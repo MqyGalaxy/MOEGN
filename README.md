@@ -1,7 +1,7 @@
 # MOEGN（萌GN）
 ![moegn](img/MOEGN_LOGO.png)
 
-A simple and cute Hexo-Shoka theme scorecard-created plug-in.
+A simple and cute(moe 萌) Hexo-Shoka theme scorecard-created plug-in.
 
 **Coming Soon!**
 
