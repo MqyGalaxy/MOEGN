@@ -13,6 +13,12 @@ const { category, reviews, linkTarget } = Astro.props;
 const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 const pageSize = 28;
 const totalPages = Math.ceil(reviews.length / pageSize);
+const showSortControls = !category.match?.subCategor;
+const getSortableScore = (score: string) => {
+	const scoreValue = Number.parseFloat(score);
+
+	return Number.isFinite(scoreValue) ? scoreValue : -Infinity;
+};
 ---
 
 <section class:list={['category-hero', `tone-${category.tone}`]}>
@@ -31,9 +37,20 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 		data-review-pagination-root
 		data-page-size={pageSize}
 	>
+		{showSortControls ? (
+			<div class="review-sort-toolbar" aria-label={`${category.title}排序方式`}>
+				<button type="button" class="is-active" data-review-sort="default" aria-pressed="true">默认排序</button>
+				<button type="button" data-review-sort="score" aria-pressed="false">分数排序</button>
+			</div>
+		) : null}
 		<ul role="list" class="review-list-grid">
 			{reviews.map((review, index) => (
-				<li data-review-list-item hidden={index >= pageSize}>
+				<li
+					data-review-list-item
+					data-review-default-index={index}
+					data-review-score={getSortableScore(review.score)}
+					hidden={index >= pageSize}
+				>
 					<a
 						class="review-cover-card"
 						href={review.href}
@@ -193,6 +210,55 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 	.review-list-grid li:has(.review-cover-card:hover),
 	.review-list-grid li:has(.review-cover-card:focus-visible) {
 		z-index: 5;
+	}
+
+	.review-sort-toolbar {
+		display: flex;
+		justify-content: flex-end;
+		gap: 18px;
+		margin: 0 0 18px;
+		color: var(--color-main);
+		font-family: var(--font-normal);
+		font-size: 14px;
+	}
+
+	.review-sort-toolbar button {
+		position: relative;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		line-height: 1.4;
+		cursor: pointer;
+		opacity: .62;
+		transition: opacity .18s ease-in-out, transform .18s ease-in-out;
+	}
+
+	.review-sort-toolbar button::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -5px;
+		height: 2px;
+		border-radius: 999px;
+		background: currentColor;
+		opacity: 0;
+		transform: scaleX(.4);
+		transition: opacity .18s ease-in-out, transform .18s ease-in-out;
+	}
+
+	.review-sort-toolbar button:hover,
+	.review-sort-toolbar button:focus-visible,
+	.review-sort-toolbar button.is-active {
+		opacity: 1;
+		transform: translateY(-1px);
+	}
+
+	.review-sort-toolbar button.is-active::after {
+		opacity: .72;
+		transform: scaleX(1);
 	}
 
 	.review-cover-card {
@@ -553,6 +619,12 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 			gap: 16px;
 		}
 
+		.review-sort-toolbar {
+			justify-content: flex-start;
+			margin-bottom: 16px;
+			font-size: 13px;
+		}
+
 		.review-title {
 			left: 8px;
 			right: 8px;
@@ -596,14 +668,15 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 
 	paginationRoots.forEach((root) => {
 		const pageSize = Number(root.dataset.pageSize || 28);
-		const items = Array.from(root.querySelectorAll<HTMLElement>('[data-review-list-item]'));
+		const list = root.querySelector<HTMLElement>('.review-list-grid');
+		const originalItems = Array.from(root.querySelectorAll<HTMLElement>('[data-review-list-item]'));
+		let items = [...originalItems];
 		const pageInput = root.querySelector<HTMLInputElement>('[data-review-page-input]');
 		const previousButton = root.querySelector<HTMLButtonElement>('[data-review-page-prev]');
 		const nextButton = root.querySelector<HTMLButtonElement>('[data-review-page-next]');
+		const sortButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-review-sort]'));
 		const totalPages = Math.ceil(items.length / pageSize);
 		let activePage = 0;
-
-		if (totalPages <= 1) return;
 
 		const showPage = (page: number) => {
 			activePage = Math.min(Math.max(page, 0), totalPages - 1);
@@ -620,6 +693,27 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 			if (nextButton) nextButton.disabled = activePage === totalPages - 1;
 
 			root.dispatchEvent(new CustomEvent('moegn:review-page-change', { bubbles: true }));
+		};
+
+		const getDefaultIndex = (item: HTMLElement) => Number(item.dataset.reviewDefaultIndex || 0);
+		const getScore = (item: HTMLElement) => Number(item.dataset.reviewScore || -Infinity);
+		const showSortMode = (mode: string) => {
+			if (!list) return;
+
+			items = mode === 'score'
+				? [...originalItems].sort((left, right) => (
+					getScore(right) - getScore(left) || getDefaultIndex(left) - getDefaultIndex(right)
+				))
+				: [...originalItems];
+
+			list.replaceChildren(...items);
+			sortButtons.forEach((button) => {
+				const isActive = button.dataset.reviewSort === mode;
+
+				button.classList.toggle('is-active', isActive);
+				button.setAttribute('aria-pressed', String(isActive));
+			});
+			showPage(0);
 		};
 
 		const commitInputPage = () => {
@@ -642,6 +736,10 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 				event.preventDefault();
 				commitInputPage();
 			}
+		});
+
+		sortButtons.forEach((button) => {
+			button.addEventListener('click', () => showSortMode(button.dataset.reviewSort || 'default'));
 		});
 
 		previousButton?.addEventListener('click', () => showPage(activePage - 1));
