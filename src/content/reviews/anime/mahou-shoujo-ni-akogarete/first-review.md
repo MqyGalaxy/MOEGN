@@ -6,23 +6,22 @@ scoreTag: "佳作"
 summary: "自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”“黑深残”的标签。本作却开辟了一条新的路，把搞笑、反套路和角色关系放在了更靠前的位置。"
 proClass: "番剧"
 subCategor:
-  - "2026七月新番"
+  - ""
 otherTag:
-  - "金:不可以色色奖"
-reviewType: "初评"
+  - ""
+reviewType: "完结评测"
 infoSummary:
   - label: "番剧类型"
     value: "日本电视动画 / 魔法少女 / 喜剧 / 反套路 / 轻百 / 卖肉"
   - label: "适龄建议"
     value: "建议 16 岁以上观看，包含较强的成人擦边表达"
   - label: "追番状态 · 连载状态"
-    value: "已追完 · 已完结"
+    value: "已追完 · 共 12 话（已完结）"
   - label: "推荐人群"
     value: "喜欢反套路魔法少女、夸张喜剧和角色关系和成长的观众"
 imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg"
-publishedAt: 2024-01-03
+publishedAt: 2026-07-07
 buttonText: "查看详情"
-blogHref: "https://blog.moeqy.com/acg/game/20230506/post-1/"
 thirdPartyLinks:
   - label: "Bangumi"
     href: "https://bgm.tv/subject/424663"

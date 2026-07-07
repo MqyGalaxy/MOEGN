@@ -1,0 +1,124 @@
+---
+interface Props {
+	webTitle: string;
+}
+
+const { webTitle } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN,en,ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name="viewport" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{webTitle}</title>
+	</head>
+	<body>
+		<slot />
+		<script is:inline>
+			(() => {
+				const embedRoot = document.querySelector('[data-moegn-category-embed]');
+				const sendHeight = () => {
+					window.parent?.postMessage({
+						source: 'moegn-category-embed',
+						slug: embedRoot?.getAttribute('data-moegn-category-embed') ?? '',
+						height: Math.ceil(document.documentElement.scrollHeight),
+					}, '*');
+				};
+
+				if ('ResizeObserver' in window) {
+					new ResizeObserver(sendHeight).observe(document.documentElement);
+				}
+
+				window.addEventListener('load', sendHeight);
+				window.addEventListener('resize', sendHeight);
+				sendHeight();
+			})();
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--color-main: #ff69b4;
+		--color-light: #ffb6c1;
+		--grey-0: #fff;
+		--grey-1: #fdfdfd;
+		--grey-2: #f7f7f7;
+		--grey-3: #eff2f3;
+		--grey-4: #ccc;
+		--grey-5: #999;
+		--grey-6: #666;
+		--grey-7: #333;
+		--grey-8: #222;
+		--grey-9: #000;
+		--grey-9-a1: rgba(0,0,0,0.1);
+		--color-red-a3: rgba(255,105,180,0.3);
+		--text-color: var(--grey-7);
+		--font-heavy: "Source Han Sans CN Heavy", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-medium: "Source Han Sans CN Medium", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-normal: "Source Han Sans CN Normal", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-light: "Source Han Sans CN Light", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+	}
+
+	html {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 100%;
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: inherit;
+	}
+
+	body {
+		width: 100%;
+		min-height: 100%;
+		margin: 0;
+		background: transparent;
+		color: var(--text-color);
+		font-family: var(--font-normal);
+		font-size: 1em;
+		line-height: 2;
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	img {
+		display: block;
+		max-width: 100%;
+	}
+
+	a {
+		color: inherit;
+	}
+
+	@font-face {
+		font-family: 'Source Han Sans CN Heavy';
+		src: url('/fonts/Source Han Sans CN Heavy.otf');
+		font-weight: bold;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Medium';
+		src: url('/fonts/Source Han Sans CN Medium.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Normal';
+		src: url('/fonts/SourceHanSansSC-Normal.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Light';
+		src: url('/fonts/SourceHanSansSC-Light.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+</style>

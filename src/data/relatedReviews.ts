@@ -7,8 +7,9 @@ export type RelatedReviewGroup = {
 export const relatedReviewGroups: RelatedReviewGroup[] = [
 	{
 		id: 'game-current-experience',
-		title: '游戏体验关联',
+		title: '崩坏系列',
 		works: [
+			'game/honkai-star-rail',
 		],
 	},
 ];
