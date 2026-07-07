@@ -7,12 +7,22 @@ summary: "《少女前线2：追放》有着不错的美术质感和前作积累
 proClass: "游戏"
 reviewType: "二次评测"
 infoSummary:
+  - label: "开发"
+    value: "散爆网络"
+  - label: "发行"
+    value: "散爆网络"
+  - label: "发行日期"
+    value: "2023年12月21日"
+  - label: "售价"
+    value: "免费游玩 / 包含内购 / 抽卡"
   - label: "游戏类型"
     value: "二次元角色养成 / 美式战棋 / 系列游戏"
+  - label: "登录平台"
+    value: "Steam / PC / 移动端"
+  - label: "推荐游玩人数"
+    value: "1"
   - label: "适龄建议"
     value: "建议 12 岁以上游玩，包含战争题材、商业化抽卡与长期养成内容"
-  - label: "登录平台"
-    value: "PC / 移动端"
   - label: "推荐人群"
     value: "少女前线系列玩家；战棋玩法爱好者；以及能接受长线运营节奏的玩家"
   - label: "游玩状态"
@@ -21,6 +31,8 @@ imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/6c/e6/306788_PmNMv.jpg"
 publishedAt: 2024-01-30
 buttonText: "查看详情"
 blogHref: "https://blog.moeqy.com/acg/game/20240129/post-1/"
+previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=367397813&bvid=BV1194y1A7Rq&cid=1374522837&p=2"
+previewVideoTitle: "《少女前线2：追放》公测OP【少女不在前线】"
 ---
 
 作为承接《少女前线》世界观的新作，《少女前线2：追放》在视觉层面确实有不少亮点。角色建模、战斗演出和界面风格都能让人看到它想要迈向更大制作规模的野心。
