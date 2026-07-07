@@ -21,6 +21,8 @@ imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/d2/c9/360097_z4dYA.jpg"
 publishedAt: 2023-05-06
 buttonText: "查看详情"
 blogHref: "https://blog.moeqy.com/acg/game/20230506/post-1/"
+previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=612992200&bvid=BV1rh4y1n77f&cid=1107647299&p=2"
+previewVideoTitle: "《崩坏：星穹铁道》OP"
 ---
 
 作为崩坏系列的最新作品，《崩坏：星穹铁道》不仅沿用了前作设定，在其上扩展了一个更庞大的银河世界。在本作中，崩坏系列的老玩家依旧能够见到自己熟悉的名词设定和角色。但新玩家也完全不用担心没有玩过前作而感到陌生，因为跟随星穹列车，玩家遇到的不再是受到崩坏能威胁的世界，而是一个崭新而未知的银河冒险。
