@@ -1,0 +1,292 @@
+---
+interface Props {
+	title: string;
+	subTitle: string;
+	score: string;
+	scoreTag: string;
+	body: string;
+	proClass: string;
+	href: string;
+	imgSrc: string;
+	awardTags?: Array<{
+		label: string;
+		tone: 'gold' | 'silver' | 'bronze';
+	}>;
+	buttonText?: string;
+	buttonAction?: string;
+}
+
+const { href, proClass, title, subTitle, score, scoreTag, body, imgSrc, awardTags = [], buttonText = '', buttonAction = '' } = Astro.props;
+const displayButtonText = buttonText.trim();
+const isExternalHref = /^https?:\/\//.test(href);
+---
+
+<li class="moegn">
+    <div class="pro-img">
+        <div class="pro-img-body">
+            <img alt="img" src={imgSrc}>
+        </div>
+    </div>
+    <div class="pro-page">
+        <div class="pro-title">
+            <div class="pro-score"><span>{score}</span></div>
+            <div class="pro-title-text">
+                <div class="title">
+                    <div class="pro-class">{proClass}</div>
+                    <span title={title}>{title}</span>
+                    <b>{subTitle}</b>
+                </div>
+                <div class="pro-score-tag">{scoreTag}</div>
+            </div>
+        </div>
+		{awardTags.length ? (
+			<div class="pro-awards" aria-label="评测标签">
+				{awardTags.map((tag) => (
+					<b class:list={['pro-award', `is-${tag.tone}`]}>{tag.label}</b>
+				))}
+			</div>
+		) : null}
+        <div class="pro-text">
+            <div class="pro-author">MOEGN 评测</div>
+            <p>
+				{body}
+			</p>
+        </div>
+        {displayButtonText ? (
+        <div class="pro-link">
+			{buttonAction ? (
+				<a type="button" data-card-action={buttonAction}>{displayButtonText}</a>
+			) : (
+				<a href={href} target={isExternalHref ? '_blank' : undefined} rel={isExternalHref ? 'noreferrer' : undefined}>{displayButtonText}</a>
+			)}
+        </div>
+        ) : null}
+    </div>
+</li>
+
+<style>
+	.moegn {
+		display: flex;
+		justify-content: flex-start;
+		position: relative;
+		max-width: 100%;
+		margin: 20px;
+		padding: 10px;
+		list-style: none;
+		background: var(--grey-0);
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.pro-img {
+		position: absolute;
+		top: -1rem;
+		right: -1rem;
+		width: 80px;
+	}
+
+	.pro-img-body {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.pro-img-body img {
+		width: 100%;
+	}
+
+	.pro-page {
+		width: 100%;
+		padding: 20px;
+	}
+
+	.pro-author {
+		color: var(--grey-6);
+		font-size: 14px;
+	}
+
+	.pro-title {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+	.pro-score {
+		position: absolute;
+		top: -1rem;
+		left: -1rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 3rem;
+		height: 3rem;
+		border-radius: 3rem;
+		font-size: 21px;
+		font-weight: bold;
+		color: var(--grey-0);
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		font-family: var(--font-heavy);
+	}
+
+	.pro-score-tag {
+		position: absolute;
+		z-index: 1;
+		left: 20px;
+		bottom: -5px;
+		overflow: hidden;
+		font-size: 2.5rem;
+		font-weight: bold;
+		color: var(--color-red-a3);
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-family: var(--font-heavy);
+	}
+
+	.pro-title-text {
+		position: relative;
+		flex: 1;
+		width: 0;
+	}
+
+	.pro-title-text .title {
+		position: relative;
+		z-index: 2;
+		max-width: 100%;
+	}
+
+	.pro-title-text .title .pro-class {
+		position: absolute;
+		left: 0;
+		top: -14px;
+		font-size: 14px;
+		font-weight: lighter;
+		letter-spacing: 5px;
+		font-family: var(--font-light);
+	}
+
+	.pro-title-text .title span {
+		display: block;
+		width: 90%;
+		margin: 0;
+		overflow: hidden;
+		font-size: 20px;
+		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-family: var(--font-normal);
+	}
+
+	.pro-title-text .title b {
+		position: absolute;
+		left: 0;
+		bottom: -10px;
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--grey-5);
+		line-height: 10px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		font-family: var(--font-light);
+	}
+
+	.pro-text {
+		margin-top: 20px;
+	}
+
+	.pro-awards {
+		position: absolute;
+		left: 18px;
+		bottom: -12px;
+		z-index: 4;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		max-width: calc(100% - 160px);
+		pointer-events: none;
+	}
+
+	.pro-award {
+		display: inline-flex;
+		align-items: center;
+		min-height: 24px;
+		padding: 0 10px;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .18);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.pro-award.is-gold {
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+	}
+
+	.pro-award.is-silver {
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	.pro-award.is-bronze {
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.pro-text p {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 9;
+		overflow: hidden;
+		margin: 5px 0;
+		font-size: 16px;
+		line-height: 150%;
+		text-overflow: ellipsis;
+		word-break: break-all;
+	}
+
+	.moegn .powered,
+	.pro-read-more,
+	.pro-link {
+		font-size: 12px;
+		color: var(--grey-6);
+	}
+
+	.moegn .powered,
+	.pro-read-more {
+		position: absolute;
+		bottom: 10px;
+		font-size: 10px;
+	}
+
+	.pro-link {
+		justify-content: center;
+	}
+
+	.pro-link a,
+	.pro-link button {
+		position: absolute;
+		right: -15px;
+		bottom: -20px;
+		padding: 16px;
+	}
+
+	.pro-link button {
+		border: 0;
+		cursor: pointer;
+	}
+
+	.pro-read-more a {
+		color: var(--grey-6);
+	}
+
+	.pro-read-more a:hover {
+		color: var(--color-blue);
+	}
+
+	.moegn .powered {
+		text-align: right;
+		right: 40px;
+	}
+</style>

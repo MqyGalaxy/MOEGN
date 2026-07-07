@@ -1,0 +1,344 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const cardStyles = [
+	{
+		title: '经典大卡片',
+		desc: '沿用 LargeCard.astro 的评测卡片结构，适合文章头图、推荐区和长评分享。',
+		style: 'classic',
+		size: 'large',
+	},
+	{
+		title: '经典小卡片',
+		desc: '沿用 Card.astro 的紧凑结构，适合移动端转发和快速评分展示。',
+		style: 'classic',
+		size: 'small',
+	},
+	{
+		title: '信息栏大卡片',
+		desc: '参考详情页顶部信息栏，强调封面、标题、标签和评分的横向展示。',
+		style: 'detail',
+		size: 'large',
+	},
+	{
+		title: '信息栏小卡片',
+		desc: '把详情页信息栏压缩成适合社交平台保存的小尺寸分享卡。',
+		style: 'detail',
+		size: 'small',
+	},
+];
+
+const faqs = [
+	{
+		q: '卡片可以直接编辑文字吗？',
+		a: '可以。进入编辑器后，直接点击卡片上的标题、副标题、摘要、评分、标签等文字即可编辑。',
+	},
+	{
+		q: '可以自定义颜色吗？',
+		a: '可以。编辑器内置了几套配色，也提供主色、辅色、文字色和卡片底色的色码输入。',
+	},
+	{
+		q: '导出的图片会包含什么？',
+		a: '导出的图片会包含卡片、渐变背景、Powered by MOEGN 信息，以及指向生成器主页的二维码。',
+	},
+	{
+		q: '经典风格和信息栏风格有什么区别？',
+		a: '经典风格更接近站内 Card.astro / LargeCard.astro；信息栏风格更接近详情页顶部展示区，视觉更像作品资料海报。',
+	},
+];
+---
+
+<Layout webTitle="MOEGN - 评测图片生成器">
+	<main>
+		<section class="generator-hero">
+			<div>
+				<p>MOEGN Card Generator</p>
+				<h1>评测图片<br>生成器</h1>
+			</div>
+			<div class="hero-copy">
+				<p>把一次评测整理成适合保存、分享和发布的小卡片。选择经典卡片或详情页信息栏风格，编辑文字、封面和配色后即可导出图片。</p>
+				<a href="/generator/editor/">开始制作</a>
+			</div>
+		</section>
+
+		<section class="style-section" aria-label="卡片风格">
+			{cardStyles.map((card) => (
+				<a class:list={['style-card', `is-${card.style}`]} href={`/generator/editor/?style=${card.style}&size=${card.size}`}>
+					<div class:list={['style-preview', `is-${card.size}`]}>
+						<span class="preview-score">8</span>
+						<div class="preview-cover"></div>
+						<div class="preview-lines">
+							<b></b>
+							<span></span>
+							<p></p>
+						</div>
+					</div>
+					<h2>{card.title}</h2>
+					<p>{card.desc}</p>
+				</a>
+			))}
+		</section>
+
+		<section class="faq-section" aria-label="常见问题">
+			<div class="faq-heading">
+				<p>FAQ</p>
+				<h2>常见<br>问题</h2>
+			</div>
+			<div class="faq-list">
+				{faqs.map((item) => (
+					<details>
+						<summary>{item.q}</summary>
+						<p>{item.a}</p>
+					</details>
+				))}
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	main {
+		width: min(1500px, 100%);
+		margin: 0 auto;
+		padding: 116px 20px 74px;
+		color: var(--text-color);
+	}
+
+	.generator-hero {
+		display: grid;
+		grid-template-columns: minmax(260px, .8fr) minmax(320px, 1fr);
+		gap: clamp(28px, 6vw, 92px);
+		align-items: end;
+		margin-bottom: 44px;
+	}
+
+	.generator-hero p:first-child,
+	.faq-heading p {
+		margin: 0 0 10px;
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.generator-hero h1,
+	.faq-heading h2 {
+		margin: 0;
+		background: linear-gradient(120deg, var(--color-main) 0, var(--color-red-a3) 78%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-size: clamp(3.8rem, 8vw, 7rem);
+		font-family: var(--font-heavy);
+		line-height: .95;
+	}
+
+	.hero-copy {
+		max-width: 720px;
+		padding-bottom: 10px;
+	}
+
+	.hero-copy p {
+		margin: 0;
+		color: var(--grey-6);
+		font-size: 18px;
+		line-height: 1.9;
+	}
+
+	.hero-copy a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 48px;
+		margin-top: 26px;
+		padding: 0 28px;
+		border-radius: 999px;
+		background: linear-gradient(135deg, var(--color-main), var(--color-light));
+		color: var(--grey-0);
+		font-size: 15px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+		box-shadow: 0 14px 28px rgba(255, 105, 180, .2);
+		transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+	}
+
+	.hero-copy a:hover,
+	.hero-copy a:focus-visible {
+		transform: translateY(-2px);
+		box-shadow: 0 18px 34px rgba(255, 105, 180, .3);
+	}
+
+	.style-section {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 18px;
+		margin-bottom: 76px;
+	}
+
+	.style-card {
+		display: grid;
+		gap: 16px;
+		padding: 18px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+		text-decoration: none;
+		box-shadow: 0 12px 28px rgba(255, 105, 180, .08);
+		transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+	}
+
+	.style-card:hover,
+	.style-card:focus-visible {
+		transform: translateY(-4px);
+		box-shadow: 0 18px 36px rgba(255, 105, 180, .18);
+	}
+
+	.style-preview {
+		position: relative;
+		min-height: 168px;
+		overflow: hidden;
+		border-radius: 8px;
+		background: linear-gradient(135deg, #ff69b4, #ffb6c1);
+	}
+
+	.style-card.is-detail .style-preview {
+		background: linear-gradient(135deg, #ff78b8, #9fdcff);
+	}
+
+	.style-preview.is-small {
+		min-height: 210px;
+	}
+
+	.preview-score {
+		position: absolute;
+		left: 18px;
+		top: 18px;
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 46px;
+		height: 46px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .32);
+		color: var(--grey-0);
+		font-size: 24px;
+		font-family: var(--font-heavy);
+	}
+
+	.preview-cover {
+		position: absolute;
+		right: 18px;
+		top: 22px;
+		width: 74px;
+		aspect-ratio: 3 / 4;
+		border-radius: 8px;
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .2)),
+			linear-gradient(135deg, #ffdc7b, #88d7ff);
+		box-shadow: 0 12px 24px rgba(98, 38, 62, .18);
+	}
+
+	.preview-lines {
+		position: absolute;
+		left: 28px;
+		right: 28px;
+		bottom: 24px;
+		display: grid;
+		gap: 10px;
+	}
+
+	.preview-lines b,
+	.preview-lines span,
+	.preview-lines p {
+		display: block;
+		margin: 0;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, .86);
+	}
+
+	.preview-lines b {
+		width: 58%;
+		height: 18px;
+	}
+
+	.preview-lines span {
+		width: 42%;
+		height: 10px;
+	}
+
+	.preview-lines p {
+		width: 78%;
+		height: 32px;
+		opacity: .72;
+	}
+
+	.style-card h2 {
+		margin: 0;
+		color: var(--color-main);
+		font-size: 24px;
+		font-family: var(--font-heavy);
+		line-height: 1.2;
+	}
+
+	.style-card > p {
+		margin: 0;
+		color: var(--grey-6);
+		font-size: 14px;
+		line-height: 1.75;
+	}
+
+	.faq-section {
+		display: grid;
+		grid-template-columns: 300px minmax(0, 1fr);
+		gap: clamp(28px, 7vw, 120px);
+		align-items: start;
+	}
+
+	.faq-list {
+		display: grid;
+		gap: 12px;
+	}
+
+	.faq-list details {
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+	}
+
+	.faq-list summary {
+		padding: 18px 20px;
+		color: var(--grey-7);
+		font-size: 17px;
+		font-family: var(--font-medium);
+		cursor: pointer;
+	}
+
+	.faq-list p {
+		margin: 0;
+		padding: 0 20px 18px;
+		color: var(--grey-6);
+		line-height: 1.8;
+	}
+
+	@media only screen and (max-width: 980px) {
+		.generator-hero,
+		.faq-section {
+			grid-template-columns: 1fr;
+		}
+
+		.style-section {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media only screen and (max-width: 560px) {
+		main {
+			padding: 90px 12px 58px;
+		}
+
+		.style-section {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

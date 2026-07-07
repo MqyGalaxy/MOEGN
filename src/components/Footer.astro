@@ -1,0 +1,91 @@
+﻿---
+import { Image } from 'astro:assets';
+import moegnLogo from '../images/MOEGN_LOGO.png';
+import moeqyLogo  from '../images/MOEQY_LOGO.png';
+import blogLogo  from '../images/blogLOGO.png';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer>
+    <main>
+        <div class="page">
+            <div class="footer">
+                <p style="font-family: Source Han Sans CN Heavy;">关于我们</p>
+                <p>为玩家发出次元之声！MOEGN 始终保持以大众的视角来评测面向大众的作品，而非受到基于政治、地域、国家、性别、种族、歧视等方面的影响。并且 MOEGN 希望能够支持大众参与并发布属于自己的声音，让评测不仅仅只是基于一些“官方媒体”的评论。</p>
+                <p>网站所涉及的公司名称、商标、产品等均为其各自所有者的资产，仅供识别。<br>网站内使用的部分图片、动画、音频、文本原文，仅用于更好地表现作品资料，并有助于评测分析和阅读。相关版权均为其各自所有者的资产。</p>
+                <p>除非另有声明，网站其他内容均采用 知识共享署名-非商业性使用-相同方式共享 授权。</p>
+            </div>
+            <div class="logos">
+                <Image src={moegnLogo} alt="MOEGN" style="width: 10rem" />
+                <div class="sub-logos">
+                    <Image id="moeqy" src={moeqyLogo} alt="MOEQY" style="width: auto; height: 2.2rem;" />
+                    <Image id="myblog" src={blogLogo} alt="MqyGalaxy|Blog" style="width: auto; height: 3.8rem;" />
+                </div>
+            </div>
+            <div class="copyright">Copyright © {currentYear} MOEGN. Some rights reserved.</div>
+        </div>
+    </main>
+</footer>
+
+<style>
+    footer {
+        margin-top: 50px;
+        margin-bottom: 20px;
+        color: var(--grey-5);
+        font-family: var(--font-normal);
+    }
+
+    footer main {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 0;
+        padding: 0 10px;
+    }
+
+    .page {
+        position: relative;
+        width: 100%;
+        max-width: 1500px;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .logos {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .sub-logos {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .logos img {
+        margin-right: 10px; 
+        height: auto;
+    }
+
+    .footer {
+        margin-bottom: 20px;
+    }
+
+    .copyright {
+        font-family: var(--font-light);
+    }
+
+	@media only screen and (max-width: 450px) {
+        .logos {
+            justify-content: center;
+        }
+        #moeqy, #myblog {
+            margin-top: 10px;
+        }
+        .copyright {
+            text-align: center;
+        }
+	}
+</style>

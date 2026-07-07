@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import moegnLogoPink from '../images/MOEGN_LOGO_pink.png';
+import moegnLogoWhite from '../images/MOEGN_LOGO_fff@4x.png';
+
+interface Props {
+    theme?: 'default' | 'hero';
+}
+
+const { theme = 'default' } = Astro.props;
+const isHeroHeader = theme === 'hero';
+---
+
+<header class:list={['site-header', { 'is-hero-header': isHeroHeader, 'is-over-hero': isHeroHeader }]} data-hero-header={isHeroHeader ? 'true' : 'false'}>
+    <div class="header-inner">
+        <a class="brand" href="/" aria-label="MOEGN 首页">
+            <Image src={moegnLogoPink} alt="MOEGN" class="brand-logo brand-logo-pink" />
+            <Image src={moegnLogoWhite} alt="MOEGN" class="brand-logo brand-logo-white" />
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+            <a href="/">首页</a>
+            <a href="/reviews/">评测</a>
+            <a href="/#collections">收藏</a>
+            <a href="/generator/">创建卡片</a>
+        </nav>
+    </div>
+</header>
+
+<style>
+    .site-header {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 105, 180, 0.13);
+        background: var(--grey-1-a9);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        backdrop-filter: blur(14px);
+        transition: background .24s ease-in-out, border-color .24s ease-in-out, box-shadow .24s ease-in-out;
+    }
+
+    .site-header.is-over-hero {
+        border-color: rgba(255, 255, 255, 0.18);
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+    }
+
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        width: min(1500px, 100%);
+        min-height: 72px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .brand {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        width: 126px;
+        min-height: 44px;
+        text-decoration: none;
+    }
+
+    .brand-logo {
+        position: absolute;
+        left: 0;
+        width: 118px;
+        height: auto;
+        transition: opacity .2s ease-in-out;
+    }
+
+    .brand-logo-white {
+        opacity: 0;
+    }
+
+    .site-header.is-over-hero .brand-logo-pink {
+        opacity: 0;
+    }
+
+    .site-header.is-over-hero .brand-logo-white {
+        opacity: 1;
+    }
+
+    .site-nav {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 30px;
+        min-width: 0;
+    }
+
+    .site-nav a {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        color: var(--grey-7);
+        font-size: 15px;
+        font-family: var(--font-medium);
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color .2s ease-in-out;
+    }
+
+    .site-header.is-over-hero .site-nav a {
+        color: var(--grey-0);
+    }
+
+    .site-nav a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 6px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform .2s ease-in-out;
+    }
+
+    .site-nav a:hover::after,
+    .site-nav a:focus-visible::after {
+        transform: scaleX(1);
+    }
+
+    .site-nav a:hover,
+    .site-nav a:focus-visible {
+        color: var(--primary-color);
+    }
+
+    .site-header.is-over-hero .site-nav a:hover,
+    .site-header.is-over-hero .site-nav a:focus-visible {
+        color: var(--grey-0);
+    }
+
+    @media only screen and (max-width: 720px) {
+        .header-inner {
+            min-height: 62px;
+            gap: 14px;
+            padding: 0 14px;
+        }
+
+        .brand {
+            width: 98px;
+            min-height: 38px;
+        }
+
+        .brand-logo {
+            width: 92px;
+        }
+
+        .site-nav {
+            gap: 18px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .site-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .site-nav a {
+            min-height: 40px;
+            font-size: 14px;
+        }
+    }
+
+    @media only screen and (max-width: 430px) {
+        .header-inner {
+            padding: 0 12px;
+        }
+
+        .brand {
+            width: 86px;
+        }
+
+        .brand-logo {
+            width: 80px;
+        }
+
+        .site-nav {
+            gap: 14px;
+        }
+
+        .site-nav a {
+            font-size: 13px;
+        }
+    }
+</style>
+
+<script>
+    const header = document.querySelector('.site-header[data-hero-header="true"]');
+
+    if (header) {
+        const updateHeader = () => {
+            header.classList.toggle('is-over-hero', window.scrollY < 24);
+        };
+
+        updateHeader();
+        window.addEventListener('scroll', updateHeader, { passive: true });
+    }
+</script>

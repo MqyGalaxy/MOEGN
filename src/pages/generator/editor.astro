@@ -1,0 +1,2648 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import W3SvgIcon from '../../components/W3SvgIcon.astro';
+---
+
+<Layout webTitle="MOEGN - 卡片编辑器">
+	<main>
+		<section class="editor-shell" data-card-editor>
+			<aside class="editor-panel" aria-label="卡片设置">
+				<div class="panel-block">
+					<p>Card Editor</p>
+					<h1>卡片编辑器</h1>
+				</div>
+
+				<div class="panel-block" data-panel-default-open>
+					<h2><span>风格</span><span class="panel-heading-icon"><W3SvgIcon name="chevron-down" /></span></h2>
+					<div class="segmented-control" role="group" aria-label="卡片风格">
+						<button type="button" data-style-option="classic" class="is-active">经典</button>
+						<button type="button" data-style-option="detail">信息栏</button>
+					</div>
+					<div class="segmented-control" role="group" aria-label="卡片尺寸">
+						<button type="button" data-size-option="large" class="is-active">大卡片</button>
+						<button type="button" data-size-option="small">小卡片</button>
+					</div>
+				</div>
+
+				<div class="panel-block">
+					<h2><span>配色</span><span class="panel-heading-icon"><W3SvgIcon name="chevron-down" /></span></h2>
+					<div class="palette-grid">
+						<button type="button" data-palette="#ff69b4,#ffb6c1,#ffffff,#ffffff,#333333" style="--swatch-a:#ff69b4;--swatch-b:#ffb6c1;">萌趣粉</button>
+						<button type="button" data-palette="#4c8df6,#8fc5ff,#ffffff,#ffffff,#26364d" style="--swatch-a:#4c8df6;--swatch-b:#8fc5ff;">聪明蓝</button>
+						<button type="button" data-palette="#36b37e,#8de0aa,#ffffff,#ffffff,#23382e" style="--swatch-a:#36b37e;--swatch-b:#8de0aa;">早苗绿</button>
+						<button type="button" data-palette="#8965e8,#c088ff,#ffffff,#ffffff,#33254d" style="--swatch-a:#8965e8;--swatch-b:#c088ff;">基佬紫</button>
+					</div>
+					<label>
+						<span>主色</span>
+						<input type="color" value="#ff69b4" data-color-input="accent" />
+					</label>
+					<label>
+						<span>辅色</span>
+						<input type="color" value="#ffb6c1" data-color-input="accent2" />
+					</label>
+					<label>
+						<span>背景文字</span>
+						<input type="color" value="#ffffff" data-color-input="paperText" />
+					</label>
+					<label>
+						<span>卡片底色</span>
+						<input type="color" value="#ffffff" data-color-input="cardBg" />
+					</label>
+					<label>
+						<span>卡片文字</span>
+						<input type="color" value="#333333" data-color-input="cardText" />
+					</label>
+				</div>
+
+				<div class="panel-block">
+					<h2><span>封面</span><span class="panel-heading-icon"><W3SvgIcon name="chevron-down" /></span></h2>
+					<label>
+						<span>图片 URL</span>
+						<input type="url" value="https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg" data-cover-input />
+					</label>
+					<button class="panel-action" type="button" data-cover-apply>应用封面</button>
+				</div>
+
+				<div class="panel-block" data-large-award-controls>
+					<h2><span>奖项</span><span class="panel-heading-icon"><W3SvgIcon name="chevron-down" /></span></h2>
+					<label class="checkbox-line">
+						<span>显示奖项</span>
+						<input type="checkbox" checked data-large-awards-toggle />
+					</label>
+					<div class="award-editor-list" data-large-award-list>
+						<div class="award-editor-item" data-large-award-item>
+							<input type="text" value="工具栏编辑奖项" aria-label="奖项文本" data-large-award-text />
+							<select aria-label="奖项等级" data-large-award-tone>
+								<option value="gold">金奖</option>
+								<option value="silver">银奖</option>
+								<option value="bronze">铜奖</option>
+							</select>
+							<button type="button" aria-label="删除奖项" data-large-award-delete>×</button>
+						</div>
+					</div>
+					<button class="award-add-button" type="button" aria-label="添加奖项" data-large-award-add>+</button>
+					<p class="panel-note">每个奖项会同步生成到经典大卡片封面左下角。</p>
+				</div>
+
+				<div class="panel-block export-panel" data-export-panel>
+					<h2>导出</h2>
+					<button class="export-button" type="button" data-export-button>生成预览</button>
+					<p class="export-status" data-export-status>点击画布中的文字即可编辑，当前导出画布尺寸固定。</p>
+				</div>
+			</aside>
+
+			<button class="mobile-panel-backdrop" type="button" data-panel-backdrop aria-label="关闭工具栏"></button>
+
+			<section class="workspace" aria-label="卡片画布">
+				<div class="workspace-toolbar">
+					<div>
+						<strong data-current-mode>经典 / 大卡片</strong>
+						<span>预览使用站内组件与详情页相同的 HTML 结构和样式</span>
+					</div>
+					<div class="workspace-actions">
+						<button class="panel-toggle" type="button" data-panel-toggle aria-expanded="false" aria-label="打开工具栏">
+							<span class="panel-toggle-icon"><W3SvgIcon name="tool" /></span>
+							<span class="panel-toggle-text">工具栏</span>
+						</button>
+						<a href="/generator/">生成器主页</a>
+					</div>
+				</div>
+
+				<div class="stage-scroll">
+					<div class="export-stage" data-export-stage data-style="classic" data-size="large" data-variant="classic-large">
+						<div class="stage-decoration stage-0"></div>
+						<div class="stage-decoration stage-1"></div>
+
+						<ul class="card-preview classic-large-card" data-preview="classic-large" aria-label="经典大卡片">
+							<li class="moegn">
+								<div class="pro-img">
+									<div class="pro-img-body">
+										<img data-cover-image alt="img" src="https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg" />
+										<div class="pro-cover-awards" aria-label="评测标签" data-large-awards>
+											<b class="pro-cover-award is-gold" data-generated-award>工具栏编辑奖项</b>
+										</div>
+									</div>
+								</div>
+								<div class="pro-page">
+									<div class="pro-title">
+										<div class="pro-score"><span contenteditable="true" data-edit-field="score">8</span></div>
+										<div class="pro-title-text">
+											<div class="title">
+												<div class="pro-class" contenteditable="true" data-edit-field="proClass">番剧</div>
+												<span title="憧憬成为魔法少女" contenteditable="true" data-edit-field="title">憧憬成为魔法少女</span>
+												<b contenteditable="true" data-edit-field="subTitle">魔法少女にあこがれて</b>
+											</div>
+											<div class="pro-score-tag" style="--score-tag-chars: 2;" contenteditable="true" data-edit-field="scoreTag">佳作</div>
+										</div>
+									</div>
+									<div class="pro-text">
+										<div class="pro-author" contenteditable="true" data-edit-field="reviewSource">MOEGN 评测</div>
+										<p contenteditable="true" data-edit-field="summary">自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”“黑深残”的标签。本作却开辟了一条新的路，把搞笑、反套路和角色关系放在了更靠前的位置。</p>
+									</div>
+								</div>
+							</li>
+						</ul>
+
+						<ul class="card-preview classic-small-card" data-preview="classic-small" aria-label="经典小卡片">
+							<li class="moegn">
+								<div class="pro-img">
+									<div class="pro-img-body">
+										<img data-cover-image alt="img" src="https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg" />
+									</div>
+								</div>
+								<div class="pro-page">
+									<div class="pro-title">
+										<div class="pro-score"><span contenteditable="true" data-edit-field="score">8</span></div>
+										<div class="pro-title-text">
+											<div class="title">
+												<div class="pro-class" contenteditable="true" data-edit-field="proClass">番剧</div>
+												<span title="憧憬成为魔法少女" contenteditable="true" data-edit-field="title">憧憬成为魔法少女</span>
+												<b contenteditable="true" data-edit-field="subTitle">魔法少女にあこがれて</b>
+											</div>
+											<div class="pro-score-tag" contenteditable="true" data-edit-field="scoreTag">佳作</div>
+										</div>
+									</div>
+									<div class="pro-awards" aria-label="评测标签" data-small-awards>
+										<b class="pro-award is-gold" data-generated-award>工具栏编辑奖项</b>
+									</div>
+									<div class="pro-text">
+										<div class="pro-author" contenteditable="true" data-edit-field="reviewSource">MOEGN 评测</div>
+										<p contenteditable="true" data-edit-field="summary">自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”“黑深残”的标签。本作却开辟了一条新的路，把搞笑、反套路和角色关系放在了更靠前的位置。</p>
+									</div>
+								</div>
+							</li>
+						</ul>
+
+						<section class="card-preview detail-hero detail-large-card" data-preview="detail-large" aria-label="信息栏大卡片">
+							<div class="detail-cover">
+								<img data-cover-image src="https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg" alt="卡片封面" />
+							</div>
+
+							<div class="detail-title">
+								<p class="detail-kicker" contenteditable="true" data-edit-field="reviewSource">MOEGN 评测</p>
+								<h1 contenteditable="true" data-edit-field="title">憧憬成为魔法少女</h1>
+								<p class="detail-subtitle" contenteditable="true" data-edit-field="subTitle">魔法少女にあこがれて</p>
+
+								<div class="detail-meta" aria-label="评测信息" data-detail-awards>
+									<b class="detail-award-tag is-gold" data-generated-award>工具栏编辑奖项</b>
+									<button class="detail-tag-add" type="button" aria-label="添加标签" data-detail-tag-add>+</button>
+								</div>
+
+								<p class="detail-summary" contenteditable="true" data-edit-field="summary">自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”“黑深残”的标签。本作却开辟了一条新的路，把搞笑、反套路和角色关系放在了更靠前的位置。</p>
+
+								<div class="detail-actions">
+								</div>
+							</div>
+
+							<div class="detail-score" aria-label="评分">
+								<span contenteditable="true" data-edit-field="score">8</span>
+								<b contenteditable="true" data-edit-field="scoreTag">佳作</b>
+							</div>
+						</section>
+
+						<section class="card-preview detail-hero detail-small-card" data-preview="detail-small" aria-label="信息栏小卡片">
+							<div class="detail-cover">
+								<img data-cover-image src="https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg" alt="卡片封面" />
+							</div>
+
+							<div class="detail-title">
+								<p class="detail-kicker" contenteditable="true" data-edit-field="reviewSource">MOEGN 评测</p>
+								<h1 contenteditable="true" data-edit-field="title">憧憬成为魔法少女</h1>
+								<p class="detail-subtitle" contenteditable="true" data-edit-field="subTitle">魔法少女にあこがれて</p>
+
+								<div class="detail-meta" aria-label="评测信息" data-detail-awards>
+									<b class="detail-award-tag is-gold" data-generated-award>工具栏编辑奖项</b>
+									<button class="detail-tag-add" type="button" aria-label="添加标签" data-detail-tag-add>+</button>
+								</div>
+
+								<p class="detail-summary" contenteditable="true" data-edit-field="summary">自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”“黑深残”的标签。本作却开辟了一条新的路，把搞笑、反套路和角色关系放在了更靠前的位置。</p>
+								
+								<div class="detail-actions">
+								</div>
+							</div>
+
+							<div class="detail-score" aria-label="评分">
+								<span contenteditable="true" data-edit-field="score">8</span>
+								<b contenteditable="true" data-edit-field="scoreTag">佳作</b>
+							</div>
+						</section>
+
+						<footer class="generator-footer">
+							<div>
+								<strong>Powered by MOEGN</strong>
+								<span>Scan QR Code to open the card generator.</span>
+							</div>
+							<img data-generator-qr alt="MOEGN 生成器二维码" />
+						</footer>
+					</div>
+				</div>
+			</section>
+		</section>
+
+		<div class="export-preview-modal" data-export-preview-modal hidden>
+			<div class="export-preview-dialog" role="dialog" aria-modal="true" aria-label="导出预览">
+				<div class="export-preview-toolbar">
+					<div>
+						<strong>导出预览</strong>
+						<span>确认预览无误后，再生成并下载图片。</span>
+					</div>
+					<div class="export-preview-actions">
+						<button class="export-preview-download" type="button" data-preview-download>生成并下载</button>
+						<button class="export-preview-close" type="button" aria-label="关闭预览" data-preview-close>×</button>
+					</div>
+				</div>
+				<div class="export-preview-viewport">
+					<div class="export-preview-host" data-export-preview-host></div>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		box-sizing: border-box;
+		width: min(1700px, 100%);
+		height: 100svh;
+		margin: 0 auto;
+		overflow: hidden;
+		padding: 88px 16px 16px;
+		color: var(--text-color);
+	}
+
+	.editor-shell {
+		display: grid;
+		grid-template-columns: 320px minmax(0, 1fr);
+		gap: 18px;
+		height: 100%;
+		min-height: 0;
+	}
+
+	.editor-panel,
+	.workspace {
+		min-height: 0;
+		border: 1px solid rgba(255, 105, 180, .18);
+		border-radius: 8px;
+		background: rgba(255, 255, 255);
+		box-shadow: 0 12px 32px rgba(255, 105, 180, .08);
+	}
+
+	.editor-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		height: 100%;
+		overflow: auto;
+		padding: 20px;
+	}
+
+	.panel-block {
+		display: grid;
+		gap: 12px;
+	}
+
+	.panel-block[data-collapsible] {
+		gap: 0;
+		padding-bottom: 12px;
+		border-bottom: 1px solid rgba(255, 105, 180, .1);
+	}
+
+	.panel-block[data-collapsible] h2 {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		min-height: 34px;
+		cursor: pointer;
+	}
+
+	.panel-heading-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 22px;
+		height: 22px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 50%;
+		color: var(--color-main);
+		transition: transform .18s ease-in-out;
+	}
+
+	.panel-block[data-collapsible].is-collapsed .panel-heading-icon {
+		transform: rotate(-90deg);
+	}
+
+	.panel-block[data-collapsible] > :not(h2) {
+		margin-top: 12px;
+	}
+
+	.panel-block[data-collapsible].is-collapsed > :not(h2) {
+		display: none;
+	}
+
+	.panel-block p:first-child {
+		margin: 0;
+		color: var(--color-main);
+		font-size: 13px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.panel-block h1,
+	.panel-block h2 {
+		margin: 0;
+		color: var(--grey-7);
+		font-family: var(--font-heavy);
+		line-height: 1.15;
+	}
+
+	.panel-block h1 {
+		font-size: 34px;
+	}
+
+	.panel-block h2 {
+		font-size: 16px;
+	}
+
+	.export-panel {
+		position: sticky;
+		bottom: -20px;
+		z-index: 2;
+		margin-top: auto;
+		margin-right: -20px;
+		margin-bottom: -20px;
+		margin-left: -20px;
+		padding: 16px 20px 20px;
+		border-top: 1px solid rgba(255, 105, 180, .12);
+		background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .98));
+		backdrop-filter: blur(10px);
+	}
+
+	.segmented-control {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+	}
+
+	.segmented-control button,
+	.panel-action,
+	.export-button {
+		min-height: 40px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 999px;
+		background: var(--grey-0);
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		cursor: pointer;
+	}
+
+	.segmented-control button.is-active,
+	.export-button {
+		border-color: transparent;
+		background: linear-gradient(135deg, var(--color-main), var(--color-light));
+		color: var(--grey-0);
+	}
+
+	.palette-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 8px;
+	}
+
+	.palette-grid button {
+		min-height: 48px;
+		overflow: hidden;
+		border: 0;
+		border-radius: 8px;
+		background: linear-gradient(135deg, var(--swatch-a), var(--swatch-b));
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		cursor: pointer;
+		text-shadow: 0 1px 10px rgba(0, 0, 0, .16);
+	}
+
+	label {
+		display: grid;
+		grid-template-columns: 82px minmax(0, 1fr);
+		gap: 10px;
+		align-items: center;
+		color: var(--grey-6);
+		font-size: 13px;
+	}
+
+	.checkbox-line input {
+		justify-self: start;
+		width: 18px;
+		height: 18px;
+		accent-color: var(--color-main);
+	}
+
+	.inline-actions {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+	}
+
+	.award-editor-list {
+		display: grid;
+		gap: 8px;
+	}
+
+	.award-editor-item {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 72px 34px;
+		gap: 8px;
+		align-items: center;
+		padding: 8px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+	}
+
+	.award-editor-item input,
+	.award-editor-item select {
+		width: 100%;
+		min-height: 34px;
+		border: 0;
+		background: transparent;
+		color: var(--grey-7);
+		font: inherit;
+	}
+
+	.award-editor-item input:focus,
+	.award-editor-item select:focus {
+		outline: 0;
+	}
+
+	.award-editor-item select {
+		color: var(--color-main);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+	}
+
+	.award-editor-item button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border: 0;
+		border-radius: 50%;
+		background: transparent;
+		color: var(--color-main);
+		font-size: 22px;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.award-add-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 46px;
+		border: 1px dashed var(--color-red-a5);
+		border-radius: 8px;
+		background: rgba(255, 105, 180, .04);
+		color: var(--color-main);
+		font-size: 30px;
+		font-family: var(--font-light);
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	:global(.award-editor-item) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 74px 34px;
+		gap: 8px;
+		align-items: center;
+		padding: 8px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+	}
+
+	:global(.award-editor-item input),
+	:global(.award-editor-item select) {
+		width: 100%;
+		min-height: 34px;
+		border: 0;
+		background: transparent;
+		color: var(--grey-7);
+		font: inherit;
+	}
+
+	:global(.award-editor-item input:focus),
+	:global(.award-editor-item select:focus) {
+		outline: 0;
+	}
+
+	:global(.award-editor-item select) {
+		color: var(--color-main);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+	}
+
+	:global(.award-editor-item button) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border: 0;
+		border-radius: 50%;
+		background: transparent;
+		color: var(--color-main);
+		font-size: 22px;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.panel-note {
+		margin: 0;
+		color: var(--grey-5);
+		font-size: 12px;
+		line-height: 1.6;
+	}
+
+	input[type="color"],
+	input[type="url"] {
+		width: 100%;
+		min-height: 36px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+		color: var(--grey-7);
+		font: inherit;
+	}
+
+	input[type="url"] {
+		padding: 0 10px;
+	}
+
+	.export-status {
+		margin: 0;
+		color: var(--grey-5);
+		font-size: 12px;
+		line-height: 1.6;
+	}
+
+	.workspace {
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
+		height: 100%;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.workspace-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 18px;
+		padding: 14px 18px;
+		border-bottom: 1px solid rgba(255, 105, 180, .14);
+		background: rgba(255, 255, 255, .78);
+	}
+
+	.workspace-toolbar div {
+		display: grid;
+		gap: 2px;
+	}
+
+	.workspace-toolbar strong {
+		font-family: var(--font-heavy);
+	}
+
+	.workspace-toolbar span {
+		color: var(--grey-5);
+		font-size: 12px;
+	}
+
+	.workspace-toolbar a {
+		color: var(--color-main);
+		font-size: 13px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+	}
+
+	.workspace-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.panel-toggle {
+		appearance: none;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		min-height: 34px;
+		padding: 0 14px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 999px;
+		cursor: pointer;
+		font-size: 13px;
+		font-family: var(--font-medium);
+	}
+
+	.panel-toggle-icon {
+		display: inline-flex;
+		width: 20px;
+		height: 20px;
+	}
+
+	.mobile-panel-backdrop {
+		display: none;
+	}
+
+	.stage-scroll {
+		min-height: 0;
+		height: 100%;
+		overflow: auto;
+		padding: 32px;
+		background:
+			linear-gradient(rgba(255, 105, 180, .05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 105, 180, .05) 1px, transparent 1px),
+			var(--grey-2);
+		background-size: 28px 28px;
+	}
+
+	.stage-scroll.is-panning,
+	.export-preview-viewport.is-panning {
+		user-select: none;
+	}
+
+	.export-stage {
+		--accent: #ff69b4;
+		--accent2: #ffb6c1;
+		--accent2-soft: rgba(255, 182, 193, .5);
+		--paper-text: #ffffff;
+		--card-bg: #ffffff;
+		--card-text: #333333;
+		--color-main: var(--accent);
+		--color-light: var(--accent2);
+		position: relative;
+		box-sizing: border-box;
+		display: grid;
+		justify-items: center;
+		align-content: center;
+		gap: 44px;
+		width: 1100px;
+		height: auto;
+		margin: 0 auto;
+		padding: 100px 10px 30px 10px;
+		overflow: hidden;
+		border-radius: 10px;
+		background: linear-gradient(145deg, var(--accent), var(--accent2));
+		color: var(--paper-text);
+	}
+
+	.export-stage[data-size="small"] {
+		height: auto;
+	}
+
+	.export-stage[data-size="large"] {
+		height: auto;
+	}
+
+	.export-stage[data-variant="classic-large"] {
+		width: 1100px;
+	}
+
+	.export-stage[data-variant="classic-small"] {
+		width: 640px;
+	}
+
+	.export-stage[data-variant="detail-large"] {
+		width: 1460px;
+	}
+
+	.export-stage[data-variant="detail-small"] {
+		width: 450px;
+		padding: 10px 10px 26px;
+	}
+
+	.stage-decoration {
+		position: absolute;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .18);
+		pointer-events: none;
+	}
+
+	.stage-decoration.stage-0 {
+		left: -80px;
+		top: -110px;
+		width: 320px;
+		height: 320px;
+	}
+
+	.stage-decoration.stage-1 {
+		right: -10px;
+		bottom: -30px;
+		border-radius: 20%;
+		transform: rotate(30deg);
+		width: 160px;
+		height: 160px;
+		background: rgba(255, 255, 255, .13);
+	}
+
+	.export-stage .card-preview {
+		position: relative;
+		z-index: 1;
+		display: none;
+	}
+
+	.export-stage[data-variant="classic-large"] .classic-large-card,
+	.export-stage[data-variant="classic-small"] .classic-small-card {
+		display: block;
+	}
+
+	.export-stage[data-variant="detail-large"] .detail-large-card,
+	.export-stage[data-variant="detail-small"] .detail-small-card {
+		display: grid;
+	}
+
+	[contenteditable="true"] {
+		outline: 0;
+		border-radius: 4px;
+		transition: box-shadow .16s ease-in-out, background .16s ease-in-out;
+	}
+
+	[contenteditable="true"]:focus {
+		background: rgba(255, 105, 180, .08);
+		box-shadow: 0 0 0 3px rgba(255, 105, 180, .18);
+	}
+
+	.classic-large-card,
+	.classic-small-card {
+		width: max-content;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		color: var(--card-text);
+	}
+
+	.classic-large-card .moegn {
+		display: flex;
+		justify-content: flex-start;
+		position: relative;
+		width: auto;
+		margin: 0;
+		padding: 20px;
+		list-style: none;
+		background: var(--card-bg);
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.classic-large-card .pro-img {
+		position: relative;
+		width: 250px;
+		z-index: 2;
+		flex: 0 0 250px;
+	}
+
+	.classic-large-card .pro-img-body {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: 250px;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.classic-large-card .pro-img-body img {
+		width: 250px;
+		height: auto;
+		object-fit: cover;
+	}
+
+	.classic-large-card .pro-cover-awards {
+		position: absolute;
+		left: 8px;
+		bottom: 8px;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+		max-width: 334px;
+		pointer-events: none;
+	}
+
+	.classic-large-card .pro-cover-awards.is-hidden {
+		display: none;
+	}
+
+	.classic-large-card .pro-cover-award {
+		display: inline-flex;
+		align-items: center;
+		max-width: 334px;
+		min-height: 24px;
+		padding: 0 10px;
+		overflow: hidden;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .22);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.classic-large-card .pro-cover-award.is-gold,
+	.classic-small-card .pro-award.is-gold {
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+	}
+
+	.classic-large-card .pro-cover-award.is-silver,
+	.classic-small-card .pro-award.is-silver {
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	.classic-large-card .pro-cover-award.is-bronze,
+	.classic-small-card .pro-award.is-bronze {
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	:global(.classic-large-card .pro-cover-award) {
+		display: inline-flex;
+		align-items: center;
+		max-width: 334px;
+		min-height: 24px;
+		padding: 0 10px;
+		overflow: hidden;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .22);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	:global(.classic-large-card .pro-cover-award.is-gold) {
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+	}
+
+	:global(.classic-large-card .pro-cover-award.is-silver) {
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	:global(.classic-large-card .pro-cover-award.is-bronze) {
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.classic-large-card .pro-page,
+	.classic-small-card .pro-page {
+		padding: 20px;
+	}
+
+	.classic-large-card .pro-page {
+		width: 610px;
+		flex: 0 0 610px;
+	}
+
+	.classic-small-card .pro-page {
+		width: 100%;
+	}
+
+	.classic-large-card .pro-author,
+	.classic-small-card .pro-author {
+		color: var(--grey-6);
+		font-size: 14px;
+	}
+
+	.classic-large-card .pro-title,
+	.classic-small-card .pro-title {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+	.classic-large-card .pro-score {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 80px;
+		height: 80px;
+		margin: 0;
+		border-radius: 80px;
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		color: var(--grey-0);
+		font-size: 35px;
+		font-weight: bold;
+		font-family: var(--font-heavy);
+	}
+
+	.classic-large-card .pro-title-text {
+		position: relative;
+		margin-left: 10px;
+		flex: 1;
+		width: 500px;
+		container-type: inline-size;
+	}
+
+	.classic-large-card .pro-title-text .title,
+	.classic-small-card .pro-title-text .title {
+		position: relative;
+		z-index: 2;
+		max-width: none;
+	}
+
+	.classic-large-card .pro-title-text .title .pro-class {
+		position: absolute;
+		left: 0;
+		top: -10px;
+		font-size: 14px;
+		font-weight: lighter;
+		letter-spacing: 5px;
+		font-family: var(--font-light);
+	}
+
+	.classic-large-card .pro-title-text .title span {
+		display: block;
+		width: 450px;
+		margin: 0;
+		overflow: hidden;
+		font-size: 35px;
+		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-family: var(--font-normal);
+	}
+
+	.classic-large-card .pro-title-text .title b {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--grey-5);
+		line-height: 10px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		font-family: var(--font-light);
+	}
+
+	.classic-large-card .pro-score-tag {
+		position: absolute;
+		z-index: 1;
+		left: 20px;
+		bottom: -10px;
+		max-width: 460px;
+		overflow: visible;
+		font-size: 64px;
+		font-weight: bold;
+		color: var(--accent2-soft);
+		text-transform: uppercase;
+		white-space: nowrap;
+		letter-spacing: 1px;
+		font-family: var(--font-heavy);
+	}
+
+	.classic-large-card .pro-text,
+	.classic-small-card .pro-text {
+		margin-top: 20px;
+	}
+
+	.classic-large-card .pro-text p {
+		margin: 5px 0;
+		overflow: visible;
+		font-size: 16px;
+		line-height: 150%;
+		word-break: break-all;
+	}
+
+	.classic-small-card .pro-text p {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 9;
+		overflow: hidden;
+		margin: 5px 0;
+		font-size: 16px;
+		line-height: 150%;
+		text-overflow: ellipsis;
+		word-break: break-all;
+	}
+
+	.classic-small-card .pro-link {
+		justify-content: center;
+		font-size: 12px;
+		color: var(--grey-6);
+	}
+
+	.classic-small-card .pro-link a {
+		position: absolute;
+		right: -15px;
+		bottom: -20px;
+		padding: 16px;
+		color: var(--grey-0);
+		background: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		border-radius: 999px;
+		text-decoration: none;
+		font-family: var(--font-medium);
+	}
+
+	.classic-small-card .moegn {
+		display: flex;
+		justify-content: flex-start;
+		position: relative;
+		width: 500px;
+		margin: 0;
+		padding: 10px;
+		list-style: none;
+		background: var(--card-bg);
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.classic-small-card .pro-img {
+		position: absolute;
+		top: -16px;
+		right: -2px;
+		width: 80px;
+	}
+
+	.classic-small-card .pro-img-body {
+		display: flex;
+		justify-content: center;
+		width: 90px;
+		height: auto;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.classic-small-card .pro-img-body img {
+		width: 90px;
+		height: auto;
+		object-fit: cover;
+	}
+
+	.classic-small-card .pro-score {
+		position: absolute;
+		top: -16px;
+		left: -16px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 48px;
+		height: 48px;
+		border-radius: 48px;
+		font-size: 21px;
+		font-weight: bold;
+		color: var(--grey-0);
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		font-family: var(--font-heavy);
+	}
+
+	.classic-small-card .pro-score-tag {
+		position: absolute;
+		z-index: 1;
+		left: 20px;
+		bottom: -5px;
+		overflow: hidden;
+		font-size: 40px;
+		font-weight: bold;
+		color: var(--accent2-soft);
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-family: var(--font-heavy);
+	}
+
+	.classic-small-card .pro-title-text {
+		position: relative;
+		flex: 1;
+		width: 500px;
+	}
+
+	.classic-small-card .pro-title-text .title .pro-class {
+		position: absolute;
+		left: 0;
+		top: -14px;
+		font-size: 14px;
+		font-weight: lighter;
+		letter-spacing: 5px;
+		font-family: var(--font-light);
+	}
+
+	.classic-small-card .pro-title-text .title span {
+		display: block;
+		width: 440px;
+		margin: 0;
+		overflow: hidden;
+		font-size: 20px;
+		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-family: var(--font-normal);
+	}
+
+	.classic-small-card .pro-title-text .title b {
+		position: absolute;
+		left: 0;
+		bottom: -10px;
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--grey-5);
+		line-height: 10px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		font-family: var(--font-light);
+	}
+
+	.classic-small-card .pro-awards {
+		position: absolute;
+		left: 18px;
+		bottom: -12px;
+		z-index: 4;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		max-width: 440px;
+		pointer-events: none;
+	}
+
+	.classic-small-card .pro-awards.is-hidden {
+		display: none;
+	}
+
+	.classic-small-card .pro-award {
+		display: inline-flex;
+		align-items: center;
+		min-height: 24px;
+		padding: 0 10px;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .18);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	:global(.classic-small-card .pro-award) {
+		display: inline-flex;
+		align-items: center;
+		min-height: 24px;
+		padding: 0 10px;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .18);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	:global(.classic-small-card .pro-award.is-gold) {
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+	}
+
+	:global(.classic-small-card .pro-award.is-silver) {
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	:global(.classic-small-card .pro-award.is-bronze) {
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.detail-hero {
+		position: relative;
+		display: grid;
+		grid-template-columns: 340px 1fr;
+		gap: 30px;
+		align-items: flex-start;
+		width: 1300px;
+		overflow: visible;
+		border-radius: 10px;
+	}
+
+	.detail-cover,
+	.detail-title,
+	.detail-score {
+		position: relative;
+		z-index: 1;
+	}
+
+	.detail-cover {
+		width: 340px;
+		margin-inline: auto;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 18px 38px rgba(98, 38, 62, .24);
+		background: var(--grey-0);
+	}
+
+	.detail-cover img {
+		display: block;
+		width: 340px;
+		height: 453px;
+		aspect-ratio: 3 / 4;
+		object-fit: cover;
+	}
+
+	.detail-title {
+		width: 100%;
+		max-width: none;
+		color: var(--paper-text);
+	}
+
+	.detail-kicker {
+		margin: 0 0 12px;
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.detail-title h1 {
+		margin: 0;
+		font-size: 96px;
+		font-family: var(--font-heavy);
+		line-height: .94;
+		letter-spacing: -5px;
+	}
+
+	.detail-subtitle {
+		margin: 14px 0 0;
+		color: rgba(255, 255, 255, .78);
+		font-size: 23px;
+		font-family: var(--font-light);
+		text-transform: uppercase;
+	}
+
+	.detail-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 28px;
+	}
+
+	.detail-meta > span,
+	.detail-tag-add {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		min-height: 34px;
+		padding: 0 14px;
+		border: 1px solid rgba(255, 255, 255, .48);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, .13);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.detail-tag > span {
+		display: inline-flex;
+		align-items: center;
+		min-width: 1em;
+		white-space: nowrap;
+	}
+
+	.detail-tag button,
+	.detail-tag-add {
+		appearance: none;
+		border: 0;
+		cursor: pointer;
+		font: inherit;
+	}
+
+	.detail-tag button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 16px;
+		height: 16px;
+		margin-right: -4px;
+		padding: 0;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .16);
+		color: rgba(255, 255, 255, .82);
+		font-size: 13px;
+		font-family: var(--font-medium);
+		line-height: 1;
+		transition: background .18s ease-in-out, color .18s ease-in-out;
+	}
+
+	.detail-tag button:hover,
+	.detail-tag button:focus-visible {
+		background: rgba(255, 255, 255, .32);
+		color: var(--grey-0);
+	}
+
+	.detail-tag-add {
+		justify-content: center;
+		min-width: 34px;
+		padding: 0;
+		border: 1px dashed rgba(255, 255, 255, .68);
+		background: rgba(255, 255, 255, .05);
+		font-family: var(--font-heavy);
+		line-height: 1;
+		transition: background .18s ease-in-out, border-color .18s ease-in-out;
+	}
+
+	.detail-tag-add:hover,
+	.detail-tag-add:focus-visible {
+		border-color: var(--grey-0);
+		background: rgba(255, 255, 255, .18);
+	}
+
+	.export-stage.is-exporting .detail-tag button,
+	.export-stage.is-exporting .detail-tag-add {
+		display: none;
+	}
+
+	:global(.detail-tag) {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		min-height: 34px;
+		padding: 0 14px;
+		border: 1px solid rgba(255, 255, 255, .48);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, .13);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	:global(.detail-tag > span) {
+		display: inline-flex;
+		align-items: center;
+		min-width: 1em;
+		white-space: nowrap;
+	}
+
+	:global(.detail-tag button) {
+		appearance: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 16px;
+		height: 16px;
+		margin-right: -4px;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .16);
+		color: rgba(255, 255, 255, .82);
+		cursor: pointer;
+		font-size: 13px;
+		font-family: var(--font-medium);
+		line-height: 1;
+		transition: background .18s ease-in-out, color .18s ease-in-out;
+	}
+
+	:global(.detail-tag button:hover),
+	:global(.detail-tag button:focus-visible) {
+		background: rgba(255, 255, 255, .32);
+		color: var(--grey-0);
+	}
+
+	:global(.detail-small-card .detail-tag) {
+		min-height: 34px;
+		padding: 0 14px;
+		font-size: 13px;
+	}
+
+	:global(.export-stage.is-exporting .detail-tag button) {
+		display: none;
+	}
+
+	.detail-award-tag {
+		--award-glow: rgba(255, 207, 82, .82);
+		display: inline-flex;
+		align-items: center;
+		min-height: 34px;
+		padding: 0 14px;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, .22) inset,
+			0 0 14px var(--award-glow),
+			0 0 28px var(--award-glow);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.detail-award-tag.is-silver {
+		--award-glow: rgba(214, 225, 234, .86);
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	.detail-award-tag.is-bronze {
+		--award-glow: rgba(227, 161, 95, .84);
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	:global(.detail-award-tag) {
+		--award-glow: rgba(255, 207, 82, .82);
+		display: inline-flex;
+		align-items: center;
+		min-height: 34px;
+		padding: 0 14px;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, .22) inset,
+			0 0 14px var(--award-glow),
+			0 0 28px var(--award-glow);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	:global(.detail-award-tag.is-silver) {
+		--award-glow: rgba(214, 225, 234, .86);
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	:global(.detail-award-tag.is-bronze) {
+		--award-glow: rgba(227, 161, 95, .84);
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.detail-summary {
+		width: 100%;
+		max-width: none;
+		margin: 26px 0 0;
+		font-size: 19px;
+		line-height: 1.8;
+	}
+
+	.detail-actions {
+		position: relative;
+		z-index: 4;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		margin-top: 80px;
+	}
+
+	.detail-action {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 46px;
+		padding: 0 24px;
+		border: 1px solid var(--grey-0);
+		border-radius: 999px;
+		cursor: pointer;
+		font-size: 15px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+	}
+
+	.detail-action.is-solid {
+		background: var(--grey-0);
+		color: var(--color-main);
+	}
+
+	.detail-action.is-outline {
+		color: var(--grey-0);
+		background: transparent;
+	}
+
+	.detail-score {
+		position: absolute;
+		right: 72px;
+		bottom: -20px;
+		display: flex;
+		align-items: center;
+		gap: 18px;
+		color: rgba(255, 255, 255, .35);
+		font-family: var(--font-heavy);
+		pointer-events: auto;
+	}
+
+	.detail-score span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 106px;
+		height: 106px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .2);
+		color: var(--grey-0);
+		font-size: 51px;
+		line-height: 1;
+		pointer-events: auto;
+	}
+
+	.detail-score b {
+		font-size: 90px;
+		line-height: 1;
+		pointer-events: auto;
+	}
+
+	.detail-small-card {
+		box-sizing: border-box;
+		grid-template-columns: 1fr;
+		width: 430px;
+		min-height: auto;
+		padding: 14px 18px 100px;
+		gap: 0;
+		border-radius: 8px;
+	}
+
+	.detail-small-card .detail-cover {
+		width: 230px;
+	}
+
+	.detail-small-card .detail-title {
+		width: 100%;
+		margin-top: 28px;
+	}
+
+	.detail-small-card .detail-cover img {
+		width: 230px;
+		height: 307px;
+	}
+
+	.detail-small-card .detail-title h1 {
+		font-size: 48px;
+		line-height: .98;
+		letter-spacing: -2px;
+	}
+
+	.detail-small-card .detail-kicker {
+		margin-bottom: 12px;
+		font-size: 12px;
+	}
+
+	.detail-small-card .detail-subtitle {
+		margin-top: 10px;
+		font-size: 16px;
+		line-height: 1.45;
+	}
+
+	.detail-small-card .detail-meta {
+		gap: 8px;
+		margin-top: 26px;
+	}
+
+	.detail-small-card .detail-meta > span,
+	.detail-small-card .detail-tag-add,
+	.detail-small-card :global(.detail-award-tag) {
+		min-height: 34px;
+		padding: 0 14px;
+		font-size: 13px;
+	}
+
+	.detail-small-card .detail-summary {
+		width: 100%;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 5;
+		overflow: hidden;
+		margin-top: 26px;
+		font-size: 16px;
+		line-height: 1.75;
+	}
+
+	.detail-small-card .detail-actions {
+		display: none;
+	}
+
+	.detail-small-card .detail-score {
+		gap: 10px;
+		right: 18px;
+		bottom: 20px;
+	}
+
+	.detail-small-card .detail-score span {
+		width: 78px;
+		height: 78px;
+		font-size: 35px;
+	}
+
+	.detail-small-card .detail-score b {
+		font-size: 48px;
+	}
+
+	.generator-footer {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 18px;
+		color: var(--paper-text);
+		text-align: right;
+	}
+
+	.generator-footer strong,
+	.generator-footer span {
+		display: block;
+	}
+
+	.generator-footer strong {
+		font-size: 22px;
+		font-family: var(--font-heavy);
+	}
+
+	.generator-footer span {
+		font-size: 13px;
+		opacity: .78;
+	}
+
+	.generator-footer img {
+		width: 112px;
+		height: 112px;
+	}
+
+	.export-preview-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 100;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 24px;
+		background: rgba(24, 20, 24, .58);
+		backdrop-filter: blur(8px);
+	}
+
+	.export-preview-modal[hidden] {
+		display: none;
+	}
+
+	.export-preview-dialog {
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
+		width: calc(100vw - 48px);
+		height: calc(100svh - 48px);
+		max-width: 1480px;
+		overflow: hidden;
+		border-radius: 10px;
+		background: var(--grey-0);
+		box-shadow: 0 24px 70px rgba(32, 18, 26, .28);
+	}
+
+	.export-preview-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 18px;
+		padding: 18px 22px;
+		border-bottom: 1px solid rgba(255, 105, 180, .16);
+		background: rgba(255, 255, 255, .94);
+	}
+
+	.export-preview-toolbar div:first-child {
+		display: grid;
+		gap: 4px;
+	}
+
+	.export-preview-toolbar strong {
+		font-family: var(--font-heavy);
+	}
+
+	.export-preview-toolbar span {
+		color: var(--grey-5);
+		font-size: 13px;
+	}
+
+	.export-preview-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.export-preview-download,
+	.export-preview-close {
+		appearance: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--color-main);
+		cursor: pointer;
+		font-family: var(--font-heavy);
+		transition: transform .18s ease-in-out, background .18s ease-in-out;
+	}
+
+	.export-preview-download {
+		min-height: 42px;
+		padding: 0 22px;
+		border-radius: 999px;
+		background: var(--color-main);
+		color: var(--grey-0);
+	}
+
+	.export-preview-close {
+		width: 42px;
+		height: 42px;
+		border-radius: 50%;
+		background: transparent;
+		color: var(--color-main);
+		font-size: 24px;
+		line-height: 1;
+	}
+
+	.export-preview-download:hover,
+	.export-preview-download:focus-visible,
+	.export-preview-close:hover,
+	.export-preview-close:focus-visible {
+		transform: translateY(-1px);
+	}
+
+	.export-preview-viewport {
+		min-height: 0;
+		overflow: auto;
+		padding: 36px;
+		background:
+			linear-gradient(rgba(255, 105, 180, .05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 105, 180, .05) 1px, transparent 1px),
+			var(--grey-2);
+		background-size: 28px 28px;
+	}
+
+	.export-preview-host {
+		display: grid;
+		justify-content: center;
+		min-width: max-content;
+	}
+
+	.export-preview-host .export-stage {
+		margin: 0;
+	}
+
+	@media only screen and (max-width: 1120px) {
+		.editor-shell {
+			grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+		}
+
+		.editor-panel {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media only screen and (max-width: 640px) {
+		main {
+			padding: 76px 10px 10px;
+		}
+
+		.editor-shell {
+			grid-template-columns: 1fr;
+		}
+
+		.editor-panel {
+			position: fixed;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			border-radius: 0;
+			z-index: 90;
+			width: min(320px, calc(100vw - 20px));
+			box-sizing: border-box;
+			transform: translateX(calc(-100% - 16px));
+			transition: transform .22s ease-in-out;
+		}
+
+		.editor-shell.is-mobile-panel-open .editor-panel {
+			transform: translateX(0);
+		}
+
+		.mobile-panel-backdrop {
+			position: fixed;
+			inset: 0;
+			z-index: 80;
+			display: block;
+			padding: 0;
+			border: 0;
+			background: rgba(0, 0, 0, .42);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity .22s ease-in-out;
+		}
+
+		.editor-shell.is-mobile-panel-open .mobile-panel-backdrop {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.workspace-toolbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.workspace-actions {
+			width: 100%;
+			justify-content: flex-end;
+		}
+
+		.panel-toggle {
+			position: fixed;
+			right: 18px;
+			bottom: 18px;
+			z-index: 110;
+			display: inline-flex;
+			width: 54px;
+			min-height: 54px;
+			padding: 0;
+			border-color: transparent;
+			background: linear-gradient(135deg, var(--color-main), var(--color-light));
+			color: var(--grey-0);
+			box-shadow: 0 14px 32px rgba(255, 105, 180, .32);
+		}
+
+		.panel-toggle-icon {
+			color: var(--grey-0)!important;
+			width: 24px;
+			height: 24px;
+		}
+
+		.panel-toggle-text {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+		}
+
+		.stage-scroll {
+			padding: 18px;
+		}
+
+		.export-preview-modal {
+			padding: 10px;
+		}
+
+		.export-preview-dialog {
+			width: calc(100vw - 20px);
+			height: calc(100svh - 20px);
+		}
+
+		.export-preview-toolbar {
+			align-items: flex-start;
+			flex-direction: column;
+			padding: 14px;
+		}
+
+		.export-preview-actions {
+			width: 100%;
+		}
+
+		.export-preview-download {
+			flex: 1;
+		}
+
+		.export-preview-viewport {
+			padding: 18px;
+		}
+	}
+</style>
+
+<script>
+	import { toBlob } from 'html-to-image';
+	import QRCode from 'qrcode';
+
+	const editor = document.querySelector<HTMLElement>('[data-card-editor]');
+	const stage = document.querySelector<HTMLElement>('[data-export-stage]');
+	const stageScroll = document.querySelector<HTMLElement>('.stage-scroll');
+	const panelToggle = document.querySelector<HTMLButtonElement>('[data-panel-toggle]');
+	const panelBackdrop = document.querySelector<HTMLButtonElement>('[data-panel-backdrop]');
+	const coverInput = document.querySelector<HTMLInputElement>('[data-cover-input]');
+	const coverApply = document.querySelector<HTMLButtonElement>('[data-cover-apply]');
+	const exportButton = document.querySelector<HTMLButtonElement>('[data-export-button]');
+	const exportStatus = document.querySelector<HTMLElement>('[data-export-status]');
+	const exportPreviewModal = document.querySelector<HTMLElement>('[data-export-preview-modal]');
+	const exportPreviewHost = document.querySelector<HTMLElement>('[data-export-preview-host]');
+	const exportPreviewViewport = document.querySelector<HTMLElement>('.export-preview-viewport');
+	const previewDownload = document.querySelector<HTMLButtonElement>('[data-preview-download]');
+	const previewClose = document.querySelector<HTMLButtonElement>('[data-preview-close]');
+	const qrImage = document.querySelector<HTMLImageElement>('[data-generator-qr]');
+	const currentMode = document.querySelector<HTMLElement>('[data-current-mode]');
+	const largeAwards = document.querySelector<HTMLElement>('[data-large-awards]');
+	const smallAwards = document.querySelector<HTMLElement>('[data-small-awards]');
+	const detailAwardHosts = Array.from(document.querySelectorAll<HTMLElement>('[data-detail-awards]'));
+	const largeAwardsToggle = document.querySelector<HTMLInputElement>('[data-large-awards-toggle]');
+	const largeAwardList = document.querySelector<HTMLElement>('[data-large-award-list]');
+	const largeAwardAdd = document.querySelector<HTMLButtonElement>('[data-large-award-add]');
+
+	if (editor && stage && qrImage && exportPreviewModal && exportPreviewHost) {
+		const params = new URLSearchParams(window.location.search);
+		const styleParam = params.get('style') === 'detail' ? 'detail' : 'classic';
+		const sizeParam = params.get('size') === 'small' ? 'small' : 'large';
+		const styleLabels = {
+			classic: '经典',
+			detail: '信息栏',
+		};
+		const sizeLabels = {
+			large: '大卡片',
+			small: '小卡片',
+		};
+
+		const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+		const clearViewTransform = (target: HTMLElement) => {
+			target.style.removeProperty('transform');
+			target.style.removeProperty('transform-origin');
+			target.style.removeProperty('margin-right');
+			target.style.removeProperty('margin-bottom');
+		};
+
+		const applyViewTransform = (target: HTMLElement, scale: number) => {
+			if (Math.abs(scale - 1) < 0.001) {
+				clearViewTransform(target);
+				return;
+			}
+
+			target.style.transformOrigin = '0 0';
+			target.style.transform = `scale(${scale})`;
+			target.style.marginRight = `${Math.max(0, target.offsetWidth * (scale - 1))}px`;
+			target.style.marginBottom = `${Math.max(0, target.offsetHeight * (scale - 1))}px`;
+		};
+
+		const attachPanZoom = (viewport: HTMLElement, getTarget: () => HTMLElement | null) => {
+			const state = {
+				scale: 1,
+				isPanning: false,
+				startX: 0,
+				startY: 0,
+				startScrollLeft: 0,
+				startScrollTop: 0,
+				pointerId: -1,
+			};
+
+			const setScale = (scale: number, originX?: number, originY?: number) => {
+				const target = getTarget();
+				if (!target) return;
+
+				const nextScale = clamp(scale, 0.35, 3);
+				const rect = viewport.getBoundingClientRect();
+				const anchorX = originX ?? rect.left + rect.width / 2;
+				const anchorY = originY ?? rect.top + rect.height / 2;
+				const localX = anchorX - rect.left;
+				const localY = anchorY - rect.top;
+				const contentX = (viewport.scrollLeft + localX) / state.scale;
+				const contentY = (viewport.scrollTop + localY) / state.scale;
+
+				state.scale = nextScale;
+				applyViewTransform(target, state.scale);
+				viewport.scrollLeft = contentX * state.scale - localX;
+				viewport.scrollTop = contentY * state.scale - localY;
+			};
+
+			const reset = () => {
+				const target = getTarget();
+
+				state.scale = 1;
+				if (target) clearViewTransform(target);
+				viewport.scrollLeft = 0;
+				viewport.scrollTop = 0;
+			};
+
+			viewport.addEventListener('wheel', (event) => {
+				if (!event.ctrlKey) return;
+
+				event.preventDefault();
+				setScale(state.scale + (event.deltaY > 0 ? -0.1 : 0.1), event.clientX, event.clientY);
+			}, { passive: false });
+
+			viewport.addEventListener('pointerdown', (event) => {
+				if (event.button !== 0) return;
+
+				const interactiveTarget = (event.target as HTMLElement).closest('button, input, select, textarea, a, [contenteditable="true"]');
+				if (interactiveTarget) return;
+
+				state.isPanning = true;
+				state.pointerId = event.pointerId;
+				state.startX = event.clientX;
+				state.startY = event.clientY;
+				state.startScrollLeft = viewport.scrollLeft;
+				state.startScrollTop = viewport.scrollTop;
+				viewport.classList.add('is-panning');
+				viewport.setPointerCapture(event.pointerId);
+			});
+
+			viewport.addEventListener('pointermove', (event) => {
+				if (!state.isPanning || event.pointerId !== state.pointerId) return;
+
+				viewport.scrollLeft = state.startScrollLeft - (event.clientX - state.startX);
+				viewport.scrollTop = state.startScrollTop - (event.clientY - state.startY);
+			});
+
+			const stopPanning = (event: PointerEvent) => {
+				if (!state.isPanning || event.pointerId !== state.pointerId) return;
+
+				state.isPanning = false;
+				viewport.classList.remove('is-panning');
+				if (viewport.hasPointerCapture(event.pointerId)) {
+					viewport.releasePointerCapture(event.pointerId);
+				}
+			};
+
+			viewport.addEventListener('pointerup', stopPanning);
+			viewport.addEventListener('pointercancel', stopPanning);
+
+			return { reset };
+		};
+
+		if (stageScroll) attachPanZoom(stageScroll, () => stage);
+		const previewPanZoom = exportPreviewViewport ? attachPanZoom(exportPreviewViewport, () => getPreviewStage()) : null;
+
+		document.querySelectorAll<HTMLElement>('.panel-block').forEach((block, index) => {
+			const heading = block.querySelector<HTMLElement>('h2');
+
+			if (!heading || block.dataset.exportPanel !== undefined) return;
+
+			const panelId = `editor-panel-block-${index}`;
+			const shouldCollapse = block.dataset.panelDefaultOpen === undefined;
+
+			block.dataset.collapsible = '';
+			heading.setAttribute('role', 'button');
+			heading.setAttribute('tabindex', '0');
+			heading.setAttribute('aria-expanded', String(!shouldCollapse));
+			heading.setAttribute('aria-controls', panelId);
+			Array.from(block.children).forEach((child) => {
+				if (child !== heading) (child as HTMLElement).dataset.panelContent = panelId;
+			});
+			if (shouldCollapse) block.classList.add('is-collapsed');
+
+			const toggleBlock = () => {
+				const collapsed = block.classList.toggle('is-collapsed');
+
+				heading.setAttribute('aria-expanded', String(!collapsed));
+			};
+
+			heading.addEventListener('click', toggleBlock);
+			heading.addEventListener('keydown', (event) => {
+				if (event.key !== 'Enter' && event.key !== ' ') return;
+
+				event.preventDefault();
+				toggleBlock();
+			});
+		});
+
+		const setMobilePanelOpen = (opened: boolean) => {
+			editor.classList.toggle('is-mobile-panel-open', opened);
+
+			const label = opened ? '收起工具栏' : '打开工具栏';
+			const text = panelToggle?.querySelector<HTMLElement>('.panel-toggle-text');
+
+			panelToggle?.setAttribute('aria-expanded', String(opened));
+			panelToggle?.setAttribute('aria-label', label);
+			if (text) text.textContent = label;
+		};
+
+		panelToggle?.addEventListener('click', () => {
+			setMobilePanelOpen(!editor.classList.contains('is-mobile-panel-open'));
+		});
+
+		panelBackdrop?.addEventListener('click', () => {
+			setMobilePanelOpen(false);
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key !== 'Escape' || !editor.classList.contains('is-mobile-panel-open')) return;
+
+			setMobilePanelOpen(false);
+		});
+
+		const updateScoreTagWidth = () => {
+			document.querySelectorAll<HTMLElement>('[data-edit-field="scoreTag"]').forEach((field) => {
+				const chars = Math.max(Array.from(field.textContent?.trim() || '').length, 1);
+				field.style.setProperty('--score-tag-chars', String(chars));
+			});
+		};
+
+		const createAwardTag = (label: string, tone: string, className: string) => {
+			const tag = document.createElement('b');
+
+			tag.className = `${className} is-${tone}`;
+			tag.dataset.generatedAward = '';
+			tag.textContent = label;
+
+			return tag;
+		};
+
+		const createLargeAwardEditor = (label = '新奖项', tone = 'gold') => {
+			const item = document.createElement('div');
+
+			item.className = 'award-editor-item';
+			item.dataset.largeAwardItem = '';
+			item.innerHTML = `
+				<input type="text" aria-label="奖项文本" data-large-award-text />
+				<select aria-label="奖项等级" data-large-award-tone>
+					<option value="gold">金奖</option>
+					<option value="silver">银奖</option>
+					<option value="bronze">铜奖</option>
+				</select>
+				<button type="button" aria-label="删除奖项" data-large-award-delete>×</button>
+			`;
+
+			const input = item.querySelector<HTMLInputElement>('[data-large-award-text]');
+			const select = item.querySelector<HTMLSelectElement>('[data-large-award-tone]');
+
+			if (input) input.value = label;
+			if (select) select.value = tone;
+
+			return item;
+		};
+
+		const getLargeAwardEditors = () => Array.from(document.querySelectorAll<HTMLElement>('[data-large-award-item]'));
+
+		const getAwardItems = () => getLargeAwardEditors().map((item) => ({
+			label: item.querySelector<HTMLInputElement>('[data-large-award-text]')?.value.trim() ?? '',
+			tone: item.querySelector<HTMLSelectElement>('[data-large-award-tone]')?.value || 'gold',
+		})).filter((item) => item.label);
+
+		const renderLargeAwards = () => {
+			const awardItems = largeAwardsToggle?.checked === false ? [] : getAwardItems();
+
+			largeAwards?.replaceChildren(...awardItems.map((item) => createAwardTag(item.label, item.tone, 'pro-cover-award')));
+			smallAwards?.replaceChildren(...awardItems.map((item) => createAwardTag(item.label, item.tone, 'pro-award')));
+
+			detailAwardHosts.forEach((host) => {
+				host.querySelectorAll('[data-generated-award]').forEach((tag) => tag.remove());
+
+				awardItems.slice().reverse().forEach((item) => {
+					host.prepend(createAwardTag(item.label, item.tone, 'detail-award-tag'));
+				});
+			});
+		};
+
+		const createDetailCustomTag = (label = '新标签', id = `tag-${Date.now()}-${Math.random().toString(16).slice(2)}`) => {
+			const tag = document.createElement('span');
+			const text = document.createElement('span');
+			const deleteButton = document.createElement('button');
+
+			tag.className = 'detail-tag';
+			tag.dataset.detailTag = '';
+			tag.dataset.detailTagId = id;
+
+			text.contentEditable = 'true';
+			text.dataset.detailCustomTagText = '';
+			text.textContent = label;
+
+			deleteButton.type = 'button';
+			deleteButton.dataset.detailTagDelete = '';
+			deleteButton.setAttribute('aria-label', '删除标签');
+			deleteButton.textContent = '×';
+
+			tag.append(text, deleteButton);
+
+			return tag;
+		};
+
+		const insertDetailTagBeforeAddButton = (host: HTMLElement, tag: HTMLElement) => {
+			const addButton = host.querySelector<HTMLElement>('[data-detail-tag-add]');
+
+			if (addButton) {
+				host.insertBefore(tag, addButton);
+			} else {
+				host.appendChild(tag);
+			}
+		};
+
+		const addDetailCustomTag = (sourceHost: HTMLElement) => {
+			const id = `tag-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+			let focusTarget: HTMLElement | null = null;
+
+			detailAwardHosts.forEach((host) => {
+				const tag = createDetailCustomTag('新标签', id);
+
+				insertDetailTagBeforeAddButton(host, tag);
+
+				if (host === sourceHost) {
+					focusTarget = tag.querySelector<HTMLElement>('[data-detail-custom-tag-text]');
+				}
+			});
+
+			if (focusTarget) {
+				(focusTarget as HTMLElement).focus();
+			}
+		};
+
+		const removeMatchingDetailTags = (sourceTag: HTMLElement) => {
+			const id = sourceTag.dataset.detailTagId;
+			const key = sourceTag.dataset.detailTagKey;
+
+			detailAwardHosts.forEach((host) => {
+				host.querySelectorAll<HTMLElement>('[data-detail-tag]').forEach((tag) => {
+					if ((id && tag.dataset.detailTagId === id) || (key && tag.dataset.detailTagKey === key)) {
+						tag.remove();
+					}
+				});
+			});
+		};
+
+		const syncDetailCustomTagText = (sourceText: HTMLElement) => {
+			const sourceTag = sourceText.closest<HTMLElement>('[data-detail-tag]');
+			const id = sourceTag?.dataset.detailTagId;
+
+			if (!id) return;
+
+			detailAwardHosts.forEach((host) => {
+				host.querySelectorAll<HTMLElement>('[data-detail-tag]').forEach((tag) => {
+					if (tag.dataset.detailTagId !== id) return;
+
+					const text = tag.querySelector<HTMLElement>('[data-detail-custom-tag-text]');
+					if (text && text !== sourceText) text.textContent = sourceText.textContent ?? '';
+				});
+			});
+		};
+
+		const setMode = (modeType: 'style' | 'size', value: string) => {
+			stage.dataset[modeType] = value;
+
+			const selector = modeType === 'style' ? '[data-style-option]' : '[data-size-option]';
+			document.querySelectorAll<HTMLButtonElement>(selector).forEach((button) => {
+				const activeValue = modeType === 'style' ? button.dataset.styleOption : button.dataset.sizeOption;
+
+				button.classList.toggle('is-active', activeValue === value);
+			});
+
+			const currentStyle = (stage.dataset.style ?? 'classic') as keyof typeof styleLabels;
+			const currentSize = (stage.dataset.size ?? 'large') as keyof typeof sizeLabels;
+			const currentVariant = `${currentStyle}-${currentSize}`;
+
+			stage.dataset.variant = currentVariant;
+
+			if (currentMode) {
+				currentMode.textContent = `${styleLabels[currentStyle]} / ${sizeLabels[currentSize]}`;
+			}
+		};
+
+		setMode('style', styleParam);
+		setMode('size', sizeParam);
+		updateScoreTagWidth();
+		renderLargeAwards();
+
+		document.querySelectorAll<HTMLButtonElement>('[data-style-option]').forEach((button) => {
+			button.addEventListener('click', () => {
+				if (button.dataset.styleOption) setMode('style', button.dataset.styleOption);
+			});
+		});
+
+		document.querySelectorAll<HTMLButtonElement>('[data-size-option]').forEach((button) => {
+			button.addEventListener('click', () => {
+				if (button.dataset.sizeOption) setMode('size', button.dataset.sizeOption);
+			});
+		});
+
+		document.querySelectorAll<HTMLElement>('[data-edit-field]').forEach((field) => {
+			field.addEventListener('input', () => {
+				const key = field.dataset.editField;
+				if (!key) return;
+
+				document.querySelectorAll<HTMLElement>(`[data-edit-field="${key}"]`).forEach((target) => {
+					if (target !== field) {
+						target.textContent = field.textContent ?? '';
+						if (key === 'title') target.setAttribute('title', field.textContent ?? '');
+					}
+				});
+
+				if (key === 'scoreTag') updateScoreTagWidth();
+			});
+		});
+
+		largeAwardsToggle?.addEventListener('change', () => {
+			largeAwards?.classList.toggle('is-hidden', !largeAwardsToggle.checked);
+			smallAwards?.classList.toggle('is-hidden', !largeAwardsToggle.checked);
+			renderLargeAwards();
+		});
+
+		largeAwardAdd?.addEventListener('click', () => {
+			if (!largeAwards || !largeAwardList) return;
+
+			largeAwards.classList.remove('is-hidden');
+			smallAwards?.classList.remove('is-hidden');
+			if (largeAwardsToggle) largeAwardsToggle.checked = true;
+			largeAwardList.appendChild(createLargeAwardEditor());
+			renderLargeAwards();
+		});
+
+		largeAwardList?.addEventListener('input', renderLargeAwards);
+		largeAwardList?.addEventListener('change', renderLargeAwards);
+		largeAwardList?.addEventListener('click', (event) => {
+			const deleteButton = (event.target as HTMLElement).closest<HTMLElement>('[data-large-award-delete]');
+
+			if (!deleteButton) return;
+
+			deleteButton.closest('[data-large-award-item]')?.remove();
+			renderLargeAwards();
+		});
+
+		detailAwardHosts.forEach((host) => {
+			host.addEventListener('click', (event) => {
+				const target = event.target as HTMLElement;
+				const addButton = target.closest<HTMLElement>('[data-detail-tag-add]');
+				const deleteButton = target.closest<HTMLElement>('[data-detail-tag-delete]');
+
+				if (addButton) {
+					addDetailCustomTag(host);
+					return;
+				}
+
+				if (deleteButton) {
+					const tag = deleteButton.closest<HTMLElement>('[data-detail-tag]');
+
+					if (tag) removeMatchingDetailTags(tag);
+				}
+			});
+
+			host.addEventListener('input', (event) => {
+				const text = (event.target as HTMLElement).closest<HTMLElement>('[data-detail-custom-tag-text]');
+
+				if (text) syncDetailCustomTagText(text);
+			});
+		});
+
+		const colorMap = {
+			accent: '--accent',
+			accent2: '--accent2',
+			paperText: '--paper-text',
+			cardBg: '--card-bg',
+			cardText: '--card-text',
+		};
+
+		const hexToRgba = (hex: string, alpha: number) => {
+			const normalized = hex.replace('#', '').trim();
+			const fullHex = normalized.length === 3
+				? normalized.split('').map((char) => `${char}${char}`).join('')
+				: normalized;
+
+			if (!/^[0-9a-fA-F]{6}$/.test(fullHex)) return hex;
+
+			const red = parseInt(fullHex.slice(0, 2), 16);
+			const green = parseInt(fullHex.slice(2, 4), 16);
+			const blue = parseInt(fullHex.slice(4, 6), 16);
+
+			return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+		};
+
+		const setColor = (name: keyof typeof colorMap, value: string) => {
+			stage.style.setProperty(colorMap[name], value);
+			if (name === 'accent2') {
+				stage.style.setProperty('--accent2-soft', hexToRgba(value, .5));
+			}
+
+			const input = document.querySelector<HTMLInputElement>(`[data-color-input="${name}"]`);
+
+			if (input) input.value = value;
+		};
+
+		document.querySelectorAll<HTMLInputElement>('[data-color-input]').forEach((input) => {
+			input.addEventListener('input', () => {
+				const key = input.dataset.colorInput as keyof typeof colorMap | undefined;
+
+				if (key && colorMap[key]) {
+					setColor(key, input.value);
+				}
+			});
+		});
+
+		document.querySelectorAll<HTMLButtonElement>('[data-palette]').forEach((button) => {
+			button.addEventListener('click', () => {
+				const [accent, accent2, paperText, cardBg, cardText] = (button.dataset.palette ?? '').split(',');
+
+				if (accent) setColor('accent', accent);
+				if (accent2) setColor('accent2', accent2);
+				if (paperText) setColor('paperText', paperText);
+				if (cardBg) setColor('cardBg', cardBg);
+				if (cardText) setColor('cardText', cardText);
+			});
+		});
+
+		coverApply?.addEventListener('click', () => {
+			const nextCover = coverInput?.value.trim();
+
+			if (nextCover) {
+				document.querySelectorAll<HTMLImageElement>('[data-cover-image]').forEach((image) => {
+					image.src = nextCover;
+				});
+			}
+		});
+
+		const waitForImage = (image: HTMLImageElement) => new Promise<void>((resolve) => {
+			if (image.complete) {
+				resolve();
+				return;
+			}
+
+			image.addEventListener('load', () => resolve(), { once: true });
+			image.addEventListener('error', () => resolve(), { once: true });
+		});
+
+		const renderQr = async () => {
+			qrImage.src = await QRCode.toDataURL(new URL('/generator/', location.origin).href, {
+				width: 180,
+				margin: 1,
+				color: {
+					dark: '#ffffff',
+					light: '#00000000',
+				},
+			});
+		};
+
+		const downloadBlob = (blob: Blob) => {
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			const styleName = stage.dataset.style ?? 'classic';
+			const sizeName = stage.dataset.size ?? 'large';
+
+			link.href = url;
+			link.download = `moegn-${styleName}-${sizeName}-card.png`;
+			link.style.display = 'none';
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+		};
+
+		const createPreviewStage = () => {
+			const clone = stage.cloneNode(true) as HTMLElement;
+
+			clone.classList.add('is-exporting');
+			clearViewTransform(clone);
+			clone.querySelectorAll<HTMLElement>('[contenteditable="true"]').forEach((editable) => {
+				editable.removeAttribute('contenteditable');
+			});
+			clone.querySelectorAll<HTMLElement>('[data-detail-tag-delete], [data-detail-tag-add]').forEach((control) => {
+				control.remove();
+			});
+
+			return clone;
+		};
+
+		const openPreviewModal = async () => {
+			await renderQr();
+			await document.fonts?.ready;
+			await Promise.all(Array.from(stage.querySelectorAll<HTMLImageElement>('img')).map(waitForImage));
+
+			const previewStage = createPreviewStage();
+
+			exportPreviewHost.replaceChildren(previewStage);
+			previewPanZoom?.reset();
+			exportPreviewModal.hidden = false;
+			document.body.style.overflow = 'hidden';
+
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			previewStage.scrollIntoView({ block: 'center', inline: 'center' });
+		};
+
+		const closePreviewModal = () => {
+			exportPreviewModal.hidden = true;
+			exportPreviewHost.replaceChildren();
+			document.body.style.overflow = '';
+		};
+
+		const getPreviewStage = () => exportPreviewHost.querySelector<HTMLElement>('[data-export-stage]');
+
+		renderQr();
+
+		exportButton?.addEventListener('click', async () => {
+			if (!exportButton || !exportStatus) return;
+
+			exportButton.disabled = true;
+			exportStatus.textContent = '正在生成图片...';
+
+			try {
+				await renderQr();
+				await document.fonts?.ready;
+				await Promise.all(Array.from(stage.querySelectorAll<HTMLImageElement>('img')).map(waitForImage));
+				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+				stage.classList.add('is-exporting');
+				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+				const blob = await toBlob(stage, {
+					backgroundColor: '#00000000',
+					cacheBust: true,
+					includeQueryParams: true,
+					pixelRatio: 2,
+					skipAutoScale: true,
+					width: stage.offsetWidth,
+					height: stage.offsetHeight,
+				});
+
+				if (!blob) throw new Error('Export failed');
+
+				downloadBlob(blob);
+				exportStatus.textContent = '图片已生成并下载。';
+			} catch (error) {
+				console.error('MOEGN generator export failed', error);
+				exportStatus.textContent = '生成失败，请检查封面图片是否允许跨域，或改用本站打包后的图片路径。';
+			} finally {
+				stage.classList.remove('is-exporting');
+				exportButton.disabled = false;
+			}
+		});
+
+		exportButton?.addEventListener('click', async (event) => {
+			if (!exportButton || !exportStatus) return;
+
+			event.preventDefault();
+			event.stopImmediatePropagation();
+
+			exportButton.disabled = true;
+			exportStatus.textContent = '正在生成预览...';
+
+			try {
+				await openPreviewModal();
+				exportStatus.textContent = '预览已生成，请在弹窗中确认并下载。';
+			} catch (error) {
+				console.error('MOEGN generator preview failed', error);
+				exportStatus.textContent = '预览生成失败，请检查封面图片是否可以加载。';
+			} finally {
+				exportButton.disabled = false;
+			}
+		}, { capture: true });
+
+		previewDownload?.addEventListener('click', async () => {
+			if (!previewDownload || !exportStatus) return;
+
+			const previewStage = getPreviewStage();
+
+			if (!previewStage) {
+				exportStatus.textContent = '请先生成预览。';
+				return;
+			}
+
+			previewDownload.disabled = true;
+			let savedViewStyle: { transform: string; transformOrigin: string; marginRight: string; marginBottom: string } | null = null;
+			exportStatus.textContent = '正在从预览窗口生成图片...';
+
+			try {
+				await document.fonts?.ready;
+				await Promise.all(Array.from(previewStage.querySelectorAll<HTMLImageElement>('img')).map(waitForImage));
+				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+				savedViewStyle = {
+					transform: previewStage.style.transform,
+					transformOrigin: previewStage.style.transformOrigin,
+					marginRight: previewStage.style.marginRight,
+					marginBottom: previewStage.style.marginBottom,
+				};
+
+				clearViewTransform(previewStage);
+				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+				const blob = await toBlob(previewStage, {
+					backgroundColor: '#00000000',
+					cacheBust: true,
+					includeQueryParams: true,
+					pixelRatio: 2,
+					skipAutoScale: true,
+					width: previewStage.offsetWidth,
+					height: previewStage.offsetHeight,
+				});
+
+				previewStage.style.transform = savedViewStyle.transform;
+				previewStage.style.transformOrigin = savedViewStyle.transformOrigin;
+				previewStage.style.marginRight = savedViewStyle.marginRight;
+				previewStage.style.marginBottom = savedViewStyle.marginBottom;
+
+				if (!blob) throw new Error('Export failed');
+
+				downloadBlob(blob);
+				exportStatus.textContent = '图片已从预览窗口生成并下载。';
+			} catch (error) {
+				console.error('MOEGN generator export failed', error);
+				exportStatus.textContent = '生成失败，请检查封面图片是否允许跨域，或改用本站打包后的图片路径。';
+			} finally {
+				if (savedViewStyle) {
+					previewStage.style.transform = savedViewStyle.transform;
+					previewStage.style.transformOrigin = savedViewStyle.transformOrigin;
+					previewStage.style.marginRight = savedViewStyle.marginRight;
+					previewStage.style.marginBottom = savedViewStyle.marginBottom;
+				}
+				previewDownload.disabled = false;
+			}
+		});
+
+		previewClose?.addEventListener('click', closePreviewModal);
+
+		exportPreviewModal.addEventListener('click', (event) => {
+			if (event.target === exportPreviewModal) closePreviewModal();
+		});
+
+		window.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && !exportPreviewModal.hidden) {
+				closePreviewModal();
+			}
+		});
+	}
+</script>

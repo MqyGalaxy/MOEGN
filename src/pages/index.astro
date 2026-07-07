@@ -1,0 +1,1014 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import LargeCard from '../components/LargeCard.astro';
+import mascot from '../images/moegn-hero-standee-transparent.png';
+import moegnIcon from '../images/MOEGN-icon@4x.png';
+import moegnLogo from '../images/MOEGN_LOGO_pink.png';
+import blogLogo from '../images/blogLOGO.png';
+
+const reviews = [
+	{
+		title: '憧憬成为魔法少女',
+		subTitle: '魔法少女にあこがれて',
+		score: '8',
+		scoreTag: '佳作',
+		body: '自从《魔法少女小圆》这样的代表性作品诞生后，以魔法少女为题材的作品大多都离不开“致郁”、“黑深残”的标签，通过少女们的苦难来体现魔法少女所背负的责任和命运。而《憧憬成为魔法少女》却开辟了一条新的路径，重新定义了魔法少女类作品。本作以开创性的以恶之女干部： 柊宇天那作为主角，以及通过与魔法少女的交战和亲密接触作为卖点。虽然剧情上着重于展现在卖肉和搞笑，却又不缺失热血王道的主线叙事，魔法少女与恶之组织的相互成长，以及双方逐渐成为相互不可或缺的关系。',
+		proClass: '番剧',
+		href: 'https://blog.moeqy.com/acg/game/20230506/post-1/',
+		buttonText: '阅读评测',
+		imgSrc: 'https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg',
+	},
+	{
+		title: '少女前线2：追放',
+		subTitle: "Girls' Frontline 2: Exilium",
+		score: '4',
+		scoreTag: '差劲',
+		body: '《少女前线2：追放》是基于前作《少女前线》剧情十年之后展开的后续故事。在游戏中独特的美术风格、简洁的HUD、以及精细的人物建模给玩家带来了愉悦的第一印象。但尽管本作有着高质量的美术设计与高人气的前作基底，《少女前线2：追放》却给玩家们带来了一个既不符合商业逻辑，也不符合系列粉丝期待，充满了一股扭曲自傲的恶心产物。',
+		proClass: '游戏',
+		href: 'https://blog.moeqy.com/acg/game/20240129/post-1/',
+		buttonText: '阅读评测',
+		imgSrc: 'https://lain.bgm.tv/pic/cover/l/6c/e6/306788_L2WZ4.jpg',
+	},
+	{
+		title: '崩坏：星穹铁道',
+		subTitle: 'Honkai: Star Rail',
+		score: '8',
+		scoreTag: '佳作',
+		body: '作为崩坏系列的最新作品，《崩坏：星穹铁道》不仅沿用了前作设定，在其上扩展了一个更庞大的银河世界。在本作中，崩坏系列的老玩家依旧能够见到自己熟悉的名词设定和角色。但新玩家也完全不用担心没有玩过前作而感到陌生，因为跟随星穹列车，玩家遇到的不再是受到崩坏能威胁的世界，而是一个崭新而未知的银河冒险。',
+		proClass: '游戏',
+		href: 'https://blog.moeqy.com/acg/game/20230506/post-1/',
+		buttonText: '阅读评测',
+		imgSrc: 'https://lain.bgm.tv/r/400/pic/cover/l/d2/c9/360097_z4dYA.jpg',
+	},
+];
+
+---
+
+<Layout webTitle="MOEGN - 次元之声" headerTheme="hero">
+	<div class="page-title" data-hero-animate>
+		<div class="hero-stage">
+			<div class="hero-title hero-rise">
+				<p>MOEGN Review</p>
+				<h1>次元<br>之声</h1>
+				<span>Anime / Game / Review Archive</span>
+				<div class="hero-title-actions">
+					<a class="hero-title-button is-solid" href="#reviews">查看评测</a>
+					<a class="hero-title-button is-outline" href="/generator/">创建卡片</a>
+				</div>
+			</div>
+			<div class="hero-showcase hero-rise">
+				<div class="hero-mascot">
+					<Image src={mascot} alt="MOEGN 看板角色" />
+				</div>
+				<div class="side-wave side-wave-shoe" aria-hidden="true">
+					<svg viewBox="0 0 180 32" focusable="false">
+						<path d="M0 16 L22 28 L45 16 L68 28 L91 16 L114 28 L137 16 L160 28 L180 16" />
+					</svg>
+				</div>
+				<div class="side-wave side-wave-top" aria-hidden="true">
+					<svg viewBox="0 0 180 32" focusable="false">
+						<path d="M0 16 L22 28 L45 16 L68 28 L91 16 L114 28 L137 16 L160 28 L180 16" />
+					</svg>
+				</div>
+				<div class="side-wave side-wave-card" aria-hidden="true">
+					<svg viewBox="0 0 180 32" focusable="false">
+						<path d="M0 16 L22 28 L45 16 L68 28 L91 16 L114 28 L137 16 L160 28 L180 16" />
+					</svg>
+				</div>
+				<div class="side-wave side-wave-hand" aria-hidden="true">
+					<svg viewBox="0 0 180 32" focusable="false">
+						<path d="M0 16 L22 28 L45 16 L68 28 L91 16 L114 28 L137 16 L160 28 L180 16" />
+					</svg>
+				</div>
+				<div class="mascot-shape shape-circle" aria-hidden="true"><span></span></div>
+				<div class="mascot-shape shape-triangle" aria-hidden="true"><span></span></div>
+				<div class="mascot-shape shape-square" aria-hidden="true"><span></span></div>
+				<div class="page-title-info">
+					<LargeCard
+						title="说你想说的。";
+						subTitle="Say anything that you want to say.";
+						score="✓";
+						scoreTag="次元之声";
+						body="为玩家发出次元之声！MOEGN 始终保持以大众的视角来评测面向大众的作品。这里会保存看过的动漫、玩过的游戏，以及每一次值得留下来的判断。";
+						proClass="为玩家：";
+						href="https://blog.moeqy.com/acg/game/20240129/post-1/";
+						buttonText="插件下载";
+						imgSrc={moegnIcon.src};
+					>
+					</LargeCard>
+				</div>
+				<a class="page-title-plugin-button" href="#generator">插件下载</a>
+			</div>
+		</div>
+	</div>
+	<main>
+		<div class="page">
+			<ul role="list" class="link-card-grid" id="reviews">
+				{reviews.map((review) => <Card {...review} />)}
+			</ul>
+
+			<section class="page-box feature-section" id="collections">
+				<div class="feature-copy">
+					<h1 class="page-index-title">发出<br>次元之声</h1>
+					<p>
+						把每一次观看、游玩后的真实想法记录下来。评分不只是数字，也是一段体验、一种态度，以及在作品退潮后仍然留下来的印象。
+					</p>
+					<div class="link-botton"><a href="#reviews">查看更多</a></div>
+				</div>
+				<div class="feature-visual review-wall" aria-label="评测作品预览">
+					{reviews.map((review) => (
+						<article>
+							<img src={review.imgSrc} alt={review.title} />
+							<div>
+								<strong>{review.score}</strong>
+								<span>{review.proClass}</span>
+							</div>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<section class="page-box feature-section is-reverse" id="generator">
+				<div class="feature-copy">
+					<h1 class="page-index-title">创建<br>属于你的<br>评测</h1>
+					<p>
+						用和站内评测卡片一致的视觉样式生成分享图。可以选择大卡片或小卡片，把标题、评分、标签、封面和短评组合成一张完整的评测图片。
+					</p>
+					<div class="link-botton"><a href="/generator/">创建卡片</a></div>
+				</div>
+				<div class="feature-visual generator-preview" aria-label="评测卡片生成器预览">
+					<div class="preview-card preview-large">
+						<Image src={moegnIcon} alt="MOEGN 图标" />
+						<div>
+							<span>大卡片</span>
+							<strong>9</strong>
+							<p>完整介绍、封面与评分标签，适合长评分享。</p>
+						</div>
+					</div>
+					<div class="preview-card preview-small">
+						<Image src={moegnLogo} alt="MOEGN" />
+						<div>
+							<span>小卡片</span>
+							<strong>8</strong>
+							<p>紧凑展示，适合快速发布。</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="page-box feature-section">
+				<div class="feature-copy">
+					<h1 class="page-index-title">分享<br>你的观点</h1>
+					<p>
+						评测可以写在站内详情页，也可以链接到自己的 Blog 原文。MOEGN 负责整理入口、作品信息和评分卡片，让观点更容易被再次找到。
+					</p>
+					<div class="link-botton"><a href="https://blog.moeqy.com/" target="_blank">前往 Blog</a></div>
+				</div>
+				<div class="feature-visual share-panel" aria-label="观点分享方式">
+					<Image src={blogLogo} alt="MqyGalaxy Blog" />
+					<div class="share-route">
+						<span>站内详情</span>
+						<i></i>
+						<span>Blog 原文</span>
+						<i></i>
+						<span>评测卡片</span>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		color: var(--text-color);
+		font-size: 20px;
+		line-height: 1.6;
+	}
+
+	.page {
+		position: relative;
+		width: 100%;
+		max-width: 1500px;
+		padding: 10px;
+	}
+
+	.page-box {
+		padding: 15px;
+	}
+
+	.page-title {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: stretch;
+		height: 100vh;
+		height: 100svh;
+		max-height: 100vh;
+		max-height: 100svh;
+		padding: 90px 20px 0;
+		background: linear-gradient(120deg, var(--color-main) 0, var(--color-light) 100%);
+		overflow: hidden;
+	}
+
+	.page-title::after {
+		content: '';
+		position: absolute;
+		z-index: 3;
+		left: 50%;
+		bottom: 0;
+		width: 150%;
+		height: 100px;
+		border-radius: 100%;
+		background: var(--grey-1);
+		transform: translate(-50%, 50%);
+	}
+
+	.side-wave {
+		position: absolute;
+		z-index: 1;
+		width: clamp(116px, 11vw, 170px);
+		pointer-events: none;
+		animation: side-wave-float 6.8s ease-in-out infinite;
+	}
+
+	.side-wave-shoe {
+		left: 14%;
+		top: 30%;
+	}
+
+	.side-wave-top {
+		right: 20%;
+		top: 12%;
+		scale: -1 1; 
+		animation-delay: -2.2s;
+	}
+
+	.side-wave-card {
+		right: 1%;
+		bottom: 50%;
+		animation-delay: -1.1s;
+	}
+
+	.side-wave-hand {
+		right: 12%;
+		bottom: 10%;
+		scale: -1 1; 
+		animation-delay: -3.2s;
+	}
+
+	.side-wave svg {
+		display: block;
+		width: 100%;
+		height: auto;
+		overflow: visible;
+		transform: rotate(90deg);
+		transform-origin: center;
+	}
+
+	.side-wave path {
+		fill: none;
+		stroke: var(--grey-1-a7);
+		stroke-width: 9;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+	}
+
+	.hero-stage {
+		position: relative;
+		z-index: 4;
+		display: grid;
+		grid-template-columns: minmax(280px, .62fr) minmax(620px, 1.38fr);
+		align-items: center;
+		width: min(1500px, 100%);
+		height: calc(100vh - 90px);
+		height: calc(100svh - 90px);
+		min-height: 0;
+		margin: 0 auto;
+		overflow: hidden;
+	}
+
+	.hero-rise {
+		opacity: 0;
+		transform: translate3d(0, 88px, 0);
+		will-change: opacity, transform;
+	}
+
+	.page-title.is-hero-ready .hero-rise {
+		animation: hero-rise-up 1.1s cubic-bezier(.18, .82, .22, 1) forwards;
+	}
+
+	.hero-showcase.hero-rise {
+		animation-delay: .16s;
+	}
+
+	.hero-title {
+		position: relative;
+		z-index: 7;
+		align-self: start;
+		padding-top: 36px;
+		color: var(--grey-0);
+	}
+
+	.hero-title p,
+	.hero-title span {
+		margin: 0;
+		color: var(--grey-1-a7);
+		font-family: var(--font-light);
+		letter-spacing: 1px;
+		line-height: 1.4;
+	}
+
+	.hero-title h1 {
+		position: relative;
+		z-index: 2;
+		margin: 10px 0;
+		font-size: clamp(4rem, 8.4vw, 9rem);
+		font-family: var(--font-heavy);
+		line-height: .92;
+	}
+
+	.hero-title-actions {
+		position: relative;
+		z-index: 8;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		margin-top: 24px;
+	}
+
+	.hero-title-button {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 132px;
+		min-height: 44px;
+		padding: 0 24px;
+		border: 2px solid var(--grey-1);
+		border-radius: 999px;
+		color: var(--grey-0);
+		font-size: 15px;
+		font-family: var(--font-medium);
+		line-height: 1;
+		text-decoration: none;
+		transition: transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+	}
+
+	.hero-title-button:hover {
+		transform: translateY(-2px);
+	}
+
+	.hero-title-button.is-solid {
+		background: var(--grey-1);
+		color: var(--color-main);
+		box-shadow: 0 12px 24px var(--grey-9-a1);
+	}
+
+	.hero-title-button.is-outline {
+		background: transparent;
+	}
+
+	.hero-showcase {
+		position: relative;
+		align-self: stretch;
+		justify-self: end;
+		width: min(68vw, 980px);
+		height: 100%;
+		min-height: 0;
+		pointer-events: none;
+	}
+
+	.hero-mascot {
+		position: absolute;
+		z-index: 2;
+		right: 0;
+		bottom: 58px;
+		width: min(66vw, 940px);
+		max-height: min(82vh, 800px);
+		max-height: min(82svh, 800px);
+	}
+
+	.hero-mascot img {
+		width: 100%;
+		height: auto;
+		max-height: min(82vh, 800px);
+		max-height: min(82svh, 800px);
+		object-fit: contain;
+		object-position: bottom right;
+		filter: drop-shadow(0 24px 34px rgba(173, 39, 101, 0.22));
+		animation: mascot-float 5.8s ease-in-out infinite;
+	}
+
+	.mascot-shape {
+		position: absolute;
+		z-index: 3;
+		--shape-scale: 1;
+		pointer-events: none;
+		animation: mascot-float 5.8s ease-in-out infinite;
+	}
+
+	.mascot-shape span {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--grey-1-a7);
+		filter: drop-shadow(0 10px 16px rgba(173, 39, 101, 0.14));
+		animation: shape-spin 8s linear infinite;
+	}
+
+	.shape-circle {
+		top: 23%;
+		right: 13%;
+		width: 44px;
+		height: 44px;
+		animation-delay: -.8s;
+	}
+
+	.shape-circle span {
+		border-radius: 50%;
+	}
+
+	.shape-triangle {
+		top: 38%;
+		left: 16%;
+		width: 56px;
+		height: 50px;
+		animation-delay: -1.8s;
+	}
+
+	.shape-triangle span {
+		clip-path: polygon(50% 0, 100% 100%, 0 100%);
+	}
+
+	.shape-square {
+		right: 5%;
+		bottom: 24%;
+		width: 46px;
+		height: 46px;
+		animation-delay: -2.6s;
+	}
+
+	.shape-square span {
+		border-radius: 8px;
+	}
+
+	.page-title-info {
+		position: absolute;
+		z-index: 2;
+		left: 2%;
+		bottom: 74px;
+		width: min(760px, 70%);
+		pointer-events: auto;
+	}
+
+	.page-title-plugin-button {
+		position: absolute;
+		z-index: 999;
+		left: 50%;
+		bottom: 30px;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		min-width: 132px;
+		min-height: 44px;
+		padding: 0 24px;
+		border-radius: 999px;
+		background: linear-gradient(120deg, var(--color-main) 0, var(--color-light) 100%);
+		color: var(--grey-0);
+		font-size: 15px;
+		font-family: var(--font-medium);
+		line-height: 1;
+		text-decoration: none;
+		box-shadow: 0 0 24px var(--grey-1);
+		transform: translateX(-50%);
+		pointer-events: auto;
+		transition: transform .2s ease, box-shadow .2s ease;
+	}
+
+	.page-title-plugin-button:hover {
+		transform: translate(-50%, -2px);
+		box-shadow: 0 0 24px var(--grey-1);
+	}
+
+	.link-card-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(25ch, 1fr));
+		gap: .1rem;
+		padding: 0;
+	}
+
+	.page-index-title {
+		margin: 0;
+		background: linear-gradient(120deg, var(--color-main) 0, var(--color-red-a3) 72%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-size: clamp(3.8rem, 8vw, 7rem);
+		font-weight: bold;
+		font-family: var(--font-medium);
+		line-height: .94;
+	}
+
+	.feature-section {
+		display: grid;
+		grid-template-columns: minmax(280px, .9fr) minmax(360px, 1.1fr);
+		align-items: center;
+		gap: 64px;
+		min-height: 520px;
+		padding-block: 72px;
+		scroll-margin-top: 96px;
+	}
+
+	.feature-section.is-reverse .feature-copy {
+		order: 2;
+	}
+
+	.feature-copy p {
+		max-width: 440px;
+		margin: 26px 0 0;
+		color: var(--grey-6);
+		font-size: 17px;
+		line-height: 1.9;
+	}
+
+	.feature-copy .link-botton {
+		justify-content: flex-start;
+		width: auto;
+		margin-top: 28px;
+	}
+
+	.feature-visual {
+		position: relative;
+		min-height: 360px;
+		border-radius: 12px;
+	}
+
+	.review-wall {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		align-items: end;
+		gap: 18px;
+		padding: 28px;
+		background: linear-gradient(135deg, var(--color-pink-light-a7), var(--grey-0));
+		box-shadow: 0 0 20px 5px var(--grey-9-a1);
+	}
+
+	.review-wall article {
+		position: relative;
+		overflow: hidden;
+		min-height: 300px;
+		border-radius: 10px;
+		background: var(--grey-0);
+		box-shadow: 0 0 12px 3px var(--grey-9-a1);
+	}
+
+	.review-wall article:nth-child(2) {
+		transform: translateY(-34px);
+	}
+
+	.review-wall img {
+		width: 100%;
+		height: 100%;
+		min-height: 300px;
+		object-fit: cover;
+	}
+
+	.review-wall article div {
+		position: absolute;
+		left: 12px;
+		right: 12px;
+		bottom: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 12px;
+		border-radius: 999px;
+		background: var(--grey-1-a9);
+		color: var(--color-main);
+		font-family: var(--font-heavy);
+	}
+
+	.review-wall span {
+		color: var(--grey-6);
+		font-size: 12px;
+		font-family: var(--font-light);
+	}
+
+	.generator-preview {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 24px;
+		padding: 30px;
+		background: linear-gradient(145deg, var(--grey-0), var(--color-pink-light-a5));
+		box-shadow: 0 0 20px 5px var(--grey-9-a1);
+	}
+
+	.preview-card {
+		display: grid;
+		grid-template-columns: 116px 1fr;
+		align-items: center;
+		gap: 22px;
+		padding: 22px;
+		border-radius: 10px;
+		background: var(--grey-0);
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.preview-small {
+		width: 78%;
+		margin-left: auto;
+	}
+
+	.preview-card img {
+		width: 100%;
+		height: auto;
+	}
+
+	.preview-card span {
+		color: var(--grey-5);
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 4px;
+	}
+
+	.preview-card strong {
+		display: block;
+		color: var(--color-main);
+		font-size: 4rem;
+		font-family: var(--font-heavy);
+		line-height: 1;
+	}
+
+	.preview-card p {
+		margin: 6px 0 0;
+		color: var(--grey-6);
+		font-size: 14px;
+		line-height: 1.7;
+	}
+
+	.share-panel {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 34px;
+		padding: 38px;
+		background: linear-gradient(145deg, var(--color-pink-light-a5), var(--grey-0));
+		box-shadow: 0 0 20px 5px var(--grey-9-a1);
+	}
+
+	.share-panel > img {
+		width: min(100%, 360px);
+		height: auto;
+	}
+
+	.share-route {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr auto 1fr;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.share-route span {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 52px;
+		padding: 0 16px;
+		border-radius: 999px;
+		background: var(--grey-0);
+		color: var(--grey-7);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		box-shadow: 0 0 10px 3px var(--grey-9-a1);
+	}
+
+	.share-route i {
+		width: 28px;
+		height: 2px;
+		background: var(--color-red-a3);
+	}
+
+	@media only screen and (max-width: 980px) {
+		.hero-stage {
+			grid-template-columns: 1fr;
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+
+		.hero-title {
+			padding-top: 18px;
+			text-align: center;
+		}
+
+		.hero-showcase {
+			justify-self: center;
+			width: min(100%, 720px);
+			height: 100%;
+			min-height: 0;
+		}
+
+		.hero-mascot {
+			right: 50%;
+			bottom: 58px;
+			width: min(92vw, 620px);
+			max-height: 52vh;
+			max-height: 52svh;
+			transform: translateX(50%);
+		}
+
+		.hero-mascot img {
+			max-height: 52vh;
+			max-height: 52svh;
+			object-position: bottom center;
+		}
+
+		.page-title-info {
+			display: none;
+		}
+
+		.page-title-plugin-button {
+			display: inline-flex;
+		}
+
+		.side-wave {
+			width: clamp(82px, 14vw, 120px);
+			opacity: .66;
+		}
+
+		.side-wave-shoe {
+			left: 14%;
+			top: 30%;
+		}
+
+		.side-wave-top {
+			right: 20%;
+			top: 12%;
+		}
+
+		.side-wave-card {
+			left: 38%;
+			bottom: 24%;
+		}
+
+		.side-wave-hand {
+			right: 12%;
+			bottom: 10%;
+		}
+
+		.hero-title-actions {
+			justify-content: center;
+		}
+
+		.shape-circle {
+			right: 10%;
+		}
+
+		.shape-triangle {
+			left: 8%;
+		}
+
+		.shape-square {
+			right: 4%;
+			bottom: 26%;
+		}
+
+		.link-card-grid {
+			grid-template-columns: repeat(1, minmax(25ch, 1fr));
+			row-gap: 20px;
+		}
+
+		.feature-section,
+		.feature-section.is-reverse {
+			grid-template-columns: 1fr;
+			gap: 34px;
+			min-height: auto;
+			padding-block: 54px;
+		}
+
+		.feature-section.is-reverse .feature-copy {
+			order: 0;
+		}
+
+		.feature-copy {
+			text-align: center;
+		}
+
+		.feature-copy p {
+			max-width: 680px;
+			margin-inline: auto;
+		}
+
+		.feature-copy .link-botton {
+			justify-content: center;
+		}
+	}
+
+	@media only screen and (max-width: 720px) {
+		main {
+			align-items: flex-start;
+		}
+
+		.page-title {
+			padding: 70px 12px 0;
+		}
+
+		.hero-title h1 {
+			font-size: clamp(3.2rem, 16vw, 5rem);
+		}
+
+		.page-title-info {
+			display: none;
+		}
+
+		.side-wave {
+			display: none;
+		}
+
+		.hero-title-actions {
+			gap: 10px;
+			margin-top: 18px;
+		}
+
+		.hero-title-button {
+			min-width: 118px;
+			min-height: 40px;
+			padding: 0 18px;
+			font-size: 14px;
+		}
+
+		.page-title-plugin-button {
+			bottom: 10px;
+			min-width: 118px;
+			min-height: 40px;
+			padding: 0 20px;
+			font-size: 14px;
+		}
+
+		.mascot-shape {
+			--shape-scale: .78;
+		}
+
+		.review-wall {
+			grid-template-columns: 1fr;
+			padding: 20px;
+		}
+
+		.review-wall article,
+		.review-wall img {
+			min-height: 180px;
+		}
+
+		.review-wall article:nth-child(2) {
+			transform: none;
+		}
+
+		.preview-card {
+			grid-template-columns: 76px 1fr;
+			padding: 18px;
+		}
+
+		.preview-small {
+			width: 100%;
+		}
+
+		.preview-card strong {
+			font-size: 3rem;
+		}
+
+		.share-route {
+			grid-template-columns: 1fr;
+		}
+
+		.share-route i {
+			width: 2px;
+			height: 20px;
+			margin: 0 auto;
+		}
+	}
+
+	@media only screen and (min-width: 721px) and (max-height: 560px) {
+		.hero-mascot {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-height: 560px) {
+		.hero-mascot {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-height: 720px) {
+		.hero-mascot {
+			max-height: 40vh;
+			max-height: 40svh;
+		}
+
+		.hero-mascot img {
+			max-height: 40vh;
+			max-height: 40svh;
+			object-position: bottom center;
+		}
+	}
+
+	@media only screen and (max-height: 600px) {
+		.hero-mascot {
+			max-height: 30vh;
+			max-height: 30svh;
+		}
+
+		.hero-mascot img {
+			max-height: 30vh;
+			max-height: 30svh;
+			object-position: bottom center;
+		}
+	}
+
+
+	@keyframes side-wave-float {
+		0%,
+		100% {
+			transform: translate3d(0, 0, 0);
+		}
+
+		50% {
+			transform: translate3d(0, -18px, 0);
+		}
+	}
+
+	@keyframes mascot-float {
+		0%,
+		100% {
+			transform: translate3d(0, 0, 0) scale(var(--shape-scale, 1));
+		}
+
+		50% {
+			transform: translate3d(0, -16px, 0) scale(var(--shape-scale, 1));
+		}
+	}
+
+	@keyframes shape-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes hero-rise-up {
+		to {
+			opacity: 1;
+			transform: translate3d(0, 0, 0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-rise,
+		.side-wave svg,
+		.hero-mascot img,
+		.mascot-shape,
+		.mascot-shape span {
+			animation: none;
+		}
+
+		.hero-rise {
+			opacity: 1;
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+const hero = document.querySelector("[data-hero-animate]");
+
+const waitForWindowLoad = () => new Promise<void>((resolve) => {
+	if (document.readyState === "complete") {
+		resolve();
+		return;
+	}
+
+	window.addEventListener("load", () => resolve(), { once: true });
+});
+
+const waitForFonts = () => {
+	if ("fonts" in document) {
+		return document.fonts.ready;
+	}
+
+	return Promise.resolve();
+};
+
+Promise.all([waitForWindowLoad(), waitForFonts()]).then(() => {
+	window.requestAnimationFrame(() => {
+		hero?.classList.add("is-hero-ready");
+	});
+});
+</script>

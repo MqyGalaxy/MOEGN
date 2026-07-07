@@ -1,0 +1,2139 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import W3SvgIcon from '../../components/W3SvgIcon.astro';
+import { getImage } from 'astro:assets';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import {
+	getReviewCategoryHref,
+	getReviewSubCategorCategories,
+	matchesReviewCategory,
+	standardReviewCategories,
+} from '../../data/reviewCategories';
+import { getRelatedReviewWorkSlugs } from '../../data/relatedReviews';
+import { getSortedOtherTags } from '../../data/reviewTags';
+
+export async function getStaticPaths() {
+	const reviews = await getCollection('reviews');
+
+	return reviews.map((review) => ({
+		params: { slug: review.slug },
+		props: { review },
+	}));
+}
+
+const { review } = Astro.props as { review: CollectionEntry<'reviews'> };
+const { Content } = await review.render();
+const previewAssetModules = import.meta.glob('../../assets/**/*.{avif,gif,jpeg,jpg,png,webp}', {
+	eager: true,
+	import: 'default',
+});
+const moeqyGirlModules = import.meta.glob('../../assets/moeqyGirl/*_noBackground.webp', {
+	eager: true,
+	import: 'default',
+});
+const moeqyGirlImages = Object.values(moeqyGirlModules).map((asset) => (asset as ImageMetadata).src);
+const previewAssets = new Map<string, ImageMetadata>(
+	Object.entries(previewAssetModules).map(([assetPath, asset]) => {
+		const normalizedPath = assetPath.replace('../../assets/', 'src/assets/').replaceAll('\\', '/');
+
+		return [normalizedPath, asset as ImageMetadata];
+	}),
+);
+const allReviews = await getCollection('reviews');
+const getWorkPath = (slug: string) => slug.split('/').slice(0, -1).join('/');
+const workPath = getWorkPath(review.slug);
+const latestReviewByWork = new Map<string, CollectionEntry<'reviews'>>();
+
+for (const entry of allReviews) {
+	const entryWorkPath = getWorkPath(entry.slug);
+	const latestEntry = latestReviewByWork.get(entryWorkPath);
+
+	if (!latestEntry || entry.data.publishedAt.valueOf() > latestEntry.data.publishedAt.valueOf()) {
+		latestReviewByWork.set(entryWorkPath, entry);
+	}
+}
+
+const latestReview = latestReviewByWork.get(workPath);
+const isOutdatedReview = Boolean(latestReview && latestReview.slug !== review.slug);
+const publishedDate = review.data.publishedAt.toLocaleDateString('zh-CN', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+});
+const createPreviewVideoSrc = (videoSrc?: string) => {
+	if (!videoSrc) return '';
+
+	const [urlWithoutHash, hash] = videoSrc.split('#');
+	const [baseUrl, query = ''] = urlWithoutHash.split('?');
+	const params = new URLSearchParams(query);
+
+	params.set('autoplay', '1');
+	params.set('muted', '0');
+	params.set('mute', '0');
+	params.set('muted_play', '0');
+
+	return `${baseUrl}?${params.toString()}${hash ? `#${hash}` : ''}`;
+};
+const resolvePreviewImage = async (imageSrc: string) => {
+	const normalizedSrc = imageSrc.replaceAll('\\', '/').replace(/^\/+/, '');
+	const localAsset = previewAssets.get(normalizedSrc);
+
+	if (!localAsset) return imageSrc;
+
+	const optimizedImage = await getImage({ src: localAsset });
+
+	return optimizedImage.src;
+};
+const previewImages = await Promise.all(review.data.previewImages.slice(0, 4).map(resolvePreviewImage));
+const previewPrimaryImage = previewImages[0] ?? review.data.imgSrc;
+const previewVideoCover = review.data.previewVideoCover ? await resolvePreviewImage(review.data.previewVideoCover) : previewPrimaryImage;
+const previewVideoSrc = createPreviewVideoSrc(review.data.previewVideo);
+const hasPreviewGallery = previewImages.length > 0;
+const currentReviewPath = `/reviews/${review.slug}/`;
+const currentCategory = standardReviewCategories.find((category) => matchesReviewCategory(review.data, category));
+const currentSubCategories = getReviewSubCategorCategories(review.data);
+const awardTags = getSortedOtherTags(review.data.otherTag);
+const currentYear = new Date().getFullYear();
+const relatedReviews = getRelatedReviewWorkSlugs(workPath)
+	.map((relatedWorkSlug) => latestReviewByWork.get(relatedWorkSlug))
+	.filter((entry): entry is CollectionEntry<'reviews'> => Boolean(entry))
+	.map((entry) => {
+		const relatedLatestReview = latestReviewByWork.get(getWorkPath(entry.slug));
+
+		return {
+			...entry.data,
+			href: `/reviews/${entry.slug}/`,
+			isOutdated: Boolean(relatedLatestReview && relatedLatestReview.slug !== entry.slug),
+		};
+	});
+const relatedReviewsByClass = Array.from(
+	relatedReviews.reduce<Map<string, typeof relatedReviews>>((groups, relatedReview) => {
+		const group = groups.get(relatedReview.proClass) ?? [];
+
+		group.push(relatedReview);
+		groups.set(relatedReview.proClass, group);
+
+		return groups;
+	}, new Map()),
+).map(([proClass, items]) => ({ proClass, items }));
+---
+
+<Layout webTitle={`MOEGN - ${review.data.title}`}>
+	<main>
+		<nav class="detail-breadcrumb" aria-label="当前位置">
+			<a href="/reviews/">评测列表</a>
+			<span>/</span>
+			{currentCategory ? (
+				<>
+					<a href={getReviewCategoryHref(currentCategory.slug)}>{currentCategory.title}</a>
+					<span>/</span>
+				</>
+			) : null}
+			<span>{review.data.title}</span>
+		</nav>
+
+		<section class="detail-hero">
+			<div class="detail-cover">
+				<img src={review.data.imgSrc} alt={`${review.data.title} 封面`} />
+			</div>
+
+			<div class="detail-title">
+				<p class="detail-kicker">MOEGN 评测</p>
+				<h1>{review.data.title}</h1>
+				<p class="detail-subtitle">{review.data.subTitle}</p>
+
+				<div class="detail-meta" aria-label="评测信息">
+					{awardTags.map((tag) => (
+						<b class:list={['detail-award-tag', `is-${tag.tone}`]}>{tag.label}</b>
+					))}
+					<span>{review.data.proClass}</span>
+					{currentSubCategories.map((category) => (
+						<a href={getReviewCategoryHref(category.slug)}>
+							{category.title}
+							<span class="detail-meta-icon" aria-hidden="true"><W3SvgIcon name="external" /></span>
+						</a>
+					))}
+					<span>{review.data.reviewType}</span>
+					<span>{publishedDate}</span>
+					<span>{review.data.scoreTag}</span>
+				</div>
+
+				<p class="detail-summary">{review.data.summary}</p>
+
+				<div class="detail-actions">
+					{review.data.blogHref ? <a class="detail-action is-solid" href={review.data.blogHref} target="_blank" rel="noreferrer">阅读原文</a> : null}
+					<div class="detail-link-menu" data-third-party-menu>
+						<button class="detail-action is-outline" type="button" aria-expanded="false" data-third-party-menu-button>
+							<span>作品资料</span>
+							<span class="detail-action-icon" aria-hidden="true"><W3SvgIcon name="chevron-down" /></span>
+						</button>
+						<div class="detail-link-menu-list" aria-hidden="true" data-third-party-menu-list inert>
+							{review.data.thirdPartyLinks.length ? (
+								review.data.thirdPartyLinks.map((link) => (
+									<a href={link.href} target="_blank" rel="noreferrer">
+										<span>{link.label}</span>
+										<span aria-hidden="true"><W3SvgIcon name="external" /></span>
+									</a>
+								))
+							) : (
+								<span class="detail-link-empty">暂无第三方链接</span>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class:list={['detail-score', { 'is-outdated': isOutdatedReview }]} aria-label={`评分 ${review.data.score}`}>
+				<span>{review.data.score}{isOutdatedReview ? <sup>*</sup> : null}</span>
+				<b>{review.data.scoreTag}</b>
+				{latestReview && isOutdatedReview ? (
+					<small class="score-stale-note">
+						该评测已过期，不具有时效性。<a href={`/reviews/${latestReview.slug}/`}>查看最新评测</a>
+					</small>
+				) : null}
+			</div>
+		</section>
+
+		<article class="detail-article">
+			<div class="article-heading">
+				<p>Review Overview</p>
+				<h2>评测<br>概览</h2>
+			</div>
+			<div class="article-body">
+				<Content />
+			</div>
+		</article>
+
+		{review.data.infoSummary.length ? (
+			<section class="work-info-summary" aria-label="作品信息总结">
+				<div class="work-info-heading">
+					<p>Work Info</p>
+					<h2>信息<br>总结</h2>
+				</div>
+				<div class="work-info-body">
+					<dl>
+						{review.data.infoSummary.map((item) => (
+							<div>
+								<dt>{item.label}</dt>
+								<dd>{item.value}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
+			</section>
+		) : null}
+
+		<section class="detail-preview-section" aria-label="详情预览">
+			<div class="detail-section-heading">
+				<p>Detail Preview</p>
+				<h2>详情<br>预览</h2>
+			</div>
+			<div class="detail-preview-body">
+				<div class="preview-feature">
+					{review.data.previewVideo ? (
+						<button
+							class="preview-image-button preview-video-button is-featured"
+							type="button"
+							data-preview-video={previewVideoSrc}
+							aria-label={`播放 ${review.data.title} 预览视频`}
+						>
+							<img src={previewVideoCover} alt={`${review.data.title} 视频封面`} />
+							{review.data.previewVideoTitle ? (
+								<b class="preview-video-title">{review.data.previewVideoTitle}</b>
+							) : null}
+							<span aria-hidden="true">
+								<W3SvgIcon name="play" />
+							</span>
+						</button>
+					) : (
+						<button class="preview-image-button is-featured" type="button" data-preview-image={previewPrimaryImage} aria-label={`查看 ${review.data.title} 预览图`}>
+							<img src={previewPrimaryImage} alt={`${review.data.title} 预览图`} />
+						</button>
+					)}
+				</div>
+
+				{hasPreviewGallery ? (
+					<div class="preview-shot-grid" aria-label="截图预览">
+						{previewImages.map((image, index) => (
+							<button class="preview-image-button" type="button" data-preview-image={image} aria-label={`查看截图 ${index + 1}`}>
+								<img src={image} alt={`${review.data.title} 截图 ${index + 1}`} />
+							</button>
+						))}
+					</div>
+				) : null}
+			</div>
+		</section>
+
+		{relatedReviews.length ? (
+			<section class="detail-related-section" aria-label="关联作品">
+				<div class="detail-section-heading">
+					<p>Related Works</p>
+					<h2>关联<br>作品</h2>
+				</div>
+				<div class="detail-related-body">
+					<div class="related-review-groups">
+						{relatedReviewsByClass.map((group) => (
+							<section class="related-class-group" aria-label={`关联${group.proClass}`}>
+								<h3>{group.proClass}</h3>
+								<ul role="list" class="related-review-grid">
+									{group.items.map((relatedReview) => (
+										<li>
+											<a class="related-cover-card" href={relatedReview.href} aria-label={`${relatedReview.title} ${relatedReview.reviewType}`}>
+												<img src={relatedReview.imgSrc} alt={`${relatedReview.title} 封面`} />
+												<span class="related-title">{relatedReview.title}</span>
+												<span
+													class:list={['related-score', { 'is-outdated': relatedReview.isOutdated }]}
+													data-stale-reason={relatedReview.isOutdated ? '该评测已过期，不具有时效性。已有更新的评测。' : undefined}
+													aria-label={relatedReview.isOutdated ? `评分 ${relatedReview.score}，该评测已过期，不具有时效性。` : `评分 ${relatedReview.score}`}
+												>
+													{relatedReview.score}{relatedReview.isOutdated ? <sup>*</sup> : null}
+												</span>
+											</a>
+										</li>
+									))}
+								</ul>
+							</section>
+						))}
+					</div>
+				</div>
+			</section>
+		) : null}
+
+		<section
+			class="detail-share-section"
+			aria-label={`分享${review.data.proClass}`}
+			data-share-section
+			data-share-title={review.data.title}
+			data-share-subtitle={review.data.subTitle}
+			data-share-score={review.data.score}
+			data-share-score-tag={review.data.scoreTag}
+			data-share-class={review.data.proClass}
+			data-share-summary={review.data.summary}
+			data-share-image={review.data.imgSrc}
+			data-share-path={currentReviewPath}
+		>
+			<div class="detail-section-heading">
+				<p>Share Review</p>
+				<h2>分享<br>{review.data.proClass}</h2>
+			</div>
+			<div class="detail-share-body">
+				<div class="share-entry-panel">
+					<ul class="share-entry-card-list">
+						<Card
+							href={currentReviewPath}
+							proClass={review.data.proClass}
+							title={review.data.title}
+							subTitle={review.data.subTitle}
+							score={review.data.score}
+							scoreTag={review.data.scoreTag}
+							body="生成一张适合保存与转发的图像分享卡片，扫描卡片中的二维码即可访问本页。"
+							imgSrc={review.data.imgSrc}
+							awardTags={awardTags}
+							buttonText="点击分享"
+							buttonAction="share-preview"
+						/>
+					</ul>
+				</div>
+				<div class="share-entry-actions" aria-label="其他分享方式">
+					<button type="button" data-share-copy-link title="复制本页链接" aria-label="复制本页链接">
+						<W3SvgIcon name="copy" />
+					</button>
+					<button type="button" data-share-native title="系统分享" aria-label="系统分享">
+						<W3SvgIcon name="share" />
+					</button>
+					<a href={currentReviewPath} target="_blank" rel="noreferrer" title="新窗口打开本页" aria-label="新窗口打开本页">
+						<W3SvgIcon name="external" />
+					</a>
+					<!--<span class="share-entry-feedback" data-share-feedback aria-live="polite"></span> -->
+				</div>
+				<dialog class="share-preview-dialog" data-share-dialog aria-label={`${review.data.title} 分享卡片预览`}>
+					<div class="share-dialog-toolbar">
+						<p data-share-status>调整预览后可生成分享图片</p>
+						<div class="share-dialog-controls" aria-label="预览操作">
+							<button type="button" data-share-zoom-out aria-label="缩小预览">-</button>
+							<button type="button" data-share-zoom-reset>100%</button>
+							<button type="button" data-share-zoom-in aria-label="放大预览">+</button>
+							<button class="share-generate-button" type="button" data-share-generate data-share-filename={`${review.slug.replaceAll('/', '-')}-share.png`}>生成并下载</button>
+							<button type="button" data-share-close aria-label="关闭分享预览">×</button>
+						</div>
+					</div>
+					<div class="share-preview-viewport">
+						<div class="share-preview-scale" data-share-scale>
+							<div class="share-card-export" data-share-export aria-label={`${review.data.title} 分享卡片`}>
+								{moeqyGirlImages.length ? (
+									<img
+										class="share-card-mascot"
+										src={moeqyGirlImages[0]}
+										data-share-mascot
+										data-share-mascots={JSON.stringify(moeqyGirlImages)}
+										alt=""
+										aria-hidden="true"
+									/>
+								) : null}
+								<ul class="share-card-list">
+									<Card
+										href={currentReviewPath}
+										proClass={review.data.proClass}
+										title={review.data.title}
+										subTitle={review.data.subTitle}
+										score={review.data.score}
+										scoreTag={review.data.scoreTag}
+										body={review.data.summary}
+										imgSrc={review.data.imgSrc}
+										awardTags={awardTags}
+										buttonText=""
+									/>
+								</ul>
+								{isOutdatedReview ? (
+									<div class="share-card-stale-note">
+										<span>时效提醒</span>
+										<p>该评测已过期，不具有时效性，请以最新评测为准。</p>
+									</div>
+								) : null}
+								<div class="share-card-footer">
+									<h3 style="padding: 0; margin: 0;">扫描二维码阅读详情</h3>
+									<img data-share-qr alt={`${review.data.title} 二维码`} />
+									<p>Copyright © {currentYear} MOEGN. Some rights reserved.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</dialog>
+			</div>
+		</section>
+
+		<dialog class="image-lightbox" data-image-lightbox>
+			<button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="关闭图片预览">×</button>
+			<img src={previewPrimaryImage} alt="截图详情" data-image-lightbox-img />
+		</dialog>
+
+		<dialog class="video-lightbox" data-video-lightbox>
+			<button class="image-lightbox-close" type="button" data-video-lightbox-close aria-label="关闭视频预览">×</button>
+			<iframe
+				title={`${review.data.title} 预览视频`}
+				loading="lazy"
+				allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+				allowfullscreen
+				data-video-lightbox-frame
+			></iframe>
+		</dialog>
+	</main>
+</Layout>
+
+<style>
+	main {
+		--section-title-offset: 36px;
+		width: min(1500px, 100%);
+		margin: 0 auto;
+		padding: 104px 20px 76px;
+		color: var(--text-color);
+	}
+
+	.detail-breadcrumb {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 18px;
+		color: var(--grey-5);
+		font-size: 14px;
+		font-family: var(--font-light);
+	}
+
+	.detail-breadcrumb a {
+		color: var(--color-main);
+		text-decoration: none;
+	}
+
+	.detail-breadcrumb a:hover,
+	.detail-breadcrumb a:focus-visible {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.detail-hero {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+		gap: clamp(26px, 5vw, 72px);
+		align-items: flex-start;
+		min-height: 560px;
+		padding: clamp(28px, 5vw, 68px);
+		overflow: visible;
+		border-radius: 10px;
+		background:
+			linear-gradient(120deg, var(--color-main) 0, var(--color-light) 100%),
+			var(--color-main);
+		box-shadow: 0 18px 40px rgba(255, 105, 180, .22);
+	}
+
+	.detail-cover,
+	.detail-title,
+	.detail-score {
+		position: relative;
+		z-index: 1;
+	}
+
+	.detail-cover {
+		width: min(100%, 340px);
+		margin-inline: auto;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 18px 38px rgba(98, 38, 62, .24);
+		background: var(--grey-0);
+	}
+
+	.detail-cover img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 4;
+		object-fit: cover;
+	}
+
+	.detail-title {
+		max-width: 820px;
+		color: var(--grey-0);
+	}
+
+	.detail-kicker {
+		margin: 0 0 12px;
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.detail-title h1 {
+		margin: 0;
+		font-size: clamp(3.2rem, 7vw, 6rem);
+		font-family: var(--font-heavy);
+		line-height: .94;
+		letter-spacing: -5px;
+	}
+
+	.detail-subtitle {
+		margin: 14px 0 0;
+		color: rgba(255, 255, 255, .78);
+		font-size: clamp(1rem, 2vw, 1.45rem);
+		font-family: var(--font-light);
+		text-transform: uppercase;
+	}
+
+	.detail-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 28px;
+	}
+
+	.detail-meta > span,
+	.detail-meta > a {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		min-height: 34px;
+		padding: 0 14px;
+		border: 1px solid rgba(255, 255, 255, .48);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, .13);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+	}
+
+	.detail-meta a:hover,
+	.detail-meta a:focus-visible {
+		background: rgba(255, 255, 255, .24);
+	}
+
+	.detail-meta-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 14px;
+		height: 14px;
+		flex: 0 0 auto;
+	}
+
+	.detail-award-tag {
+		--award-glow: rgba(255, 207, 82, .82);
+		display: inline-flex;
+		align-items: center;
+		min-height: 34px;
+		padding: 0 14px;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, .22) inset,
+			0 0 14px var(--award-glow),
+			0 0 28px var(--award-glow);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.detail-award-tag.is-silver {
+		--award-glow: rgba(214, 225, 234, .86);
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	.detail-award-tag.is-bronze {
+		--award-glow: rgba(227, 161, 95, .84);
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.detail-summary {
+		max-width: 760px;
+		margin: 26px 0 0;
+		font-size: clamp(1rem, 1.7vw, 1.2rem);
+		line-height: 1.8;
+	}
+
+	.detail-actions {
+		position: relative;
+		z-index: 4;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		margin-top: 34px;
+	}
+
+	.detail-action {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 46px;
+		padding: 0 24px;
+		border: 1px solid var(--grey-0);
+		border-radius: 999px;
+		cursor: pointer;
+		font-size: 15px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+		transition: transform .2s ease-in-out, background .2s ease-in-out, color .2s ease-in-out;
+	}
+
+	.detail-action:hover,
+	.detail-action:focus-visible {
+		transform: translateY(-2px);
+	}
+
+	.detail-action.is-solid {
+		background: var(--grey-0);
+		color: var(--color-main);
+	}
+
+	.detail-action.is-outline {
+		color: var(--grey-0);
+		background: transparent;
+	}
+
+	.detail-link-menu {
+		position: relative;
+		display: inline-flex;
+	}
+
+	.detail-link-menu button {
+		appearance: none;
+	}
+
+	.detail-action-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 15px;
+		height: 15px;
+		transition: transform .18s ease-in-out;
+	}
+
+	.detail-link-menu.is-open .detail-action-icon {
+		transform: rotate(180deg);
+	}
+
+	.detail-link-menu-list {
+		position: absolute;
+		left: 0;
+		top: calc(100% + 12px);
+		z-index: 8;
+		display: grid;
+		gap: 8px;
+		min-width: 230px;
+		padding: 10px;
+		border: 1px solid rgba(255, 255, 255, .34);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, .94);
+		box-shadow: 0 18px 36px rgba(98, 38, 62, .18);
+		backdrop-filter: blur(12px);
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(8px);
+		transition: opacity .18s ease-in-out, transform .18s ease-in-out;
+	}
+
+	.detail-link-menu-list::before {
+		content: "";
+		position: absolute;
+		left: 28px;
+		top: -7px;
+		width: 14px;
+		height: 14px;
+		border-left: 1px solid rgba(255, 255, 255, .34);
+		border-top: 1px solid rgba(255, 255, 255, .34);
+		background: rgba(255, 255, 255, .94);
+		transform: rotate(45deg);
+	}
+
+	.detail-link-menu.is-open .detail-link-menu-list {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0);
+	}
+
+	.detail-link-menu-list a,
+	.detail-link-empty {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 14px;
+		min-height: 38px;
+		padding: 0 12px;
+		border-radius: 6px;
+		color: var(--grey-7);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.detail-link-menu-list a:hover,
+	.detail-link-menu-list a:focus-visible {
+		background: var(--color-red-a1);
+		color: var(--color-main);
+	}
+
+	.detail-link-menu-list a span:last-child {
+		width: 14px;
+		height: 14px;
+		flex: 0 0 auto;
+	}
+
+	.detail-link-empty {
+		color: var(--grey-5);
+	}
+
+	.detail-score {
+		position: absolute;
+		right: clamp(22px, 5vw, 72px);
+		bottom: 16px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 14px;
+		max-width: min(460px, calc(100% - 44px));
+		color: var(--grey-0);
+	}
+
+	.detail-score span {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: clamp(68px, 8vw, 106px);
+		height: clamp(68px, 8vw, 106px);
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .22);
+		font-size: clamp(2.3rem, 5vw, 4.2rem);
+		font-family: var(--font-heavy);
+	}
+
+	.detail-score sup {
+		position: absolute;
+		top: 24%;
+		right: 20%;
+		font-size: .34em;
+		line-height: 1;
+	}
+
+	.detail-score b {
+		font-size: clamp(2.2rem, 5vw, 5rem);
+		font-family: var(--font-heavy);
+		color: rgba(255, 255, 255, .36);
+		white-space: nowrap;
+	}
+
+	.score-stale-note {
+		flex-basis: 100%;
+		margin-top: -8px;
+		color: rgba(255, 255, 255, .82);
+		font-size: 13px;
+		font-family: var(--font-light);
+		line-height: 1.6;
+		text-align: right;
+	}
+
+	.score-stale-note a {
+		color: var(--grey-0);
+		text-underline-offset: 4px;
+	}
+
+	.detail-article {
+		display: grid;
+		grid-template-columns: 300px minmax(0, 840px);
+		gap: clamp(28px, 6vw, 80px);
+		align-items: flex-start;
+		margin-top: 70px;
+	}
+
+	.article-heading {
+		position: sticky;
+		top: 104px;
+	}
+
+	.article-heading p {
+		margin: 0 0 8px;
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.article-heading h2 {
+		margin: 0;
+		color: var(--color-main);
+		font-size: clamp(2.5rem, 5vw, 4.8rem);
+		font-family: var(--font-heavy);
+		line-height: 1;
+	}
+
+	.article-body {
+		padding-top: var(--section-title-offset);
+	}
+
+	.article-body > :global(:first-child) {
+		margin-top: 0;
+	}
+
+	.article-body :global(p),
+	.article-body :global(li) {
+		color: var(--grey-7);
+		font-size: clamp(1rem, 1.4vw, 1.15rem);
+		line-height: 2;
+	}
+
+	.article-body :global(p) {
+		margin: 0 0 24px;
+	}
+
+	.article-body :global(h2),
+	.article-body :global(h3) {
+		margin: 34px 0 16px;
+		color: var(--color-main);
+		font-family: var(--font-heavy);
+		line-height: 1.25;
+	}
+
+	.article-body :global(a) {
+		color: var(--color-main);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 4px;
+	}
+
+	.article-body :global(ul),
+	.article-body :global(ol) {
+		margin: 0 0 24px;
+		padding-left: 1.4em;
+	}
+
+	.work-info-summary {
+		display: grid;
+		grid-template-columns: 300px minmax(0, 1fr);
+		gap: clamp(28px, 6vw, 80px);
+		align-items: flex-start;
+		margin-top: 70px;
+	}
+
+	.work-info-heading {
+		position: sticky;
+		top: 104px;
+	}
+
+	.work-info-heading p {
+		margin: 0 0 8px;
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.work-info-heading h2 {
+		margin: 0;
+		color: var(--color-main);
+		font-size: clamp(2.5rem, 5vw, 4.8rem);
+		font-family: var(--font-heavy);
+		line-height: 1;
+	}
+
+	.work-info-body {
+		min-width: 0;
+		padding-top: var(--section-title-offset);
+	}
+
+	.work-info-summary dl {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
+		gap: 16px;
+		margin: 0;
+	}
+
+	.work-info-summary dl > div {
+		min-width: 0;
+		padding: 18px 20px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 8px;
+		background: var(--grey-0);
+	}
+
+	.work-info-summary dt {
+		margin: 0 0 4px;
+		color: var(--color-main);
+		font-size: 13px;
+		font-family: var(--font-medium);
+		line-height: 1.5;
+	}
+
+	.work-info-summary dd {
+		margin: 0;
+		color: var(--grey-7);
+		font-size: 15px;
+		font-family: var(--font-normal);
+		line-height: 1.7;
+		word-break: break-word;
+	}
+
+	.detail-preview-section,
+	.detail-related-section,
+	.detail-share-section {
+		display: grid;
+		grid-template-columns: 300px minmax(0, 1fr);
+		gap: clamp(28px, 6vw, 80px);
+		align-items: flex-start;
+		margin-top: 70px;
+	}
+
+	.detail-section-heading {
+		position: sticky;
+		top: 104px;
+	}
+
+	.detail-section-heading p {
+		margin: 0 0 8px;
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-light);
+		letter-spacing: 2px;
+	}
+
+	.detail-section-heading h2 {
+		margin: 0;
+		color: var(--color-main);
+		font-size: clamp(2.5rem, 5vw, 4.8rem);
+		font-family: var(--font-heavy);
+		line-height: 1;
+	}
+
+	.detail-preview-body,
+	.detail-related-body,
+	.detail-share-body {
+		min-width: 0;
+		padding-top: var(--section-title-offset);
+	}
+
+	.detail-preview-body {
+		--preview-gap: 16px;
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(320px, 1.2fr);
+		gap: var(--preview-gap);
+		align-items: stretch;
+		height: clamp(320px, 36vw, 560px);
+		overflow: hidden;
+	}
+
+	.detail-preview-body:not(:has(.preview-shot-grid)) {
+		grid-template-columns: 1fr;
+	}
+
+	.preview-feature,
+	.preview-shot-grid {
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.preview-feature {
+		height: 100%;
+		overflow: hidden;
+		border-radius: 8px;
+	}
+
+	.preview-image-button {
+		width: 100%;
+		height: 100%;
+		border: 0;
+		border-radius: 8px;
+		background: var(--grey-0);
+		box-shadow: 0 12px 28px rgba(98, 38, 62, .13);
+	}
+
+	.preview-image-button {
+		position: relative;
+		display: block;
+		padding: 0;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.preview-image-button img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-height: 100%;
+		object-fit: cover;
+		transition: transform .22s ease-in-out;
+	}
+
+	.preview-image-button:hover img,
+	.preview-image-button:focus-visible img {
+		transform: scale(1.04);
+	}
+
+	.preview-image-button.is-featured {
+		aspect-ratio: auto;
+	}
+
+	.preview-video-title {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 2;
+		display: block;
+		padding: 18px 22px;
+		background: linear-gradient(0deg, rgba(0, 0, 0, .64), rgba(0, 0, 0, 0));
+		color: var(--grey-0);
+		font-size: clamp(1rem, 1.6vw, 1.28rem);
+		font-family: var(--font-medium);
+		line-height: 1.45;
+		text-align: left;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+	}
+
+	.preview-video-button span {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 88px;
+		height: 88px;
+		border: 0;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, .54);
+		color: var(--grey-0);
+		transform: translate(-50%, -50%);
+	}
+
+	.preview-video-button :global(.w3-svg-icon) {
+		width: 58px;
+		height: 58px;
+	}
+
+	.preview-shot-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: repeat(2, minmax(0, 1fr));
+		gap: var(--preview-gap);
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.preview-shot-grid .preview-image-button {
+		height: 100%;
+		min-height: 0;
+	}
+
+	.related-review-groups {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 26px;
+		max-width: 900px;
+		margin: 0;
+	}
+
+	.related-class-group {
+		flex: 0 1 auto;
+		min-width: 0;
+		max-width: 100%;
+	}
+
+	.related-class-group h3 {
+		margin: 0 0 10px;
+		color: var(--grey-5);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		line-height: 1.4;
+	}
+
+	.related-review-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 18px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.related-review-grid li {
+		position: relative;
+		z-index: 0;
+		flex: 0 0 180px;
+		width: 180px;
+	}
+
+	.related-review-grid li:has(.related-cover-card:hover),
+	.related-review-grid li:has(.related-cover-card:focus-visible) {
+		z-index: 5;
+	}
+
+	.related-cover-card {
+		position: relative;
+		display: block;
+		overflow: visible;
+		border-radius: 8px;
+		background: var(--grey-0);
+		box-shadow: 0 10px 24px var(--grey-9-a1);
+		text-decoration: none;
+		transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+	}
+
+	.related-cover-card:hover,
+	.related-cover-card:focus-visible {
+		transform: translateY(-4px);
+		box-shadow: 0 16px 34px rgba(255, 105, 180, .22);
+	}
+
+	.related-cover-card img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 4;
+		border-radius: 8px;
+		object-fit: cover;
+	}
+
+	.related-title {
+		position: absolute;
+		left: 12px;
+		right: 12px;
+		top: 12px;
+		z-index: 2;
+		display: block;
+		padding: 8px 10px;
+		border-radius: 6px;
+		background: rgba(34, 34, 34, .86);
+		color: var(--grey-0);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		line-height: 1.5;
+		text-align: center;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(6px);
+		transition: opacity .18s ease-in-out, transform .18s ease-in-out;
+	}
+
+	.related-cover-card:hover .related-title,
+	.related-cover-card:focus-visible .related-title {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.related-score {
+		position: absolute;
+		right: 12px;
+		bottom: 12px;
+		z-index: 3;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		box-shadow: 0 8px 18px rgba(255, 105, 180, .35);
+		color: var(--grey-0);
+		font-size: 28px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+	}
+
+	.related-score sup {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		font-size: 12px;
+		line-height: 1;
+	}
+
+	.related-score.is-outdated {
+		cursor: help;
+	}
+
+	.related-score.is-outdated::after {
+		content: attr(data-stale-reason);
+		position: absolute;
+		right: 0;
+		bottom: calc(100% + 10px);
+		z-index: 10;
+		width: max-content;
+		max-width: min(260px, 70vw);
+		padding: 8px 10px;
+		border-radius: 6px;
+		background: var(--grey-8);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-normal);
+		line-height: 1.6;
+		text-align: left;
+		white-space: normal;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(4px);
+		transition: opacity .18s ease-in-out, transform .18s ease-in-out;
+	}
+
+	.related-score.is-outdated:hover::after,
+	.related-score.is-outdated:focus-visible::after {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.detail-share-body {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		max-width: 640px;
+	}
+
+	.share-entry-panel {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: min(640px, 100%);
+		min-height: 280px;
+		padding: 36px 28px 42px;
+		overflow: hidden;
+		border-radius: 8px;
+		background: linear-gradient(145deg, rgba(255, 105, 180, .08), rgba(255, 168, 193, .2));
+	}
+
+	.share-entry-panel::before,
+	.share-entry-panel::after {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+		border-radius: 50%;
+	}
+
+	.share-entry-panel::before {
+		right: -64px;
+		top: -72px;
+		width: 220px;
+		height: 220px;
+		background: rgba(255, 105, 180, .18);
+	}
+
+	.share-entry-panel::after {
+		left: 34px;
+		bottom: -48px;
+		width: 132px;
+		height: 132px;
+		background: rgba(255, 255, 255, .55);
+	}
+
+	.share-entry-card-list {
+		position: relative;
+		z-index: 1;
+		width: 500px;
+		max-width: 100%;
+		margin: auto;
+		padding: 0;
+	}
+
+	.share-entry-actions {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin-left: 18px;
+	}
+
+	.share-entry-actions button,
+	.share-entry-actions a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 42px;
+		height: 42px;
+		border: 1px solid rgba(255, 105, 180, .28);
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .78);
+		color: var(--color-main);
+		box-shadow: 0 8px 20px rgba(255, 105, 180, .16);
+		cursor: pointer;
+		transition: transform .2s ease-in-out, background .2s ease-in-out, color .2s ease-in-out;
+	}
+
+	.share-entry-actions button:hover,
+	.share-entry-actions button:focus-visible,
+	.share-entry-actions a:hover,
+	.share-entry-actions a:focus-visible {
+		background: var(--color-main);
+		color: var(--grey-0);
+		transform: translateY(-2px);
+	}
+
+	.share-entry-actions :global(.w3-svg-icon) {
+		width: 20px;
+		height: 20px;
+	}
+
+	.share-entry-feedback {
+		min-height: 16px;
+		color: var(--color-main);
+		font-size: 11px;
+		font-family: var(--font-medium);
+		line-height: 1.2;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	.share-generate-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 42px;
+		padding: 0 18px;
+		border: 1px solid var(--color-main);
+		border-radius: 999px;
+		font-size: 14px;
+		font-family: var(--font-medium);
+		cursor: pointer;
+		transition: transform .2s ease-in-out, background .2s ease-in-out, color .2s ease-in-out;
+		background: var(--color-main);
+		color: var(--grey-0);
+	}
+
+	.share-generate-button:hover,
+	.share-generate-button:focus-visible {
+		transform: translateY(-2px);
+	}
+
+	.share-preview-dialog {
+		width: min(1120px, calc(100vw - 32px));
+		height: min(900px, calc(100vh - 32px));
+		max-width: none;
+		max-height: none;
+		padding: 0;
+		border: 0;
+		border-radius: 10px;
+		background: var(--grey-0);
+		box-shadow: 0 18px 48px rgba(38, 18, 28, .22);
+	}
+
+	.share-preview-dialog::backdrop {
+		background: rgba(26, 18, 24, .66);
+	}
+
+	.share-preview-dialog[open] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.share-dialog-toolbar {
+		position: sticky;
+		top: 0;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 18px;
+		padding: 14px 18px;
+		border-bottom: 1px solid rgba(255, 105, 180, .2);
+		background: rgba(255, 255, 255, .94);
+		backdrop-filter: blur(12px);
+	}
+
+	.share-dialog-toolbar p {
+		margin: 0;
+		color: var(--grey-5);
+		font-size: 13px;
+		font-family: var(--font-light);
+	}
+
+	.share-dialog-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 10px;
+	}
+
+	.share-dialog-controls button:not(.share-generate-button) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 38px;
+		min-height: 38px;
+		padding: 0 12px;
+		border: 1px solid var(--color-red-a3);
+		border-radius: 999px;
+		background: var(--grey-0);
+		color: var(--color-main);
+		font-size: 14px;
+		font-family: var(--font-medium);
+		cursor: pointer;
+	}
+
+	.share-preview-viewport {
+		flex: 1;
+		min-height: 0;
+		overflow: auto;
+		padding: 32px;
+		background: linear-gradient(180deg, rgba(255, 105, 180, .04), rgba(255, 255, 255, .96));
+	}
+
+	.share-preview-scale {
+		width: max-content;
+		margin: 0 auto;
+		transform-origin: top left;
+		transition: transform .18s ease-in-out;
+	}
+
+	.share-card-export {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 640px;
+		height: auto;
+		padding: 64px 48px 44px;
+		overflow: hidden;
+		border-radius: 8px;
+		background: linear-gradient(145deg, var(--color-main), var(--color-light));
+	}
+
+	.share-card-export::before {
+		content: '';
+		position: absolute;
+		z-index: 0;
+		left: -68px;
+		top: -56px;
+		width: 220px;
+		height: 220px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .4);
+	}
+
+	.share-card-mascot {
+		position: absolute;
+		z-index: 0;
+		right: -30px;
+		bottom: -16px;
+		display: block;
+		height: 210px;
+		width: auto;
+		max-width: none;
+		opacity: .34;
+		pointer-events: none;
+		user-select: none;
+		filter: drop-shadow(0 12px 24px rgba(190, 35, 110, .18));
+		transform: rotate(6deg);
+	}
+
+	.share-card-list {
+		position: relative;
+		z-index: 1;
+		width: 500px;
+		margin: 0;
+		padding: 0;
+	}
+
+	.share-card-list :global(.moegn) {
+		margin: 20px;
+	}
+
+	.share-card-stale-note {
+		position: relative;
+		z-index: 1;
+		width: 460px;
+		margin: 8px 0 0;
+		padding: 12px 16px;
+		border: 1px solid rgba(255, 255, 255, .42);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, .18);
+		color: var(--grey-0);
+		text-align: center;
+		backdrop-filter: blur(8px);
+	}
+
+	.share-card-stale-note span {
+		display: block;
+		margin-bottom: 4px;
+		font-size: 12px;
+		font-family: var(--font-medium);
+		letter-spacing: 3px;
+	}
+
+	.share-card-stale-note p {
+		margin: 0;
+		font-size: 14px;
+		font-family: var(--font-normal);
+		line-height: 1.5;
+	}
+
+	.share-card-footer {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 14px;
+		margin-top: 48px;
+		color: var(--grey-0);
+		text-align: center;
+	}
+
+	.share-card-footer img {
+		display: block;
+		width: 184px;
+		height: 184px;
+		object-fit: contain;
+	}
+
+	.share-card-footer p {
+		margin: 0;
+		color: var(--grey-0);
+		font-size: 13px;
+		font-family: var(--font-light);
+		line-height: 1.5;
+	}
+
+	.image-lightbox {
+		width: 100vw;
+		max-width: none;
+		height: 100vh;
+		max-height: none;
+		padding: 24px;
+		border: 0;
+		background: transparent;
+	}
+
+	.image-lightbox[open] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.image-lightbox,
+	.image-lightbox::backdrop {
+		background: rgba(0, 0, 0, .5);
+	}
+
+	.image-lightbox::backdrop {
+		background: rgba(0, 0, 0, .5);
+	}
+
+	.image-lightbox img {
+		display: block;
+		width: auto;
+		max-width: calc(100vw - 48px);
+		max-height: calc(100vh - 48px);
+		border-radius: 8px;
+		object-fit: contain;
+		background: transparent;
+	}
+
+	.video-lightbox {
+		width: min(1120px, calc(100vw - 28px));
+		padding: 0;
+		border: 0;
+		border-radius: 10px;
+		background: var(--grey-8);
+	}
+
+	.video-lightbox::backdrop {
+		background: rgba(26, 18, 24, .78);
+	}
+
+	.video-lightbox iframe {
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+		border-radius: 10px;
+		background: var(--grey-8);
+	}
+
+	.image-lightbox-close {
+		position: absolute;
+		top: 12px;
+		right: 1%;
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border: 0;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, 0.1);
+		color: var(--grey-0);
+		font-size: 26px;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	@media only screen and (max-width: 980px) {
+		main {
+			padding-top: 90px;
+		}
+
+		.detail-hero {
+			grid-template-columns: 1fr;
+			min-height: auto;
+			padding-bottom: 112px;
+		}
+
+		.detail-cover {
+			width: min(62vw, 280px);
+		}
+
+		.detail-title h1 {
+			font-size: clamp(2.8rem, 12vw, 5.4rem);
+		}
+
+		.detail-article {
+			grid-template-columns: 1fr;
+			margin-top: 48px;
+		}
+
+		.article-heading,
+		.work-info-heading,
+		.detail-section-heading {
+			position: static;
+		}
+
+		.article-body,
+		.work-info-body,
+		.detail-preview-body,
+		.detail-related-body,
+		.detail-share-body {
+			padding-top: 0;
+		}
+
+		.detail-share-body {
+			flex-wrap: wrap;
+		}
+
+		.share-entry-panel {
+			padding: 28px 18px 34px;
+		}
+
+		.share-entry-actions {
+			flex-direction: row;
+			margin: 12px 0 0;
+		}
+
+		.share-entry-feedback {
+			flex-basis: 100%;
+		}
+
+		.work-info-summary,
+		.detail-preview-section,
+		.detail-related-section,
+		.detail-share-section {
+			grid-template-columns: 1fr;
+			margin-top: 48px;
+		}
+
+		.detail-preview-body {
+			grid-template-columns: 1fr;
+		}
+
+		.detail-preview-body {
+			height: auto;
+		}
+
+		.preview-feature,
+		.preview-image-button.is-featured {
+			height: auto;
+			aspect-ratio: 16 / 9;
+		}
+
+		.preview-shot-grid {
+			height: auto;
+		}
+
+		.preview-shot-grid .preview-image-button {
+			height: auto;
+			aspect-ratio: 16 / 9;
+		}
+	}
+
+	@media only screen and (max-width: 560px) {
+		main {
+			padding-inline: 12px;
+			padding-bottom: 56px;
+		}
+
+		.detail-hero {
+			padding: 24px 18px 100px;
+		}
+
+		.detail-cover {
+			width: min(70vw, 230px);
+		}
+
+		.detail-meta > span,
+		.detail-meta > a,
+		.detail-award-tag,
+		.detail-action {
+			font-size: 13px;
+		}
+
+		.detail-action {
+			min-height: 42px;
+			padding: 0 18px;
+		}
+
+		.detail-score {
+			right: 18px;
+			bottom: 20px;
+		}
+
+		.detail-score b {
+			max-width: 160px;
+			overflow-wrap: anywhere;
+			white-space: normal;
+		}
+
+		.work-info-summary dl {
+			grid-template-columns: 1fr;
+		}
+
+		.preview-shot-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.related-review-grid {
+			gap: 16px;
+			width: min(100%, 376px);
+		}
+
+		.related-review-grid li {
+			flex-basis: calc((100% - 16px) / 2);
+			width: calc((100% - 16px) / 2);
+		}
+
+		.related-review-groups {
+			gap: 22px;
+		}
+
+		.related-title {
+			left: 8px;
+			right: 8px;
+			top: 8px;
+			padding: 6px 8px;
+			font-size: 12px;
+			opacity: 1;
+			transform: none;
+		}
+
+		.related-score {
+			right: 10px;
+			bottom: 10px;
+			width: 48px;
+			height: 48px;
+			font-size: 24px;
+		}
+
+		.share-preview-dialog {
+			width: calc(100vw - 12px);
+			height: calc(100vh - 12px);
+			border-radius: 8px;
+		}
+
+		.share-dialog-toolbar {
+			align-items: center;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 8px;
+			padding: 10px;
+		}
+
+		.share-dialog-toolbar p {
+			display: none;
+		}
+
+		.share-dialog-controls {
+			width: 100%;
+			gap: 8px;
+			justify-content: space-between;
+		}
+
+		.share-dialog-controls button:not(.share-generate-button) {
+			min-width: 34px;
+			min-height: 34px;
+			padding: 0 10px;
+			font-size: 13px;
+		}
+
+		.share-dialog-controls .share-generate-button {
+			min-height: 36px;
+			padding: 0 14px;
+			font-size: 13px;
+		}
+
+		.share-preview-viewport {
+			padding: 12px;
+		}
+	}
+</style>
+
+<script>
+	import { toBlob } from 'html-to-image';
+	import QRCode from 'qrcode';
+
+	document.querySelectorAll<HTMLElement>('[data-third-party-menu]').forEach((menu) => {
+		const button = menu.querySelector<HTMLButtonElement>('[data-third-party-menu-button]');
+		const list = menu.querySelector<HTMLElement>('[data-third-party-menu-list]');
+
+		if (!button || !list) return;
+
+		const setMenuOpen = (isOpen: boolean) => {
+			menu.classList.toggle('is-open', isOpen);
+			button.setAttribute('aria-expanded', String(isOpen));
+			list.setAttribute('aria-hidden', String(!isOpen));
+
+			if (isOpen) {
+				list.removeAttribute('inert');
+			} else {
+				list.setAttribute('inert', '');
+			}
+		};
+
+		button.addEventListener('click', () => {
+			setMenuOpen(!menu.classList.contains('is-open'));
+		});
+
+		document.addEventListener('click', (event) => {
+			if (!menu.contains(event.target as Node)) {
+				setMenuOpen(false);
+			}
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') {
+				setMenuOpen(false);
+			}
+		});
+	});
+
+	const imageLightbox = document.querySelector<HTMLDialogElement>('[data-image-lightbox]');
+	const lightboxImage = document.querySelector<HTMLImageElement>('[data-image-lightbox-img]');
+	const lightboxClose = document.querySelector<HTMLButtonElement>('[data-image-lightbox-close]');
+	const previewButtons = document.querySelectorAll<HTMLButtonElement>('[data-preview-image]');
+	const videoLightbox = document.querySelector<HTMLDialogElement>('[data-video-lightbox]');
+	const videoFrame = document.querySelector<HTMLIFrameElement>('[data-video-lightbox-frame]');
+	const videoClose = document.querySelector<HTMLButtonElement>('[data-video-lightbox-close]');
+	const videoButtons = document.querySelectorAll<HTMLButtonElement>('[data-preview-video]');
+
+	previewButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			const image = button.dataset.previewImage;
+
+			if (!image || !imageLightbox || !lightboxImage) return;
+
+			lightboxImage.src = image;
+			imageLightbox.showModal();
+		});
+	});
+
+	lightboxClose?.addEventListener('click', () => imageLightbox?.close());
+	imageLightbox?.addEventListener('click', (event) => {
+		if (event.target === imageLightbox) {
+			imageLightbox.close();
+		}
+	});
+
+	const closeVideo = () => {
+		if (videoFrame) {
+			videoFrame.removeAttribute('src');
+		}
+
+		videoLightbox?.close();
+	};
+
+	videoButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			const video = button.dataset.previewVideo;
+
+			if (!video || !videoLightbox || !videoFrame) return;
+
+			videoFrame.src = video;
+			videoLightbox.showModal();
+		});
+	});
+
+	videoClose?.addEventListener('click', closeVideo);
+	videoLightbox?.addEventListener('click', (event) => {
+		if (event.target === videoLightbox) {
+			closeVideo();
+		}
+	});
+	videoLightbox?.addEventListener('close', () => videoFrame?.removeAttribute('src'));
+
+	const waitForExportImage = (image: HTMLImageElement) => new Promise<void>((resolve) => {
+		if (image.complete) {
+			resolve();
+			return;
+		}
+
+		image.addEventListener('load', () => resolve(), { once: true });
+		image.addEventListener('error', () => resolve(), { once: true });
+	});
+
+	document.querySelectorAll<HTMLElement>('[data-share-section]').forEach((section) => {
+		const exportElement = section.querySelector<HTMLElement>('[data-share-export]');
+		const dialog = section.querySelector<HTMLDialogElement>('[data-share-dialog]');
+		const openButton = section.querySelector<HTMLButtonElement>('[data-card-action="share-preview"]');
+		const closeButton = section.querySelector<HTMLButtonElement>('[data-share-close]');
+		const generateButton = section.querySelector<HTMLButtonElement>('[data-share-generate]');
+		const status = section.querySelector<HTMLElement>('[data-share-status]');
+		const qrImage = section.querySelector<HTMLImageElement>('[data-share-qr]');
+		const scaleElement = section.querySelector<HTMLElement>('[data-share-scale]');
+		const zoomOutButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-out]');
+		const zoomResetButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-reset]');
+		const zoomInButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-in]');
+		const copyLinkButton = section.querySelector<HTMLButtonElement>('[data-share-copy-link]');
+		const nativeShareButton = section.querySelector<HTMLButtonElement>('[data-share-native]');
+		const shareFeedback = section.querySelector<HTMLElement>('[data-share-feedback]');
+		const shareMascot = section.querySelector<HTMLImageElement>('[data-share-mascot]');
+
+		if (!exportElement || !dialog || !openButton || !closeButton || !generateButton || !status || !qrImage || !scaleElement || !zoomOutButton || !zoomResetButton || !zoomInButton) return;
+
+		const pageUrl = new URL(section.dataset.sharePath ?? location.pathname, location.origin).href;
+		const downloadFileName = generateButton.dataset.shareFilename || 'moegn-review-share.png';
+		const defaultGenerateText = generateButton.textContent || '生成并下载';
+		let previewScale = 1;
+		let feedbackTimer = 0;
+		let currentMascotIndex = -1;
+
+		const updatePreviewScale = () => {
+			const width = exportElement.offsetWidth || 640;
+			const height = exportElement.offsetHeight || exportElement.scrollHeight || 1024;
+
+			scaleElement.style.transform = `scale(${previewScale})`;
+			scaleElement.style.width = `${width * previewScale}px`;
+			scaleElement.style.height = `${(height - 26) * previewScale}px`;
+			zoomResetButton.textContent = `${Math.round(previewScale * 100)}%`;
+		};
+		const fitPreviewToViewport = () => {
+			if (!window.matchMedia('(max-width: 560px)').matches) {
+				previewScale = 1;
+				updatePreviewScale();
+				return;
+			}
+
+			const viewportWidth = dialog.clientWidth || window.innerWidth;
+			const availableWidth = Math.max(240, viewportWidth - 24);
+			const fittedScale = Math.floor(Math.min(1, availableWidth / (exportElement.offsetWidth || 640)) * 100) / 100;
+			previewScale = Math.max(.4, fittedScale);
+			updatePreviewScale();
+		};
+		const renderQr = async () => {
+			qrImage.src = await QRCode.toDataURL(pageUrl, {
+				width: 240,
+				margin: 1,
+				color: {
+					dark: '#ffffff',
+					light: '#00000000',
+				},
+			});
+		};
+		const randomizeShareMascot = () => {
+			if (!shareMascot?.dataset.shareMascots) return;
+
+			try {
+				const mascotImages = JSON.parse(shareMascot.dataset.shareMascots) as string[];
+
+				if (!mascotImages.length) return;
+
+				let nextIndex = Math.floor(Math.random() * mascotImages.length);
+
+				if (mascotImages.length > 1 && nextIndex === currentMascotIndex) {
+					nextIndex = (nextIndex + 1) % mascotImages.length;
+				}
+
+				currentMascotIndex = nextIndex;
+				shareMascot.src = mascotImages[nextIndex];
+			} catch {
+				// Keep the default mascot if the data attribute cannot be parsed.
+			}
+		};
+		const exportDomShareCard = async () => {
+			await renderQr();
+			await document.fonts?.ready;
+			await Promise.all(Array.from(exportElement.querySelectorAll<HTMLImageElement>('img')).map(waitForExportImage));
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+			const width = exportElement.offsetWidth || 640;
+			const height = Math.ceil(exportElement.scrollHeight || exportElement.offsetHeight || 1024);
+			const blob = await toBlob(exportElement, {
+				backgroundColor: '#00000000',
+				cacheBust: true,
+				height,
+				imagePlaceholder: '',
+				includeQueryParams: true,
+				pixelRatio: 2,
+				skipAutoScale: true,
+				style: {
+					height: `${height - 26}px`,
+					transform: 'none',
+					width: `${width}px`,
+				},
+				width,
+			});
+
+			if (!blob) {
+				throw new Error('DOM export failed');
+			}
+
+			return blob;
+		};
+		const downloadBlob = (blob: Blob) => {
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+
+			link.href = url;
+			link.download = downloadFileName;
+			link.style.display = 'none';
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+		};
+		const showShareFeedback = (message: string) => {
+			if (!shareFeedback) return;
+
+			window.clearTimeout(feedbackTimer);
+			shareFeedback.textContent = message;
+			feedbackTimer = window.setTimeout(() => {
+				shareFeedback.textContent = '';
+			}, 1800);
+		};
+		const copyPageUrl = async () => {
+			try {
+				if (!navigator.clipboard) {
+					throw new Error('Clipboard API is unavailable');
+				}
+
+				await navigator.clipboard.writeText(pageUrl);
+				showShareFeedback('已复制');
+			} catch {
+				showShareFeedback('复制失败');
+			}
+		};
+
+		renderQr();
+		updatePreviewScale();
+
+		if (!navigator.share && nativeShareButton) {
+			nativeShareButton.hidden = true;
+		}
+
+		copyLinkButton?.addEventListener('click', copyPageUrl);
+		nativeShareButton?.addEventListener('click', async () => {
+			if (!navigator.share) return;
+
+			try {
+				await navigator.share({
+					title: document.title,
+					url: pageUrl,
+				});
+			} catch {
+				showShareFeedback('已取消');
+			}
+		});
+
+		openButton.addEventListener('click', async () => {
+			randomizeShareMascot();
+			await renderQr();
+			dialog.showModal();
+			fitPreviewToViewport();
+		});
+
+		closeButton.addEventListener('click', () => dialog.close());
+		dialog.addEventListener('click', (event) => {
+			if (event.target === dialog) {
+				dialog.close();
+			}
+		});
+
+		zoomOutButton.addEventListener('click', () => {
+			previewScale = Math.max(.4, Math.round((previewScale - .1) * 10) / 10);
+			updatePreviewScale();
+		});
+
+		zoomResetButton.addEventListener('click', () => {
+			previewScale = 1;
+			updatePreviewScale();
+		});
+
+		zoomInButton.addEventListener('click', () => {
+			previewScale = Math.min(2, Math.round((previewScale + .1) * 10) / 10);
+			updatePreviewScale();
+		});
+
+		generateButton.addEventListener('click', async () => {
+			generateButton.disabled = true;
+			generateButton.textContent = '正在生成...';
+			status.textContent = '正在生成分享图片...';
+
+			try {
+				const blob = await exportDomShareCard();
+
+				downloadBlob(blob);
+				status.textContent = '分享图片已下载';
+			} catch (error) {
+				console.error('MOEGN share DOM export failed', error);
+				status.textContent = 'DOM 导出失败，请检查封面图片是否支持跨域或改用本地图片';
+			} finally {
+				generateButton.disabled = false;
+				generateButton.textContent = defaultGenerateText;
+			}
+		});
+	});
+</script>

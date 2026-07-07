@@ -1,0 +1,26 @@
+---
+title: "崩坏：星穹铁道"
+subTitle: "Honkai: Star Rail"
+score: "8"
+scoreTag: "佳作"
+summary: "《崩坏：星穹铁道》沿用了崩坏系列的设定气质，又用银河旅途拓展出新的冒险空间。它对新老玩家都相对友好，也有稳定的角色塑造和演出水准。"
+proClass: "游戏"
+reviewType: "初评"
+infoSummary:
+  - label: "游戏类型"
+    value: "二次元角色养成 / 回合制战斗 / 箱庭冒险 / 系列游戏"
+  - label: "适龄建议"
+    value: "建议 12 岁以上游玩，包含抽卡、长线养成和轻度战斗表现"
+  - label: "登录平台"
+    value: "PC / 移动端"
+  - label: "推荐人群"
+    value: "崩坏系列玩家；喜欢角色叙事，箱庭探索和稳定日常养成循环的玩家"
+  - label: "游玩状态"
+    value: "常驻中"
+imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/d2/c9/360097_z4dYA.jpg"
+publishedAt: 2023-05-06
+buttonText: "查看详情"
+blogHref: "https://blog.moeqy.com/acg/game/20230506/post-1/"
+---
+
+作为崩坏系列的最新作品，《崩坏：星穹铁道》不仅沿用了前作设定，在其上扩展了一个更庞大的银河世界。在本作中，崩坏系列的老玩家依旧能够见到自己熟悉的名词设定和角色。但新玩家也完全不用担心没有玩过前作而感到陌生，因为跟随星穹列车，玩家遇到的不再是受到崩坏能威胁的世界，而是一个崭新而未知的银河冒险。

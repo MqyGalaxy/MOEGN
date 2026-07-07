@@ -1,0 +1,190 @@
+---
+interface Props {
+	webTitle: string;
+	headerTheme?: 'default' | 'hero';
+}
+
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+const { webTitle, headerTheme = 'default' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN,en,ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name="viewport" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<script is:inline src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+		<title>{webTitle}</title>
+	</head>
+	<body>
+		<Header theme={headerTheme} />
+		<slot />
+		<Footer />
+	</body>
+</html>
+<style is:global>
+	:root {
+		--color-main: #ff69b4;
+		--color-light: #ffb6c1;
+		--grey-0: #fff;
+		--grey-1: #fdfdfd;
+		--grey-2: #f7f7f7;
+		--grey-3: #eff2f3;
+		--grey-4: #ccc;
+		--grey-5: #999;
+		--grey-6: #666;
+		--grey-7: #333;
+		--grey-8: #222;
+		--grey-9: #000;
+		--grey-1-a0: rgba(253,253,253,0);
+		--grey-1-a9: rgba(253,253,253,0.9);
+		--grey-1-a7: rgba(253,253,253,0.7);
+		--grey-1-a5: rgba(253,253,253,0.5);
+		--grey-1-a3: rgba(253,253,253,0.3);
+		--grey-9-a1: rgba(0,0,0,0.1);
+		--grey-9-a5: rgba(0,0,0,0.5);
+		--grey-2-a0: rgba(247,247,247,0);
+		--color-pink-light: #ffe6fa;
+		--color-cyan-light: #ffe4b5;
+		--color-red: #ee3f4d;
+		--color-pink: #ee3f4d;
+		--color-orange: #ec2b24;
+		--color-yellow: #eab700;
+		--color-green: #0a7426;
+		--color-aqua: #e7a23f;
+		--color-blue: #e7a23f;
+		--color-purple: #9d5b8b;
+		--color-grey: #869194;
+		--color-red-a1: rgba(255,105,180,0.1);
+		--color-red-a3: rgba(255,105,180,0.3);
+		--color-pink-light-a3: rgba(255,230,250,0.3);
+		--color-pink-light-a5: rgba(255,230,250,0.5);
+		--color-pink-light-a7: rgba(255,230,250,0.7);
+		--body-bg-shadow: var(--grey-2);
+		--box-bg-shadow: var(--grey-9-a1);
+		--text-color: var(--grey-7);
+		--header-text-color: var(--grey-0);
+		--primary-color: var(--color-red);
+		--nav-bg: linear-gradient(-225deg, var(--color-pink-light) 0, var(--color-cyan-light) 100%);
+		--font-heavy: "Source Han Sans CN Heavy", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-medium: "Source Han Sans CN Medium", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-normal: "Source Han Sans CN Normal", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+		--font-light: "Source Han Sans CN Light", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+	}
+
+	html {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 100%;
+		scroll-padding-top: 92px;
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: inherit;
+	}
+
+	body {
+		position: relative;
+		width: 100%;
+		min-height: 100%;
+		margin: 0;
+		background: linear-gradient(to top, var(--body-bg-shadow) 0, var(--grey-1) 20%) no-repeat bottom;
+		color: var(--text-color);
+		font-family: var(--font-normal);
+		font-size: 1em;
+		line-height: 2;
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	img {
+		display: block;
+		max-width: 100%;
+	}
+
+	a {
+		color: inherit;
+	}
+
+	@font-face {
+		font-family: 'Source Han Sans CN Heavy';
+		src: url('/fonts/Source Han Sans CN Heavy.otf');
+		font-weight: bold;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Medium';
+		src: url('/fonts/Source Han Sans CN Medium.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Normal';
+		src: url('/fonts/SourceHanSansSC-Normal.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Source Han Sans CN Light';
+		src: url('/fonts/SourceHanSansSC-Light.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+	code {
+		font-family:
+			Menlo,
+			Monaco,
+			Lucida Console,
+			Liberation Mono,
+			DejaVu Sans Mono,
+			Bitstream Vera Sans Mono,
+			Courier New,
+			monospace;
+	}
+
+	.link-botton,
+	.pro-link {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		line-height: 12px;
+		margin-top: 5px;
+	}
+
+	.link-botton a,
+	.pro-link a, .pro-link button {
+		font-size: 16px;
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		box-shadow: 0 0 1rem var(--grey-1);
+		padding: 16px 30px;
+		border-radius: 5rem;
+		color: var(--grey-0);
+		text-decoration: none;
+		transition: box-shadow .2s ease-in-out, transform .2s ease-in-out;
+		cursor: pointer;
+	}
+
+	.link-botton a:hover,
+	.pro-link a:hover, .pro-link button:hover {
+		box-shadow: 0 0 0.75rem var(--color-main);
+		transform: translateY(-1px);
+	}
+
+	@keyframes move-background {
+		from {
+			background-position: 50% 0%;
+		}
+
+		to {
+			background-position: 50% 100%;
+		}
+	}
+</style>

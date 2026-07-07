@@ -1,0 +1,349 @@
+---
+interface Props {
+	title: string;
+	subTitle: string;
+	score: string;
+	scoreTag: string;
+	body: string;
+	proClass: string;
+	href: string;
+	imgSrc: string;
+	awardTags?: Array<{
+		label: string;
+		tone: 'gold' | 'silver' | 'bronze';
+	}>;
+	buttonText?: string;
+}
+
+const { href, proClass, title, subTitle, score, scoreTag, body, imgSrc, awardTags = [], buttonText = '' } = Astro.props;
+const scoreTagChars = Math.max(Array.from(scoreTag).length, 1);
+const displayButtonText = buttonText.trim();
+const isExternalHref = /^https?:\/\//.test(href);
+---
+
+<li class="moegn">
+    <div class="pro-img">
+        <div class="pro-img-body">
+            <img alt="img" src={imgSrc}>
+			{awardTags.length ? (
+				<div class="pro-cover-awards" aria-label="评测标签">
+					{awardTags.map((tag) => (
+						<b class:list={['pro-cover-award', `is-${tag.tone}`]}>{tag.label}</b>
+					))}
+				</div>
+			) : null}
+        </div>
+    </div>
+    <div class="pro-page">
+        <div class="pro-title">
+            <div class="pro-score"><span>{score}</span></div>
+            <div class="pro-title-text">
+                <div class="title">
+                    <div class="pro-class">{proClass}</div>
+                    <span title={title}>{title}</span>
+                    <b>{subTitle}</b>
+                </div>
+                <div class="pro-score-tag" style={`--score-tag-chars: ${scoreTagChars};`}>{scoreTag}</div>
+            </div>
+        </div>
+        <div class="pro-text">
+            <div class="pro-author">MOEGN 评测</div>
+            <p>
+				{body}
+			</p>
+        </div>
+        {displayButtonText ? (
+            <div class="pro-link">
+                <a href={href} target={isExternalHref ? '_blank' : undefined} rel={isExternalHref ? 'noreferrer' : undefined}>{displayButtonText}</a>
+            </div>
+        ) : null}
+    </div>
+</li>
+
+<style>
+	.moegn {
+		display: flex;
+		justify-content: flex-start;
+		position: relative;
+		max-width: 100%;
+		margin: 20px;
+		padding: 20px;
+		list-style: none;
+		background: var(--grey-0);
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.pro-img {
+		position: relative;
+		width: 20%;
+		z-index: 2;
+	}
+
+	@media only screen and (max-width: 1900px) {
+		.pro-img {
+			width: 50%;
+		}
+	}
+
+	@media only screen and (max-width: 980px) {
+		.moegn {
+			padding: 10px;
+			max-width: 70%;
+		}
+		.pro-img {
+			position: absolute;
+			top: -1rem;
+			right: -1rem;
+			width: 80px;
+		}
+		.pro-score {
+			position: absolute;
+			top: -1rem;
+			left: -1rem;
+		}
+	}
+
+	.pro-img-body {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		overflow: hidden;
+		border-radius: 10px;
+		box-shadow: 0 0 10px 5px var(--grey-9-a1);
+	}
+
+	.pro-img-body img {
+		width: 100%;
+	}
+
+	.pro-cover-awards {
+		position: absolute;
+		left: 8px;
+		bottom: 8px;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+		max-width: calc(100% - 16px);
+		pointer-events: none;
+	}
+
+	.pro-cover-award {
+		display: inline-flex;
+		align-items: center;
+		max-width: 100%;
+		min-height: 24px;
+		padding: 0 10px;
+		overflow: hidden;
+		border-radius: 999px;
+		box-shadow: 0 8px 16px rgba(88, 54, 16, .22);
+		color: var(--grey-0);
+		font-size: 12px;
+		font-family: var(--font-heavy);
+		line-height: 1;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.pro-cover-award.is-gold {
+		background: linear-gradient(135deg, #f7b733, #ffd977);
+	}
+
+	.pro-cover-award.is-silver {
+		background: linear-gradient(135deg, #8fa5ba, #d6e1ea);
+	}
+
+	.pro-cover-award.is-bronze {
+		background: linear-gradient(135deg, #b86b2c, #e3a15f);
+	}
+
+	.pro-page {
+		width: 100%;
+		padding: 20px;
+	}
+
+	.pro-author {
+		color: var(--grey-6);
+		font-size: 14px;
+	}
+
+	.pro-title {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+	.pro-score {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 5rem;
+		height: 5rem;
+		margin: 0;
+		border-radius: 5rem;
+		background-image: linear-gradient(to right, var(--color-main) 0, var(--color-light) 100%);
+		color: var(--grey-0);
+		font-size: 35px;
+		font-weight: bold;
+		font-family: var(--font-heavy);
+	}
+
+	.pro-score-tag {
+		position: absolute;
+		z-index: 1;
+		left: 20px;
+		bottom: -10px;
+		max-width: calc(100cqw - 40px);
+		overflow: visible;
+		font-size: clamp(.9rem, calc((100cqw - 40px) / var(--score-tag-chars)), 4rem);
+		font-weight: bold;
+		color: var(--color-red-a3);
+		text-transform: uppercase;
+		white-space: nowrap;
+		letter-spacing: 1px;
+		font-family: var(--font-heavy);
+	}
+
+	.pro-title-text {
+		position: relative;
+		margin-left: 10px;
+		flex: 1;
+		width: 0;
+		container-type: inline-size;
+	}
+
+	.pro-title-text .title {
+		position: relative;
+		z-index: 2;
+		max-width: 100%;
+	}
+
+	.pro-title-text .title .pro-class {
+		position: absolute;
+		left: 0;
+		top: -10px;
+		font-size: 14px;
+		font-weight: lighter;
+		letter-spacing: 5px;
+		font-family: var(--font-light);
+	}
+
+	.pro-title-text .title span {
+		display: block;
+		width: 90%;
+		margin: 0;
+		overflow: hidden;
+		font-size: 35px;
+		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-family: var(--font-normal);
+	}
+
+	@media only screen and (max-width: 980px) {
+		.pro-title-text {
+			margin-left: 0;
+		}
+		.pro-title-text .title .pro-class {
+			font-size: 12px;
+		}
+		.pro-title-text .title span {
+			font-size: 20px;
+		}
+
+		.pro-score-tag {
+			max-width: calc(100cqw - 24px);
+			font-size: clamp(.78rem, calc((100cqw - 24px) / var(--score-tag-chars)), 2.5rem);
+		}
+
+		.pro-score {
+			width: 3rem;
+			height: 3rem;
+			border-radius: 3rem;
+			font-size: 20px;
+		}
+
+		.pro-title-text .title b {
+			bottom: -5px!important;
+		}
+
+		.moegn .powered,
+		.pro-link,
+		.pro-read-more {
+			font-size: 10px;
+		}
+
+		.moegn .powered,
+		.pro-read-more {
+			bottom: 10px;
+		}
+	}
+
+	.pro-title-text .title b {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--grey-5);
+		line-height: 10px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		font-family: var(--font-light);
+	}
+
+	.pro-text {
+		margin-top: 20px;
+	}
+	.pro-text p {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 9;
+		overflow: hidden;
+		margin: 5px 0;
+		font-size: 16px;
+		line-height: 150%;
+		text-overflow: ellipsis;
+		word-break: break-all;
+	}
+
+	.moegn .powered,
+	.pro-read-more,
+	.pro-link {
+		font-size: 12px;
+		color: var(--grey-6);
+	}
+
+	.moegn .powered,
+	.pro-read-more {
+		position: absolute;
+		bottom: 15px;
+	}
+	
+	.pro-link {
+		justify-content: center;
+	}
+
+	.pro-link a {
+		position: absolute;
+		right: -15px;
+		bottom: -20px;
+		padding: 16px;
+	}
+
+	.pro-read-more a {
+		color: var(--grey-6);
+	}
+
+	.pro-read-more a:hover {
+		color: var(--color-blue);
+	}
+
+	.moegn .powered {
+		text-align: right;
+		right: 40px;
+	}
+</style>
