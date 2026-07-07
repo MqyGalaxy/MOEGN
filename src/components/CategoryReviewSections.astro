@@ -507,19 +507,45 @@ const totalPages = Math.ceil(reviews.length / pageSize);
 
 	@media only screen and (max-width: 720px) {
 		.category-hero {
-			grid-template-columns: 64px minmax(0, 1fr);
-			min-height: 180px;
+			grid-template-columns: minmax(0, 1fr);
+			gap: 0;
+			min-height: 132px;
+			margin-bottom: 28px;
+			padding: 24px 22px;
 		}
 
 		.category-icon {
-			width: 64px;
-			height: 64px;
-			padding: 15px;
+			position: absolute;
+			left: auto;
+			right: 34px;
+			top: 26px;
+			width: 86px;
+			height: 86px;
+			padding: 22px;
+			opacity: .2;
+			pointer-events: none;
 		}
 
-		.category-hero b {
-			grid-column: 1 / -1;
-			font-size: 4rem;
+		.category-hero > div:not(.category-icon) {
+			max-width: calc(100% - 72px);
+			padding-left: 0;
+		}
+
+		.category-hero p {
+			margin-bottom: 6px;
+			font-size: 12px;
+			letter-spacing: 1.4px;
+		}
+
+		.category-hero h1 {
+			font-size: clamp(2.05rem, 8.6vw, 2.65rem);
+			line-height: 1.02;
+			white-space: nowrap;
+		}
+
+		.category-hero span {
+			margin-top: 8px;
+			font-size: 14px;
 		}
 
 		.review-list-grid {
