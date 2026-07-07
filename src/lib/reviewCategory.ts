@@ -21,6 +21,13 @@ const getScoreValue = (score: string) => {
 	return Number.isFinite(scoreValue) ? scoreValue : -Infinity;
 };
 
+const hasOngoingMarker = (review: CategoryReview) => (
+	review.score.includes('🕶')
+	|| review.scoreTag.includes('🕶')
+	|| review.subCategor.some((subCategor) => subCategor.includes('🕶'))
+	|| review.subTag.some((subTag) => subTag.includes('🕶'))
+);
+
 export const getCategoryReviews = async (category: ReviewCategory): Promise<CategoryReview[]> => {
 	const reviewEntries = (await getCollection('reviews')).sort(
 		(left, right) => right.data.publishedAt.valueOf() - left.data.publishedAt.valueOf(),
@@ -50,6 +57,12 @@ export const getCategoryReviews = async (category: ReviewCategory): Promise<Cate
 			};
 		})
 		.sort((left, right) => {
+			if (category.slug === 'anime') {
+				const ongoingSort = Number(hasOngoingMarker(left)) - Number(hasOngoingMarker(right));
+
+				if (ongoingSort !== 0) return ongoingSort;
+			}
+
 			if (category.match?.subCategor) {
 				const awardSort = getAwardSortRank(left.otherTags) - getAwardSortRank(right.otherTags);
 

@@ -17,7 +17,7 @@ const reviews = await getCategoryReviews(category);
 
 <EmbedLayout webTitle={`MOEGN - ${category.title} Embed`}>
 	<main class="category-embed" data-moegn-category-embed={category.slug}>
-		<CategoryReviewSections category={category} reviews={reviews} linkTarget="_top" />
+		<CategoryReviewSections category={category} reviews={reviews} linkTarget="_blank" />
 	</main>
 </EmbedLayout>
 

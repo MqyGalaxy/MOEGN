@@ -11,6 +11,8 @@ interface Props {
 
 const { category, reviews, linkTarget } = Astro.props;
 const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
+const pageSize = 28;
+const totalPages = Math.ceil(reviews.length / pageSize);
 ---
 
 <section class:list={['category-hero', `tone-${category.tone}`]}>
@@ -23,10 +25,15 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 </section>
 
 {reviews.length ? (
-	<section class="category-list-section" aria-label={`${category.title}评测`}>
+	<section
+		class="category-list-section"
+		aria-label={`${category.title}评测`}
+		data-review-pagination-root
+		data-page-size={pageSize}
+	>
 		<ul role="list" class="review-list-grid">
-			{reviews.map((review) => (
-				<li>
+			{reviews.map((review, index) => (
+				<li data-review-list-item hidden={index >= pageSize}>
 					<a
 						class="review-cover-card"
 						href={review.href}
@@ -54,6 +61,31 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 				</li>
 			))}
 		</ul>
+		{totalPages > 1 ? (
+			<nav class="review-pagination" aria-label={`${category.title}分页`}>
+				<button type="button" class="review-pagination-control" data-review-page-prev aria-label="上一页" disabled>
+					上一页
+				</button>
+				<label class="review-pagination-pages">
+					<span class="sr-only">输入页码跳转</span>
+					<input
+						class="review-pagination-input"
+						type="number"
+						inputmode="numeric"
+						min="1"
+						max={totalPages}
+						value="1"
+						data-review-page-input
+						aria-label={`输入页码跳转，当前共 ${totalPages} 页`}
+					/>
+					<span class="review-pagination-divider">/</span>
+					<span class="review-pagination-total">{totalPages}</span>
+				</label>
+				<button type="button" class="review-pagination-control" data-review-page-next aria-label="下一页">
+					下一页
+				</button>
+			</nav>
+		) : null}
 	</section>
 ) : (
 	<section class="empty-category">
@@ -75,7 +107,6 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 		overflow: hidden;
 		border-radius: 10px;
 		color: var(--grey-0);
-		box-shadow: 0 18px 40px rgba(255, 105, 180, .18);
 	}
 
 	.category-hero::after {
@@ -153,6 +184,10 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 	.review-list-grid li {
 		position: relative;
 		z-index: 0;
+	}
+
+	.review-list-grid li[hidden] {
+		display: none;
 	}
 
 	.review-list-grid li:has(.review-cover-card:hover),
@@ -316,6 +351,112 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 		transform: translateY(0);
 	}
 
+	.review-pagination {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 18px;
+		margin-top: 34px;
+	}
+
+	.review-pagination-pages {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 118px;
+		height: 40px;
+		padding: 0 6px;
+		border: 0;
+		background: transparent;
+		color: var(--color-main);
+		font-family: var(--font-medium);
+		font-size: 17px;
+		line-height: 1;
+	}
+
+	.review-pagination-input {
+		width: 3.8ch;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		line-height: 1;
+		text-align: center;
+		outline: 0;
+		appearance: textfield;
+	}
+
+	.review-pagination-input::-webkit-outer-spin-button,
+	.review-pagination-input::-webkit-inner-spin-button {
+		margin: 0;
+		appearance: none;
+	}
+
+	.review-pagination-input::selection {
+		background: rgba(255, 105, 180, .18);
+	}
+
+	.review-pagination-input:focus-visible {
+		color: #e85a9f;
+	}
+
+	.review-pagination-divider {
+		margin: 0 8px;
+		color: var(--color-light);
+	}
+
+	.review-pagination-total {
+		min-width: 2ch;
+		text-align: left;
+		color: rgba(255, 105, 180, .66);
+	}
+
+	.review-pagination button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 64px;
+		height: 40px;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		color: var(--color-main);
+		font-family: var(--font-normal);
+		font-size: 15px;
+		line-height: 1;
+		box-shadow: none;
+		cursor: pointer;
+		transition:
+			color .18s ease-in-out,
+			transform .18s ease-in-out;
+	}
+
+	.review-pagination button:hover,
+	.review-pagination button:focus-visible {
+		color: #e85a9f;
+		transform: translateY(-1px);
+	}
+
+	.review-pagination button:disabled {
+		background: transparent;
+		color: rgba(255, 105, 180, .36);
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
 	.empty-category {
 		padding: 42px;
 		border: 1px solid var(--color-red-a3);
@@ -336,26 +477,32 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 
 	.tone-rose {
 		background: linear-gradient(135deg, #ff5faf 0%, #ff9ac2 100%);
+		box-shadow: 0 18px 40px rgba(255, 95, 175, .18);
 	}
 
 	.tone-gold {
 		background: linear-gradient(135deg, #f2a93b 0%, #ffd36a 100%);
+		box-shadow: 0 18px 40px rgba(242, 169, 59, .2);
 	}
 
 	.tone-cyan {
 		background: linear-gradient(135deg, #30b8d8 0%, #7bd9ea 100%);
+		box-shadow: 0 18px 40px rgba(48, 184, 216, .2);
 	}
 
 	.tone-violet {
 		background: linear-gradient(135deg, #8965e8 0%, #c088ff 100%);
+		box-shadow: 0 18px 40px rgba(137, 101, 232, .2);
 	}
 
 	.tone-green {
 		background: linear-gradient(135deg, #36b37e 0%, #8de0aa 100%);
+		box-shadow: 0 18px 40px rgba(54, 179, 126, .2);
 	}
 
 	.tone-blue {
 		background: linear-gradient(135deg, #4c8df6 0%, #8fc5ff 100%);
+		box-shadow: 0 18px 40px rgba(76, 141, 246, .2);
 	}
 
 	@media only screen and (max-width: 720px) {
@@ -397,5 +544,82 @@ const linkRel = linkTarget === '_blank' ? 'noopener noreferrer' : undefined;
 			height: 48px;
 			font-size: 24px;
 		}
+
+		.review-pagination {
+			gap: 12px;
+		}
+
+		.review-pagination button {
+			min-width: 52px;
+			height: 38px;
+			padding: 0;
+			font-size: 13px;
+		}
+
+		.review-pagination-pages {
+			min-width: 96px;
+			height: 38px;
+			padding: 0 2px;
+			font-size: 15px;
+		}
 	}
 </style>
+
+<script>
+	const paginationRoots = Array.from(document.querySelectorAll<HTMLElement>('[data-review-pagination-root]'));
+
+	paginationRoots.forEach((root) => {
+		const pageSize = Number(root.dataset.pageSize || 28);
+		const items = Array.from(root.querySelectorAll<HTMLElement>('[data-review-list-item]'));
+		const pageInput = root.querySelector<HTMLInputElement>('[data-review-page-input]');
+		const previousButton = root.querySelector<HTMLButtonElement>('[data-review-page-prev]');
+		const nextButton = root.querySelector<HTMLButtonElement>('[data-review-page-next]');
+		const totalPages = Math.ceil(items.length / pageSize);
+		let activePage = 0;
+
+		if (totalPages <= 1) return;
+
+		const showPage = (page: number) => {
+			activePage = Math.min(Math.max(page, 0), totalPages - 1);
+			const start = activePage * pageSize;
+			const end = start + pageSize;
+
+			items.forEach((item, index) => {
+				item.hidden = index < start || index >= end;
+			});
+
+			if (pageInput) pageInput.value = String(activePage + 1);
+
+			if (previousButton) previousButton.disabled = activePage === 0;
+			if (nextButton) nextButton.disabled = activePage === totalPages - 1;
+
+			root.dispatchEvent(new CustomEvent('moegn:review-page-change', { bubbles: true }));
+		};
+
+		const commitInputPage = () => {
+			if (!pageInput) return;
+
+			const requestedPage = Number.parseInt(pageInput.value, 10);
+
+			if (!Number.isFinite(requestedPage)) {
+				showPage(activePage);
+				return;
+			}
+
+			showPage(requestedPage - 1);
+		};
+
+		pageInput?.addEventListener('change', commitInputPage);
+		pageInput?.addEventListener('blur', commitInputPage);
+		pageInput?.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				commitInputPage();
+			}
+		});
+
+		previousButton?.addEventListener('click', () => showPage(activePage - 1));
+		nextButton?.addEventListener('click', () => showPage(activePage + 1));
+		showPage(0);
+	});
+</script>
