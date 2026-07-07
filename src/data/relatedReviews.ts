@@ -9,9 +9,6 @@ export const relatedReviewGroups: RelatedReviewGroup[] = [
 		id: 'game-current-experience',
 		title: '游戏体验关联',
 		works: [
-			'game/girls-frontline-2-exilium',
-			'game/honkai-star-rail',
-			'anime/mahou-shoujo-ni-akogarete',
 		],
 	},
 ];
