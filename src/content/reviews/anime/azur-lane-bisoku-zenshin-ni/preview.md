@@ -27,7 +27,7 @@ infoSummary:
     value: "追番中 · 连载中"
   - label: "推荐人群"
     value: "碧蓝航线系列粉丝；喜欢历史战舰的观众；喜欢轻百要素的观众"
-imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/61/12/454083_DtM3t.jpg"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/61/12/454083_DtM3t.jpg"
 publishedAt: 2026-07-07
 buttonText: "查看详情"
 previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=116872720681121&bvid=BV1qGTR6MERM&cid=39704396976&p=1"

@@ -27,7 +27,7 @@ infoSummary:
     value: "崩坏系列玩家；喜欢角色叙事，箱庭探索和稳定日常养成循环的玩家"
   - label: "游玩状态"
     value: "常驻中"
-imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/d2/c9/360097_z4dYA.jpg"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/d2/c9/360097_z4dYA.jpg"
 publishedAt: 2023-05-06
 buttonText: "查看详情"
 blogHref: "https://blog.moeqy.com/acg/game/20230506/post-1/"

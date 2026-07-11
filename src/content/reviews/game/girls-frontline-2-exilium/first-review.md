@@ -27,7 +27,7 @@ infoSummary:
     value: "少女前线系列玩家；战棋玩法爱好者；以及能接受长线运营节奏的玩家"
   - label: "游玩状态"
     value: "常驻中"
-imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/6c/e6/306788_PmNMv.jpg"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/6c/e6/306788_PmNMv.jpg"
 publishedAt: 2024-01-29
 buttonText: "查看详情"
 blogHref: "https://blog.moeqy.com/acg/game/20240129/post-1/"

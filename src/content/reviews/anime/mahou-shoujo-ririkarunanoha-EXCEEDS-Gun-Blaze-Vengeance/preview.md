@@ -27,7 +27,7 @@ infoSummary:
     value: "追番中 · 连载中"
   - label: "推荐人群"
     value: "魔法少女奈叶系列粉丝；需要一定前作世界观基础；喜欢轻百的观众"
-imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/cf/0b/530729_82Fm9.jpg"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/cf/0b/530729_82Fm9.jpg"
 publishedAt: 2026-07-07
 buttonText: "查看详情"
 thirdPartyLinks:

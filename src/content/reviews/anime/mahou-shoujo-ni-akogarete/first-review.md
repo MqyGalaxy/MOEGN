@@ -19,18 +19,20 @@ infoSummary:
     value: "已追完 · 共 12 话（已完结）"
   - label: "推荐人群"
     value: "喜欢反套路魔法少女、夸张喜剧和角色关系和成长的观众"
-imgSrc: "https://lain.bgm.tv/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/96/d1/424663_mM5GN.jpg"
 publishedAt: 2026-07-07
 buttonText: "查看详情"
-thirdPartyLinks:
-  - label: "Bangumi"
-    href: "https://bgm.tv/subject/424663"
 previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=708253958&bvid=BV1cQ4y1E7KV&cid=1394350455&p=1"
 previewVideoTitle: "《憧憬成为魔法少女》NCOP"
 previewImages:
   - "src/assets/anime/mahou-shoujo-ni-akogarete/2.webp"
   - "src/assets/anime/mahou-shoujo-ni-akogarete/1.webp"
   - "src/assets/anime/mahou-shoujo-ni-akogarete/3.webp"
+thirdPartyLinks:
+  - label: "官方公式网站"
+    href: "https://mahoako-anime.com/"
+  - label: "Bangumi"
+    href: "https://bgm.tv/subject/424663"
 ---
 
 《憧憬成为魔法少女》最有趣的地方，是它没有简单复制魔法少女题材里常见的沉重叙事，而是把欲望、误会、角色关系和夸张喜剧揉在一起，形成了一种很有辨识度的观看节奏。
