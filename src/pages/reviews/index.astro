@@ -271,7 +271,9 @@ const getSortableScore = (score: string) => {
 		grid-template-columns: minmax(180px, 300px) minmax(0, 1fr);
 		gap: clamp(24px, 5vw, 64px);
 		align-items: center;
+		aspect-ratio: 3 / 1;
 		min-height: 320px;
+		max-height: 620px;
 		padding: clamp(20px, 4vw, 42px);
 		overflow: hidden;
 		border-radius: 10px;
@@ -329,10 +331,11 @@ const getSortableScore = (score: string) => {
 
 	.random-review-content h2 {
 		margin: 0;
-		font-size: clamp(2.7rem, 6vw, 6rem);
+		font-size: var(--random-review-title-size, clamp(2.7rem, 6vw, 6rem));
 		font-family: var(--font-heavy);
 		line-height: .96;
 		letter-spacing: 0;
+		overflow-wrap: anywhere;
 	}
 
 	.random-review-meta {
@@ -997,7 +1000,9 @@ const getSortableScore = (score: string) => {
 
 		.random-review-card {
 			grid-template-columns: 1fr;
+			aspect-ratio: auto;
 			gap: 18px;
+			max-height: none;
 			min-height: 0;
 			padding: 58px 18px 18px;
 		}
@@ -1185,6 +1190,7 @@ const getSortableScore = (score: string) => {
 	const recommendationCards = Array.from(document.querySelectorAll<HTMLElement>('[data-recommendation-card]'));
 
 	if (recommendationCards.length) {
+		const recommendationSection = recommendationCards[0]?.closest<HTMLElement>('.random-review-section');
 		const refreshDuration = 10000;
 		const transitionDuration = 320;
 		let activeIndex = Math.floor(Math.random() * recommendationCards.length);
@@ -1192,6 +1198,59 @@ const getSortableScore = (score: string) => {
 		let paused = false;
 		let isSwitching = false;
 		let animationFrame = 0;
+		let resizeFrame = 0;
+
+		const fitRecommendationTitles = () => {
+			if (!recommendationSection) return;
+
+			const sectionWidth = recommendationSection.getBoundingClientRect().width;
+
+			if (!sectionWidth) return;
+
+			recommendationCards.forEach((card) => {
+				const title = card.querySelector<HTMLElement>('.random-review-content h2');
+
+				if (!title) return;
+
+				const wasHidden = card.hidden;
+				const previousPosition = card.style.position;
+				const previousVisibility = card.style.visibility;
+				const previousPointerEvents = card.style.pointerEvents;
+				const previousInset = card.style.inset;
+				const previousWidth = card.style.width;
+
+				card.hidden = false;
+				card.style.position = 'absolute';
+				card.style.visibility = 'hidden';
+				card.style.pointerEvents = 'none';
+				card.style.inset = '0 auto auto 0';
+				card.style.width = `${sectionWidth}px`;
+
+				title.style.removeProperty('--random-review-title-size');
+
+				const computedTitle = window.getComputedStyle(title);
+				const maxSize = Number.parseFloat(computedTitle.fontSize);
+				const minSize = window.matchMedia('(max-width: 520px)').matches ? 28 : 42;
+				let nextSize = maxSize;
+
+				while (nextSize > minSize && card.scrollHeight > card.clientHeight + 1) {
+					nextSize -= 1;
+					title.style.setProperty('--random-review-title-size', `${nextSize}px`);
+				}
+
+				card.hidden = wasHidden;
+				card.style.position = previousPosition;
+				card.style.visibility = previousVisibility;
+				card.style.pointerEvents = previousPointerEvents;
+				card.style.inset = previousInset;
+				card.style.width = previousWidth;
+			});
+		};
+
+		const queueRecommendationTitleFit = () => {
+			cancelAnimationFrame(resizeFrame);
+			resizeFrame = requestAnimationFrame(fitRecommendationTitles);
+		};
 
 		const getNextIndex = () => {
 			if (recommendationCards.length < 2) return activeIndex;
@@ -1321,9 +1380,16 @@ const getSortableScore = (score: string) => {
 
 		const initialIndex = activeIndex;
 		activeIndex = -1;
+		fitRecommendationTitles();
+		document.fonts?.ready.then(fitRecommendationTitles);
+		window.addEventListener('resize', queueRecommendationTitleFit);
 		showCard(initialIndex);
 		animationFrame = requestAnimationFrame(tick);
 
-		document.addEventListener('astro:before-swap', () => cancelAnimationFrame(animationFrame), { once: true });
+		document.addEventListener('astro:before-swap', () => {
+			cancelAnimationFrame(animationFrame);
+			cancelAnimationFrame(resizeFrame);
+			window.removeEventListener('resize', queueRecommendationTitleFit);
+		}, { once: true });
 	}
 </script>
