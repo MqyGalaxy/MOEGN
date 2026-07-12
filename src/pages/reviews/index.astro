@@ -261,7 +261,19 @@ const getSortableScore = (score: string) => {
 	}
 
 	.random-review-section {
+		position: relative;
 		margin-bottom: 42px;
+	}
+
+	.random-review-section.is-height-locked {
+		height: var(--random-review-section-height);
+	}
+
+	.random-review-section.is-height-locked .random-review-card {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 	}
 
 	.random-review-card {
@@ -271,9 +283,7 @@ const getSortableScore = (score: string) => {
 		grid-template-columns: minmax(180px, 300px) minmax(0, 1fr);
 		gap: clamp(24px, 5vw, 64px);
 		align-items: center;
-		aspect-ratio: 3 / 1;
 		min-height: 320px;
-		max-height: 620px;
 		padding: clamp(20px, 4vw, 42px);
 		overflow: hidden;
 		border-radius: 10px;
@@ -310,6 +320,7 @@ const getSortableScore = (score: string) => {
 	}
 
 	.random-review-cover img {
+		display: block;
 		width: 100%;
 		aspect-ratio: 3 / 4;
 		object-fit: cover;
@@ -319,6 +330,7 @@ const getSortableScore = (score: string) => {
 		position: relative;
 		z-index: 1;
 		max-width: 820px;
+		min-width: 0;
 		color: var(--grey-0);
 	}
 
@@ -340,13 +352,23 @@ const getSortableScore = (score: string) => {
 
 	.random-review-meta {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		gap: 10px;
+		max-width: 100%;
 		margin-top: 24px;
+		overflow-x: auto;
+		overflow-y: hidden;
+		overscroll-behavior-inline: contain;
+		scrollbar-width: none;
+	}
+
+	.random-review-meta::-webkit-scrollbar {
+		display: none;
 	}
 
 	.random-review-meta span {
 		display: inline-flex;
+		flex: 0 0 auto;
 		align-items: center;
 		min-height: 32px;
 		padding: 0 13px;
@@ -355,11 +377,13 @@ const getSortableScore = (score: string) => {
 		background: rgba(255, 255, 255, .13);
 		font-size: 13px;
 		font-family: var(--font-medium);
+		white-space: nowrap;
 	}
 
 	.random-review-tag {
 		--award-glow: rgba(255, 207, 82, .82);
 		display: inline-flex;
+		flex: 0 0 auto;
 		align-items: center;
 		min-height: 32px;
 		padding: 0 13px;
@@ -372,6 +396,7 @@ const getSortableScore = (score: string) => {
 		font-size: 13px;
 		font-family: var(--font-heavy);
 		line-height: 1;
+		white-space: nowrap;
 	}
 
 	.random-review-tag.is-gold {
@@ -389,10 +414,14 @@ const getSortableScore = (score: string) => {
 	}
 
 	.random-review-summary {
+		display: -webkit-box;
 		max-width: 720px;
 		margin: 22px 0 0;
+		overflow: hidden;
 		font-size: clamp(1rem, 1.6vw, 1.14rem);
 		line-height: 1.8;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: var(--random-review-summary-lines, 2);
 	}
 
 	.random-review-link {
@@ -978,25 +1007,18 @@ const getSortableScore = (score: string) => {
 		}
 
 		.random-review-card {
-			grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
-			aspect-ratio: auto;
-			height: clamp(330px, 44vw, 390px);
+			grid-template-columns: 160px minmax(0, 1fr);
 			gap: 24px;
-			max-height: none;
-			min-height: 0;
-			padding: 56px 28px 28px;
+			min-height: 280px;
 		}
 
 		.random-review-cover {
-			align-self: center;
-			width: 100%;
-			max-width: 180px;
+			width: auto;
+			max-width: none;
 		}
 
 		.random-review-content {
 			max-width: 100%;
-			min-width: 0;
-			overflow: hidden;
 		}
 
 		.random-review-content h2 {
@@ -1005,21 +1027,9 @@ const getSortableScore = (score: string) => {
 		}
 
 		.random-review-meta {
-			flex-wrap: nowrap;
-			width: 100%;
-			max-width: 100%;
-			min-width: 0;
 			gap: 8px;
 			margin-top: 16px;
 			padding-bottom: 2px;
-			overflow-y: hidden;
-			overflow-x: auto;
-			overscroll-behavior-inline: contain;
-			scrollbar-width: none;
-		}
-
-		.random-review-meta::-webkit-scrollbar {
-			display: none;
 		}
 
 		.random-review-meta span,
@@ -1032,11 +1042,7 @@ const getSortableScore = (score: string) => {
 		}
 
 		.random-review-summary {
-			display: -webkit-box;
 			margin-top: 18px;
-			overflow: hidden;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: var(--random-review-summary-lines, 2);
 		}
 
 		.random-review-link {
@@ -1072,29 +1078,18 @@ const getSortableScore = (score: string) => {
 
 		.random-review-card {
 			grid-template-columns: 1fr;
-			grid-template-rows: auto minmax(0, 1fr);
-			align-items: start;
-			aspect-ratio: auto;
-			height: clamp(600px, 162vw, 700px);
-			gap: 14px;
-			max-height: none;
+			gap: 18px;
 			min-height: 0;
-			padding: 56px 16px 18px;
+			padding: 58px 18px 18px;
 		}
 
 		.random-review-cover {
-			width: min(46vw, 178px);
+			width: min(58vw, 220px);
 			margin-inline: auto;
 		}
 
 		.random-review-content {
-			display: flex;
-			width: 100%;
 			max-width: 100%;
-			min-width: 0;
-			min-height: 0;
-			overflow: hidden;
-			flex-direction: column;
 		}
 
 		.random-review-content > p:first-child {
@@ -1136,13 +1131,9 @@ const getSortableScore = (score: string) => {
 		}
 
 		.random-review-summary {
-			display: -webkit-box;
 			margin-top: 12px;
-			overflow: hidden;
 			font-size: 13px;
 			line-height: 1.65;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: var(--random-review-summary-lines, 3);
 		}
 
 		.random-review-link {
@@ -1336,6 +1327,52 @@ const getSortableScore = (score: string) => {
 		let isSwitching = false;
 		let animationFrame = 0;
 		let resizeFrame = 0;
+		const heightLockedClass = 'is-height-locked';
+
+		const withUnlockedRecommendationSection = (callback: () => void) => {
+			if (!recommendationSection) return;
+
+			const wasLocked = recommendationSection.classList.contains(heightLockedClass);
+
+			if (wasLocked) recommendationSection.classList.remove(heightLockedClass);
+
+			try {
+				callback();
+			} finally {
+				if (wasLocked) recommendationSection.classList.add(heightLockedClass);
+			}
+		};
+
+		const withMeasurableRecommendationCard = (
+			card: HTMLElement,
+			sectionWidth: number,
+			callback: () => void,
+		) => {
+			const wasHidden = card.hidden;
+			const previousPosition = card.style.position;
+			const previousVisibility = card.style.visibility;
+			const previousPointerEvents = card.style.pointerEvents;
+			const previousInset = card.style.inset;
+			const previousWidth = card.style.width;
+
+			card.hidden = false;
+			card.style.position = 'absolute';
+			card.style.visibility = 'hidden';
+			card.style.pointerEvents = 'none';
+			card.style.inset = '0 auto auto 0';
+			card.style.width = `${sectionWidth}px`;
+
+			try {
+				callback();
+			} finally {
+				card.hidden = wasHidden;
+				card.style.position = previousPosition;
+				card.style.visibility = previousVisibility;
+				card.style.pointerEvents = previousPointerEvents;
+				card.style.inset = previousInset;
+				card.style.width = previousWidth;
+			}
+		};
 
 		const fitRecommendationTitles = () => {
 			if (!recommendationSection) return;
@@ -1344,77 +1381,87 @@ const getSortableScore = (score: string) => {
 
 			if (!sectionWidth) return;
 
-			recommendationCards.forEach((card) => {
-				const title = card.querySelector<HTMLElement>('.random-review-content h2');
-				const summary = card.querySelector<HTMLElement>('.random-review-summary');
+			withUnlockedRecommendationSection(() => {
+				recommendationCards.forEach((card) => {
+					withMeasurableRecommendationCard(card, sectionWidth, () => {
+						const title = card.querySelector<HTMLElement>('.random-review-content h2');
+						const cover = card.querySelector<HTMLElement>('.random-review-cover');
+						const content = card.querySelector<HTMLElement>('.random-review-content');
 
-				if (!title) return;
+						if (!title || !content) return;
 
-				const wasHidden = card.hidden;
-				const previousPosition = card.style.position;
-				const previousVisibility = card.style.visibility;
-				const previousPointerEvents = card.style.pointerEvents;
-				const previousInset = card.style.inset;
-				const previousWidth = card.style.width;
+						title.style.removeProperty('--random-review-title-size');
 
-				card.hidden = false;
-				card.style.position = 'absolute';
-				card.style.visibility = 'hidden';
-				card.style.pointerEvents = 'none';
-				card.style.inset = '0 auto auto 0';
-				card.style.width = `${sectionWidth}px`;
+						const isCompact = window.matchMedia('(max-width: 520px)').matches;
+						const isTablet = window.matchMedia('(max-width: 980px)').matches;
+						const computedTitle = window.getComputedStyle(title);
+						const maxSize = Number.parseFloat(computedTitle.fontSize);
+						const minSize = isCompact ? 24 : isTablet ? 34 : 42;
+						const maxLines = isCompact ? 3 : 2;
+						const coverHeight = cover?.getBoundingClientRect().height || 0;
+						const fitToCoverHeight = !isCompact && coverHeight > 0;
+						let nextSize = maxSize;
 
-				title.style.removeProperty('--random-review-title-size');
-				if (summary) {
-					summary.hidden = false;
-					summary.style.removeProperty('--random-review-summary-lines');
-				}
+						const getTitleLines = () => {
+							const lineHeight = Number.parseFloat(window.getComputedStyle(title).lineHeight);
 
-				const computedTitle = window.getComputedStyle(title);
-				const maxSize = Number.parseFloat(computedTitle.fontSize);
-				const isCompact = window.matchMedia('(max-width: 520px)').matches;
-				const isTablet = window.matchMedia('(max-width: 980px)').matches;
-				const minSize = isCompact ? 24 : isTablet ? 34 : 42;
-				let nextSize = maxSize;
+							if (!Number.isFinite(lineHeight) || lineHeight <= 0) return 1;
 
-				while (nextSize > minSize && card.scrollHeight > card.clientHeight + 1) {
-					nextSize -= 1;
-					title.style.setProperty('--random-review-title-size', `${nextSize}px`);
-				}
+							return Math.max(1, Math.ceil((title.getBoundingClientRect().height - 1) / lineHeight));
+						};
 
-				if ((isCompact || isTablet) && summary) {
-					const titleLineHeight = Number.parseFloat(window.getComputedStyle(title).lineHeight);
-					const titleLines = Number.isFinite(titleLineHeight) && titleLineHeight > 0
-						? Math.round(title.getBoundingClientRect().height / titleLineHeight)
-						: 1;
-					let summaryLines = isCompact
-						? titleLines >= 3 ? 2 : 3
-						: 2;
+						const titleIsWrapped = () => getTitleLines() > 1;
+						const wrappedTitlePushesContentPastCover = () => (
+							fitToCoverHeight
+							&& titleIsWrapped()
+							&& content.getBoundingClientRect().height > coverHeight + 1
+						);
 
-					summary.style.setProperty('--random-review-summary-lines', String(summaryLines));
-
-					while (summaryLines > 1 && card.scrollHeight > card.clientHeight + 1) {
-						summaryLines -= 1;
-						summary.style.setProperty('--random-review-summary-lines', String(summaryLines));
-					}
-
-					if (card.scrollHeight > card.clientHeight + 1) {
-						summary.hidden = true;
-					}
-				}
-
-				card.hidden = wasHidden;
-				card.style.position = previousPosition;
-				card.style.visibility = previousVisibility;
-				card.style.pointerEvents = previousPointerEvents;
-				card.style.inset = previousInset;
-				card.style.width = previousWidth;
+						while (
+							nextSize > minSize
+							&& (getTitleLines() > maxLines || wrappedTitlePushesContentPastCover())
+						) {
+							nextSize = Math.max(minSize, nextSize - 1);
+							title.style.setProperty('--random-review-title-size', `${nextSize}px`);
+						}
+					});
+				});
 			});
 		};
 
-		const queueRecommendationTitleFit = () => {
+		const lockRecommendationSectionHeight = () => {
+			if (!recommendationSection) return;
+
+			const sectionWidth = recommendationSection.getBoundingClientRect().width;
+			let maxCardHeight = 0;
+
+			if (!sectionWidth) return;
+
+			withUnlockedRecommendationSection(() => {
+				recommendationCards.forEach((card) => {
+					withMeasurableRecommendationCard(card, sectionWidth, () => {
+						maxCardHeight = Math.max(maxCardHeight, card.getBoundingClientRect().height);
+					});
+				});
+			});
+
+			if (!maxCardHeight) return;
+
+			recommendationSection.style.setProperty(
+				'--random-review-section-height',
+				`${Math.ceil(maxCardHeight)}px`,
+			);
+			recommendationSection.classList.add(heightLockedClass);
+		};
+
+		const refreshRecommendationLayout = () => {
+			fitRecommendationTitles();
+			lockRecommendationSectionHeight();
+		};
+
+		const queueRecommendationLayoutRefresh = () => {
 			cancelAnimationFrame(resizeFrame);
-			resizeFrame = requestAnimationFrame(fitRecommendationTitles);
+			resizeFrame = requestAnimationFrame(refreshRecommendationLayout);
 		};
 
 		const getNextIndex = () => {
@@ -1447,6 +1494,43 @@ const getSortableScore = (score: string) => {
 			card.querySelector('[data-recommendation-countdown]')?.replaceChildren('10');
 		};
 
+		const afterCardTransition = (card: HTMLElement, callback: () => void) => {
+			let didFinish = false;
+
+			const finish = () => {
+				if (didFinish) return;
+
+				didFinish = true;
+				window.clearTimeout(fallback);
+				card.removeEventListener('transitionend', onTransitionEnd);
+				callback();
+			};
+
+			const onTransitionEnd = (event: TransitionEvent) => {
+				if (event.target === card && event.propertyName === 'opacity') {
+					finish();
+				}
+			};
+
+			const fallback = window.setTimeout(finish, transitionDuration + 120);
+
+			card.addEventListener('transitionend', onTransitionEnd);
+		};
+
+		const startEnteringCard = (card: HTMLElement) => {
+			card.hidden = false;
+			card.classList.add('is-active', 'is-entering');
+			resetCardTimer(card);
+
+			card.getBoundingClientRect();
+
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					card.classList.remove('is-entering');
+				});
+			});
+		};
+
 		const showCard = (nextIndex: number, animate = false) => {
 			if (isSwitching) return;
 
@@ -1463,25 +1547,18 @@ const getSortableScore = (score: string) => {
 				isSwitching = true;
 				previousCard.classList.add('is-leaving');
 
-				window.setTimeout(() => {
+				afterCardTransition(previousCard, () => {
 					previousCard.hidden = true;
 					previousCard.classList.remove('is-active', 'is-leaving');
 
 					activeIndex = nextIndex;
 					startedAt = performance.now();
 
-					nextCard.hidden = false;
-					nextCard.classList.add('is-active', 'is-entering');
-					resetCardTimer(nextCard);
-
-					requestAnimationFrame(() => {
-						nextCard.classList.remove('is-entering');
-					});
-
-					window.setTimeout(() => {
+					startEnteringCard(nextCard);
+					afterCardTransition(nextCard, () => {
 						isSwitching = false;
-					}, transitionDuration);
-				}, transitionDuration);
+					});
+				});
 
 				return;
 			}
@@ -1545,16 +1622,17 @@ const getSortableScore = (score: string) => {
 
 		const initialIndex = activeIndex;
 		activeIndex = -1;
-		fitRecommendationTitles();
-		document.fonts?.ready.then(fitRecommendationTitles);
-		window.addEventListener('resize', queueRecommendationTitleFit);
+		refreshRecommendationLayout();
+		document.fonts?.ready.then(refreshRecommendationLayout);
+		window.addEventListener('load', queueRecommendationLayoutRefresh, { once: true });
+		window.addEventListener('resize', queueRecommendationLayoutRefresh);
 		showCard(initialIndex);
 		animationFrame = requestAnimationFrame(tick);
 
 		document.addEventListener('astro:before-swap', () => {
 			cancelAnimationFrame(animationFrame);
 			cancelAnimationFrame(resizeFrame);
-			window.removeEventListener('resize', queueRecommendationTitleFit);
+			window.removeEventListener('resize', queueRecommendationLayoutRefresh);
 		}, { once: true });
 	}
 </script>
