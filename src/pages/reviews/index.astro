@@ -978,8 +978,80 @@ const getSortableScore = (score: string) => {
 		}
 
 		.random-review-card {
-			grid-template-columns: 160px minmax(0, 1fr);
-			min-height: 280px;
+			grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
+			aspect-ratio: auto;
+			height: clamp(330px, 44vw, 390px);
+			gap: 24px;
+			max-height: none;
+			min-height: 0;
+			padding: 56px 28px 28px;
+		}
+
+		.random-review-cover {
+			align-self: center;
+			width: 100%;
+			max-width: 180px;
+		}
+
+		.random-review-content {
+			max-width: 100%;
+			min-width: 0;
+			overflow: hidden;
+		}
+
+		.random-review-content h2 {
+			font-size: var(--random-review-title-size, clamp(2.2rem, 5vw, 3.4rem));
+			line-height: 1;
+		}
+
+		.random-review-meta {
+			flex-wrap: nowrap;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			gap: 8px;
+			margin-top: 16px;
+			padding-bottom: 2px;
+			overflow-y: hidden;
+			overflow-x: auto;
+			overscroll-behavior-inline: contain;
+			scrollbar-width: none;
+		}
+
+		.random-review-meta::-webkit-scrollbar {
+			display: none;
+		}
+
+		.random-review-meta span,
+		.random-review-tag {
+			flex: 0 0 auto;
+			min-height: 28px;
+			padding: 0 11px;
+			font-size: 12px;
+			white-space: nowrap;
+		}
+
+		.random-review-summary {
+			display: -webkit-box;
+			margin-top: 18px;
+			overflow: hidden;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: var(--random-review-summary-lines, 2);
+		}
+
+		.random-review-link {
+			min-height: 38px;
+			margin-top: 18px;
+			padding: 0 18px;
+			font-size: 13px;
+		}
+
+		.random-review-score {
+			right: 24px;
+			bottom: 24px;
+			width: 72px;
+			height: 72px;
+			font-size: 3rem;
 		}
 
 		.review-category-grid.is-standard {
@@ -1000,20 +1072,85 @@ const getSortableScore = (score: string) => {
 
 		.random-review-card {
 			grid-template-columns: 1fr;
+			grid-template-rows: auto minmax(0, 1fr);
+			align-items: start;
 			aspect-ratio: auto;
-			gap: 18px;
+			height: clamp(600px, 162vw, 700px);
+			gap: 14px;
 			max-height: none;
 			min-height: 0;
-			padding: 58px 18px 18px;
+			padding: 56px 16px 18px;
 		}
 
 		.random-review-cover {
-			width: min(58vw, 220px);
+			width: min(46vw, 178px);
 			margin-inline: auto;
 		}
 
+		.random-review-content {
+			display: flex;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			min-height: 0;
+			overflow: hidden;
+			flex-direction: column;
+		}
+
+		.random-review-content > p:first-child {
+			margin-bottom: 6px;
+			font-size: 12px;
+			letter-spacing: 1.5px;
+		}
+
 		.random-review-content h2 {
-			font-size: clamp(2.1rem, 13vw, 3.6rem);
+			font-size: var(--random-review-title-size, clamp(2rem, 12vw, 3.2rem));
+			line-height: .98;
+		}
+
+		.random-review-meta {
+			flex-wrap: nowrap;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			gap: 6px;
+			margin-top: 12px;
+			padding-bottom: 2px;
+			overflow-y: hidden;
+			overflow-x: auto;
+			overscroll-behavior-inline: contain;
+			scrollbar-width: none;
+		}
+
+		.random-review-meta::-webkit-scrollbar {
+			display: none;
+		}
+
+		.random-review-meta span,
+		.random-review-tag {
+			flex: 0 0 auto;
+			min-height: 26px;
+			padding: 0 9px;
+			font-size: 11px;
+			white-space: nowrap;
+		}
+
+		.random-review-summary {
+			display: -webkit-box;
+			margin-top: 12px;
+			overflow: hidden;
+			font-size: 13px;
+			line-height: 1.65;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: var(--random-review-summary-lines, 3);
+		}
+
+		.random-review-link {
+			align-self: flex-start;
+			min-height: 36px;
+			margin-top: 18px;
+			padding: 0 16px;
+			font-size: 12px;
 		}
 
 		.random-review-score {
@@ -1209,6 +1346,7 @@ const getSortableScore = (score: string) => {
 
 			recommendationCards.forEach((card) => {
 				const title = card.querySelector<HTMLElement>('.random-review-content h2');
+				const summary = card.querySelector<HTMLElement>('.random-review-summary');
 
 				if (!title) return;
 
@@ -1227,15 +1365,42 @@ const getSortableScore = (score: string) => {
 				card.style.width = `${sectionWidth}px`;
 
 				title.style.removeProperty('--random-review-title-size');
+				if (summary) {
+					summary.hidden = false;
+					summary.style.removeProperty('--random-review-summary-lines');
+				}
 
 				const computedTitle = window.getComputedStyle(title);
 				const maxSize = Number.parseFloat(computedTitle.fontSize);
-				const minSize = window.matchMedia('(max-width: 520px)').matches ? 28 : 42;
+				const isCompact = window.matchMedia('(max-width: 520px)').matches;
+				const isTablet = window.matchMedia('(max-width: 980px)').matches;
+				const minSize = isCompact ? 24 : isTablet ? 34 : 42;
 				let nextSize = maxSize;
 
 				while (nextSize > minSize && card.scrollHeight > card.clientHeight + 1) {
 					nextSize -= 1;
 					title.style.setProperty('--random-review-title-size', `${nextSize}px`);
+				}
+
+				if ((isCompact || isTablet) && summary) {
+					const titleLineHeight = Number.parseFloat(window.getComputedStyle(title).lineHeight);
+					const titleLines = Number.isFinite(titleLineHeight) && titleLineHeight > 0
+						? Math.round(title.getBoundingClientRect().height / titleLineHeight)
+						: 1;
+					let summaryLines = isCompact
+						? titleLines >= 3 ? 2 : 3
+						: 2;
+
+					summary.style.setProperty('--random-review-summary-lines', String(summaryLines));
+
+					while (summaryLines > 1 && card.scrollHeight > card.clientHeight + 1) {
+						summaryLines -= 1;
+						summary.style.setProperty('--random-review-summary-lines', String(summaryLines));
+					}
+
+					if (card.scrollHeight > card.clientHeight + 1) {
+						summary.hidden = true;
+					}
 				}
 
 				card.hidden = wasHidden;
