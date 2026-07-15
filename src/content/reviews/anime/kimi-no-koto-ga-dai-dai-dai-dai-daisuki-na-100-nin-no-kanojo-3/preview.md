@@ -26,7 +26,7 @@ infoSummary:
   - label: "追番状态 · 连载状态"
     value: "追番中 · 连载中"
   - label: "推荐人群"
-    value: "乙女向观众；喜欢轻百、恶役千金、古风题材的观众"
+    value: "后宫向观众；喜欢后宫、校园恋爱、无厘头搞笑的观众"
 imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/96/f8/598058_1RcCL.jpg"
 publishedAt: 2026-07-07
 buttonText: "查看详情"
