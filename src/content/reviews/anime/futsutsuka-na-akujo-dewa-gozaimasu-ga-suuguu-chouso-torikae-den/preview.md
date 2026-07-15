@@ -8,7 +8,7 @@ proClass: "番剧"
 subCategor:
   - "2026七月新番"
 otherTag:
-  - ""
+  - "金:七月前瞻推荐"
 reviewType: "追番中"
 infoSummary:
   - label: "原作"

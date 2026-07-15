@@ -354,8 +354,11 @@ const getSortableScore = (score: string) => {
 		display: flex;
 		flex-wrap: nowrap;
 		gap: 10px;
-		max-width: 100%;
-		margin-top: 24px;
+		width: calc(100% + 48px);
+		max-width: calc(100% + 48px);
+		margin: 0 -24px -24px;
+		padding: 24px;
+		box-sizing: border-box;
 		overflow-x: auto;
 		overflow-y: hidden;
 		overscroll-behavior-inline: contain;
@@ -1028,8 +1031,8 @@ const getSortableScore = (score: string) => {
 
 		.random-review-meta {
 			gap: 8px;
-			margin-top: 16px;
-			padding-bottom: 2px;
+			margin: -8px -24px -24px;
+			padding: 24px;
 		}
 
 		.random-review-meta span,
@@ -1105,12 +1108,12 @@ const getSortableScore = (score: string) => {
 
 		.random-review-meta {
 			flex-wrap: nowrap;
-			width: 100%;
-			max-width: 100%;
+			width: calc(100% + 36px);
+			max-width: calc(100% + 36px);
 			min-width: 0;
 			gap: 6px;
-			margin-top: 12px;
-			padding-bottom: 2px;
+			margin: -12px -18px -24px;
+			padding: 24px;
 			overflow-y: hidden;
 			overflow-x: auto;
 			overscroll-behavior-inline: contain;
