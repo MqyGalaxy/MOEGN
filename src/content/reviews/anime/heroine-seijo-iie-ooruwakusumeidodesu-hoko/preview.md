@@ -32,6 +32,11 @@ publishedAt: 2026-07-15
 buttonText: "查看详情"
 previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=116845373886898&bvid=BV17PTq6DEbN&cid=39569264139&p=1"
 previewVideoTitle: "女主角？圣女？不，我是杂役女仆（自豪）OP「マデュアル↔ハート」"
+previewImages:
+  - "src/assets/anime/heroine-seijo-iie-ooruwakusumeidodesu-hoko/1.webp"
+  - "src/assets/anime/heroine-seijo-iie-ooruwakusumeidodesu-hoko/2.webp"
+  - "src/assets/anime/heroine-seijo-iie-ooruwakusumeidodesu-hoko/3.webp"
+  - "src/assets/anime/heroine-seijo-iie-ooruwakusumeidodesu-hoko/4.webp"
 thirdPartyLinks:
   - label: "官方公式网站"
     href: "https://all-works-maid-anime.com"
@@ -39,7 +44,7 @@ thirdPartyLinks:
     href: "https://bgm.tv/subject/558064"
 ---
 
-我认为这部番可能是这个季度最有趣也最轻松愉快的圣女流异世界题材。女主角拥有着最强的圣女之力（作为世界观里的游戏女主角），却脱离原本的剧情路线，怀抱着母亲遗愿和自己前世的志愿成为了一个完美女仆，也因此整个剧情线发生了许多无厘头的变化。整部剧目前来开最有趣的是作为女仆的女主梅洛蒂和作为雇主的女二卢西亚娜之间的交互，以及女主知道自己拥有很厉害的圣女之力，但却将其完全用于女仆工作的各种反差、可爱的地方。
+我认为这部番可能是这个季度最有趣也最轻松愉快的圣女流异世界题材。女主角拥有着最强的圣女之力（作为世界观里的游戏女主角），却脱离原本的剧情路线，怀抱着母亲遗愿和自己前世的志愿成为了一个完美女仆，也因此整个剧情线发生了许多无厘头的变化。整部剧目前来开最有趣的是作为女仆的女主梅洛蒂和作为雇主的女二卢西亚娜之间的交互，以及女主知道自己拥有很厉害的圣女魔法，但却将其完全用于女仆工作的各种反差、可爱的地方。
 
 但本作在对世界观的引入有一些稍微不太恰当：第一集上半部分展示了女主成为女仆前的经历——作为一个贵族老爷和女仆诞下的私生子，原本母女两人的生活很不富裕。但在有一天女主发现了一位穿着华丽行为优雅的女仆，便开始下定决心偷偷努力练习成为完美女仆。直到母亲换下重病死去后，女主才在母亲留下的遗言中发现母亲早就知道了自己的志愿，并鼓励她成为最完美的女仆。原本这部分剧情十分感人，但下一秒就开始引入了经典的异世界转生设定，虽然看完后两集后理解了这个设定存在的意义，但引入的方式实在有些尴尬，让前半集积累起来的情绪瞬间烟消云散。
 
