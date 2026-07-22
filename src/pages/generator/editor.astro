@@ -701,6 +701,23 @@ import W3SvgIcon from '../../components/W3SvgIcon.astro';
 		color: var(--paper-text);
 	}
 
+	.export-stage.is-apple-webkit-export * {
+		box-shadow: none !important;
+	}
+
+	.export-stage.is-apple-webkit-export .classic-large-card .moegn,
+	.export-stage.is-apple-webkit-export .classic-small-card .moegn {
+		-webkit-filter: drop-shadow(0 10px 15px rgba(98, 38, 62, .18));
+		filter: drop-shadow(0 10px 15px rgba(98, 38, 62, .18));
+	}
+
+	.export-stage.is-apple-webkit-export .classic-large-card .pro-img-body,
+	.export-stage.is-apple-webkit-export .classic-small-card .pro-img-body,
+	.export-stage.is-apple-webkit-export .detail-cover {
+		-webkit-filter: drop-shadow(0 6px 8px rgba(98, 38, 62, .16));
+		filter: drop-shadow(0 6px 8px rgba(98, 38, 62, .16));
+	}
+
 	.export-stage[data-size="small"] {
 		height: auto;
 	}
@@ -1568,6 +1585,9 @@ import W3SvgIcon from '../../components/W3SvgIcon.astro';
 
 	.detail-small-card .detail-cover {
 		width: 230px;
+		justify-self: center;
+		margin-left: 0;
+		margin-right: 0;
 	}
 
 	.detail-small-card .detail-title {
@@ -1915,7 +1935,7 @@ import W3SvgIcon from '../../components/W3SvgIcon.astro';
 </style>
 
 <script>
-	import { toBlob } from 'html-to-image';
+	import { exportDomToPng } from '../../scripts/exportDomToPng';
 	import QRCode from 'qrcode';
 
 	const editor = document.querySelector<HTMLElement>('[data-card-editor]');
@@ -2528,10 +2548,8 @@ import W3SvgIcon from '../../components/W3SvgIcon.astro';
 				stage.classList.add('is-exporting');
 				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-				const blob = await toBlob(stage, {
+				const blob = await exportDomToPng(stage, {
 					backgroundColor: '#00000000',
-					cacheBust: true,
-					includeQueryParams: true,
 					pixelRatio: 2,
 					skipAutoScale: true,
 					width: stage.offsetWidth,
@@ -2600,10 +2618,8 @@ import W3SvgIcon from '../../components/W3SvgIcon.astro';
 				clearViewTransform(previewStage);
 				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-				const blob = await toBlob(previewStage, {
+				const blob = await exportDomToPng(previewStage, {
 					backgroundColor: '#00000000',
-					cacheBust: true,
-					includeQueryParams: true,
 					pixelRatio: 2,
 					skipAutoScale: true,
 					width: previewStage.offsetWidth,

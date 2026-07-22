@@ -1444,6 +1444,25 @@ const relatedReviewsByClass = Array.from(
 		background: linear-gradient(145deg, var(--color-main), var(--color-light));
 	}
 
+	.share-card-export.is-apple-webkit-export :global(*) {
+		box-shadow: none !important;
+	}
+
+	.share-card-export.is-apple-webkit-export :global(.moegn) {
+		-webkit-filter: drop-shadow(0 10px 15px rgba(98, 38, 62, .18));
+		filter: drop-shadow(0 10px 15px rgba(98, 38, 62, .18));
+	}
+
+	.share-card-export.is-apple-webkit-export :global(.pro-img-body) {
+		-webkit-filter: drop-shadow(0 6px 8px rgba(98, 38, 62, .16));
+		filter: drop-shadow(0 6px 8px rgba(98, 38, 62, .16));
+	}
+
+	.share-card-export.is-apple-webkit-export .share-card-mascot {
+		-webkit-filter: none;
+		filter: none;
+	}
+
 	.share-card-export::before {
 		content: '';
 		position: absolute;
@@ -1823,7 +1842,7 @@ const relatedReviewsByClass = Array.from(
 </style>
 
 <script>
-	import { toBlob } from 'html-to-image';
+	import { exportDomToPng } from '../../scripts/exportDomToPng';
 	import QRCode from 'qrcode';
 
 	document.querySelectorAll<HTMLElement>('[data-third-party-menu]').forEach((menu) => {
@@ -2011,12 +2030,9 @@ const relatedReviewsByClass = Array.from(
 
 			const width = exportElement.offsetWidth || 640;
 			const height = Math.ceil(exportElement.scrollHeight || exportElement.offsetHeight || 1024);
-			const blob = await toBlob(exportElement, {
+			const blob = await exportDomToPng(exportElement, {
 				backgroundColor: '#00000000',
-				cacheBust: true,
 				height,
-				imagePlaceholder: '',
-				includeQueryParams: true,
 				pixelRatio: 2,
 				skipAutoScale: true,
 				style: {
