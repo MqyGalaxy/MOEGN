@@ -1,4 +1,5 @@
-import { toBlob, toSvg } from 'html-to-image';
+import { toBlob } from 'html-to-image';
+import { domToBlob } from 'modern-screenshot';
 
 type ExportOptions = {
 	width: number;
@@ -11,10 +12,6 @@ type ExportOptions = {
 };
 
 const imageDataCache = new Map<string, Promise<string>>();
-
-const delay = (duration: number) => new Promise<void>((resolve) => {
-	window.setTimeout(resolve, duration);
-});
 
 const waitForFrame = () => new Promise<void>((resolve) => {
 	requestAnimationFrame(() => resolve());
@@ -90,82 +87,38 @@ const inlineImages = async (root: HTMLElement) => {
 	return images.length;
 };
 
-const loadSvgImage = (source: string, width: number, height: number) => new Promise<HTMLImageElement>((resolve, reject) => {
-	const image = new Image();
-
-	image.decoding = 'sync';
-	image.width = width;
-	image.height = height;
-	image.style.position = 'fixed';
-	image.style.left = '-100000px';
-	image.style.top = '0';
-	image.style.width = `${width}px`;
-	image.style.height = `${height}px`;
-	image.style.pointerEvents = 'none';
-	image.addEventListener('load', () => resolve(image), { once: true });
-	image.addEventListener('error', () => reject(new Error('Unable to decode export SVG')), { once: true });
-	image.src = source;
-	document.body.appendChild(image);
-});
-
-const canvasToBlob = (canvas: HTMLCanvasElement) => new Promise<Blob>((resolve, reject) => {
-	canvas.toBlob((blob) => {
-		if (blob) resolve(blob);
-		else reject(new Error('Unable to encode export canvas'));
-	}, 'image/png');
-});
-
 const renderAppleWebKitBlob = async (
 	root: HTMLElement,
 	options: ExportOptions,
-	imageCount: number,
 ) => {
-	const { width, height, pixelRatio = 1, backgroundColor, ...svgOptions } = options;
-	const svgSource = await toSvg(root, {
-		...svgOptions,
-		backgroundColor,
-		cacheBust: false,
-		height,
-		includeQueryParams: true,
+	const {
 		width,
+		height,
+		pixelRatio = 1,
+		backgroundColor,
+		style,
+	} = options;
+
+	return domToBlob(root, {
+		width,
+		height,
+		scale: Math.max(1, pixelRatio),
+		backgroundColor: backgroundColor ?? null,
+		style: style ?? null,
+		type: 'image/png',
+		drawImageInterval: 150,
+		features: {
+			copyScrollbar: false,
+			fixSvgXmlDecode: true,
+			removeAbnormalAttributes: true,
+			removeControlCharacter: true,
+			restoreScrollPosition: false,
+		},
+		fetch: {
+			requestInit: { cache: 'force-cache' },
+			bypassingCache: false,
+		},
 	});
-	const svgImage = await loadSvgImage(svgSource, width, height);
-
-	try {
-		try {
-			await svgImage.decode();
-		} catch {
-			// WebKit can reject decode() for an SVG that still renders correctly.
-		}
-
-		await delay(Math.min(1400, 300 + imageCount * 120));
-
-		const canvas = document.createElement('canvas');
-		const ratio = Math.max(1, pixelRatio);
-		canvas.width = Math.ceil(width * ratio);
-		canvas.height = Math.ceil(height * ratio);
-
-		const context = canvas.getContext('2d');
-		if (!context) throw new Error('Canvas 2D is unavailable');
-
-		context.setTransform(ratio, 0, 0, ratio, 0, 0);
-		const attempts = Math.max(3, Math.min(10, imageCount + 1));
-
-		for (let attempt = 0; attempt < attempts; attempt += 1) {
-			context.clearRect(0, 0, width, height);
-			if (backgroundColor && backgroundColor !== 'transparent' && backgroundColor !== '#00000000') {
-				context.fillStyle = backgroundColor;
-				context.fillRect(0, 0, width, height);
-			}
-			context.drawImage(svgImage, 0, 0, width, height);
-
-			if (attempt < attempts - 1) await delay(120);
-		}
-
-		return await canvasToBlob(canvas);
-	} finally {
-		svgImage.remove();
-	}
 };
 
 export const exportDomToPng = async (source: HTMLElement, options: ExportOptions) => {
@@ -195,12 +148,12 @@ export const exportDomToPng = async (source: HTMLElement, options: ExportOptions
 
 	try {
 		await document.fonts?.ready;
-		const imageCount = await inlineImages(clone);
+		await inlineImages(clone);
 		await waitForFrame();
 		await waitForFrame();
 
 		if (appleWebKit) {
-			return await renderAppleWebKitBlob(clone, options, imageCount);
+			return await renderAppleWebKitBlob(clone, options);
 		}
 
 		const blob = await toBlob(clone, {
