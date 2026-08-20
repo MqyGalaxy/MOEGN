@@ -1,5 +1,6 @@
 ---
 title: "007 初露锋芒"
+disable: false
 subTitle: "007 First Light"
 score: "8"
 scoreTag: "佳作"
@@ -20,7 +21,7 @@ infoSummary:
   - label: "游戏类型"
     value: "动作 / 箱庭冒险"
   - label: "登录平台"
-    value: "Steam / PC / PS5 / Xbox Series X/S / Nintendo Switch 2"
+    value: "PC / PS5 / Xbox Series X/S / Nintendo Switch 2"
   - label: "推荐游玩人数"
     value: "1"
   - label: "适龄建议"

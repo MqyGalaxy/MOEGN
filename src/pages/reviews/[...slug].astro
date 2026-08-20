@@ -12,6 +12,7 @@ import {
 } from '../../data/reviewCategories';
 import { getRelatedReviewWorkSlugs } from '../../data/relatedReviews';
 import { getSortedOtherTags } from '../../data/reviewTags';
+import { isContentEnabled } from '../../lib/contentVisibility';
 
 export async function getStaticPaths() {
 	const reviews = await getCollection('reviews');
@@ -40,7 +41,7 @@ const previewAssets = new Map<string, ImageMetadata>(
 		return [normalizedPath, asset as ImageMetadata];
 	}),
 );
-const allReviews = await getCollection('reviews');
+const allReviews = (await getCollection('reviews')).filter(isContentEnabled);
 const getWorkPath = (slug: string) => slug.split('/').slice(0, -1).join('/');
 const workPath = getWorkPath(review.slug);
 const latestReviewByWork = new Map<string, CollectionEntry<'reviews'>>();
@@ -119,7 +120,7 @@ const relatedReviewsByClass = Array.from(
 ).map(([proClass, items]) => ({ proClass, items }));
 ---
 
-<Layout webTitle={`MOEGN - ${review.data.title}`}>
+<Layout webTitle={`MOEGN - ${review.data.title}`} noIndex={review.data.disable}>
 	<main>
 		<nav class="detail-breadcrumb" aria-label="当前位置">
 			<a href="/reviews/">评测列表</a>

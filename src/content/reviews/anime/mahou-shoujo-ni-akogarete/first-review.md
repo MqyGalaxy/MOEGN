@@ -1,5 +1,6 @@
 ---
 title: "憧憬成为魔法少女"
+disable: false
 subTitle: "魔法少女にあこがれて"
 score: "8"
 scoreTag: "佳作"

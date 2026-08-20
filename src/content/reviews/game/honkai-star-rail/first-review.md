@@ -1,5 +1,6 @@
 ---
 title: "崩坏：星穹铁道"
+disable: false
 subTitle: "Honkai: Star Rail"
 score: "8"
 scoreTag: "佳作"

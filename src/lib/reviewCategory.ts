@@ -4,6 +4,7 @@ import {
 	type ReviewCategory,
 } from '../data/reviewCategories';
 import { getAwardSortRank, getSortedOtherTags } from '../data/reviewTags';
+import { isContentEnabled } from './contentVisibility';
 
 type ReviewEntry = CollectionEntry<'reviews'>;
 
@@ -29,7 +30,7 @@ const hasOngoingMarker = (review: CategoryReview) => (
 );
 
 export const getCategoryReviews = async (category: ReviewCategory): Promise<CategoryReview[]> => {
-	const reviewEntries = (await getCollection('reviews')).sort(
+	const reviewEntries = (await getCollection('reviews')).filter(isContentEnabled).sort(
 		(left, right) => right.data.publishedAt.valueOf() - left.data.publishedAt.valueOf(),
 	);
 	const latestReviewByWork = new Map<string, ReviewEntry>();

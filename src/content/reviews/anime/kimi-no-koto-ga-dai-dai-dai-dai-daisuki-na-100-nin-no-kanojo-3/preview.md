@@ -1,5 +1,6 @@
 ---
 title: "超超超超超喜欢你的100个女朋友 第三季"
+disable: false
 subTitle: "君のことが大大大大大好きな100人の彼女 第3期"
 score: "🕶"
 scoreTag: "前瞻"

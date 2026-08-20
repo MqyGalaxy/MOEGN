@@ -11,8 +11,9 @@ import {
 	type ReviewCategory,
 } from '../../data/reviewCategories';
 import { getSortedOtherTags } from '../../data/reviewTags';
+import { isContentEnabled } from '../../lib/contentVisibility';
 
-const reviewEntries = (await getCollection('reviews')).sort(
+const reviewEntries = (await getCollection('reviews')).filter(isContentEnabled).sort(
 	(left, right) => right.data.publishedAt.valueOf() - left.data.publishedAt.valueOf(),
 );
 

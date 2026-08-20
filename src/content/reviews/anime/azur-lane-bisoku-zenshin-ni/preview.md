@@ -1,5 +1,6 @@
 ---
 title: "碧蓝航线：微速前行！第二季"
+disable: false
 subTitle: "アズールレーン びそくぜんしんっ！にっ!!"
 score: "🕶"
 scoreTag: "前瞻"

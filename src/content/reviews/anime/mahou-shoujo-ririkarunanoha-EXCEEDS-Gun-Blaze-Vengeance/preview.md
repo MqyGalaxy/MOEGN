@@ -1,5 +1,6 @@
 ---
 title: "魔法少女奈叶 EXCEEDS"
+disable: false
 subTitle: "魔法少女リリカルなのは EXCEEDS Gun Blaze Vengeance"
 score: "🕶"
 scoreTag: "前瞻"

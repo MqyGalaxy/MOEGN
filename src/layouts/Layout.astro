@@ -2,12 +2,13 @@
 interface Props {
 	webTitle: string;
 	headerTheme?: 'default' | 'hero';
+	noIndex?: boolean;
 }
 
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
-const { webTitle, headerTheme = 'default' } = Astro.props;
+const { webTitle, headerTheme = 'default', noIndex = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -15,6 +16,7 @@ const { webTitle, headerTheme = 'default' } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
+		{noIndex ? <meta name="robots" content="noindex, nofollow, noarchive" /> : null}
 		<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name="viewport" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />

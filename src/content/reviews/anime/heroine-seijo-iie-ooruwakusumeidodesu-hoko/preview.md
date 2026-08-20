@@ -1,5 +1,6 @@
 ---
 title: "女主角？圣女？不，我是杂役女仆（自豪）！"
+disable: false
 subTitle: "ヒロイン？聖女？いいえ、オールワークスメイドです（誇）！"
 score: "🕶"
 scoreTag: "前瞻"

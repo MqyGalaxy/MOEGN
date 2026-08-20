@@ -1,5 +1,6 @@
 ---
 title: "恶女不才，请多关照 ～雏宫蝶鼠换身传～"
+disable: false
 subTitle: "ふつつかな悪女ではございますが ～雛宮蝶鼠とりかえ伝～"
 score: "🕶"
 scoreTag: "前瞻"

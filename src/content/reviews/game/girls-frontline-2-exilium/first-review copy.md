@@ -1,5 +1,6 @@
 ---
 title: "少女前线2：追放"
+disable: false
 subTitle: "Girls' Frontline 2: Exilium"
 score: ""
 scoreTag: "暂无"

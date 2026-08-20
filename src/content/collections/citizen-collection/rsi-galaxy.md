@@ -1,0 +1,60 @@
+---
+title: "RSI 银河"
+disable: false
+subTitle: "ROBERTS SPACE INDUSTRIES / GALAXY"
+summary: "一艘以模块化中段为核心的 110 米多用途星舰。冷峻的 RSI 工业轮廓之下，货运、医疗与精炼三种职业模块让同一副舰体拥有完全不同的任务身份。"
+category: "citizen-collection"
+itemType: "virtual"
+tags: ["RSI", "大型飞船", "多用途", "模块化", "概念舰"]
+imageKey: "rsi-galaxy"
+acquiredAt: 2022-12-02
+maker: "Roberts Space Industries"
+edition: "Concept Series"
+featured: true
+presentation: "product"
+specs:
+  - label: "长度"
+    value: "110"
+    unit: "M"
+  - label: "宽度"
+    value: "60"
+    unit: "M"
+  - label: "高度"
+    value: "22"
+    unit: "M"
+  - label: "标准船员"
+    value: "6"
+  - label: "基础货舱"
+    value: "64"
+    unit: "SCU"
+gallery:
+  - src: "/images/collections/rsi-galaxy/galaxy-exterior.webp"
+    alt: "RSI 银河在小行星带中的舰体外观"
+    caption: "EXTERIOR / DEEP SPACE"
+  - src: "/images/collections/rsi-galaxy/galaxy-hangar.webp"
+    alt: "RSI 银河后部机库与 Pisces 小型舰"
+    caption: "XXS AFTERDECK HANGAR"
+  - src: "/images/collections/rsi-galaxy/galaxy-refinery.webp"
+    alt: "RSI 银河精炼模块概念展示"
+    caption: "REFINERY MODULE"
+modules:
+  - kicker: "MODULE / 01"
+    title: "货运"
+    summary: "专业级 512 SCU 货运模块，通过中央升降平台完成大宗货物装卸。"
+  - kicker: "MODULE / 02"
+    title: "医疗"
+    summary: "把舰体转换为移动医疗中心，官方规格包含 1 张 Tier 1、2 张 Tier 2 与 3 张 Tier 3 医疗床。"
+  - kicker: "MODULE / 03"
+    title: "精炼"
+    summary: "搭载两座大型精炼反应器，并为原料和精炼产物提供独立存储能力。"
+sourceLinks:
+  - label: "RSI Galaxy 官方 Q&A"
+    href: "https://robertsspaceindustries.com/en/comm-link/engineering/19041-Q-A-RSI-Galaxy"
+  - label: "RSI Galaxy 官方规格册"
+    href: "https://media.robertsspaceindustries.com/if9me9wis4e47/source.pdf"
+legalNotice: "舰船规格、功能与外观仍可能在开发过程中调整。Star Citizen、RSI Galaxy 与相关素材版权归 Cloud Imperium Games / Cloud Imperium Rights 所有；本站仅作个人收藏记录与资料展示。"
+heroMedia:
+  type: "image"
+  src: "/images/collections/rsi-galaxy/galaxy-exterior.webp"
+  position: "center 48%"
+---
