@@ -4,7 +4,7 @@ disable: false
 subTitle: "Ace Combat 8: Wings of Theve"
 score: "9"
 scoreTag: "优秀"
-summary: "距离前作《皇牌空战7：未知空域》发售已经过去了7年，该系列沉淀许久最终带来了历代最长、画面表现最好、以及最强电影沉浸感的全新新作《空战奇兵8 希孚之翼》（原《皇牌空战》）。"
+summary: "距离前作《皇牌空战7：未知空域》发售已经过去了7年，该系列沉淀许久最终带来了历代剧情最长、画面表现最好、以及最强电影沉浸感的全新新作《空战奇兵8 希孚之翼》（原《皇牌空战》）。"
 proClass: "游戏"
 subCategor:
   - "2026年度游戏"
@@ -39,9 +39,9 @@ previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=117326
 previewVideoTitle: "《空战奇兵8 希孚之翼》开场动画"
 thirdPartyLinks:
   - label: "官方公式网站"
-    href: "https://www.callofduty.com/"
+    href: "https://www.bandainamcoent.com/games/ace-combat-8/"
   - label: "Steam"
-    href: "https://store.steampowered.com/app/4435490/_4/"
+    href: "https://store.steampowered.com/app/2288340/8__ACE_COMBAT_8_WINGS_OF_THEVE/"
   - label: "Bangumi"
-    href: "https://bgm.tv/subject/656041"
+    href: "https://bgm.tv/subject/614990"
 ---
