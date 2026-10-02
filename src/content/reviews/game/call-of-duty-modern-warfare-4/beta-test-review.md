@@ -37,11 +37,11 @@ previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=117122
 previewVideoTitle: "多人游戏实机预告片 | 《使命召唤：现代战争4》"
 thirdPartyLinks:
   - label: "官方公式网站"
-    href: "https://www.callofduty.com/"
+    href: "https://www.bandainamcoent.com/games/ace-combat-8/"
   - label: "Steam"
-    href: "https://store.steampowered.com/app/4435490/_4/"
+    href: "https://store.steampowered.com/app/2288340/8__ACE_COMBAT_8_WINGS_OF_THEVE/"
   - label: "Bangumi"
-    href: "https://bgm.tv/subject/656041"
+    href: "https://bgm.tv/subject/614990"
 ---
 
 **等待Beta测试开放...**
