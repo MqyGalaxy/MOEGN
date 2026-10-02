@@ -197,7 +197,7 @@ const relatedReviewsByClass = Array.from(
 		</section>
 
 		<article class="detail-article">
-			<div class="article-heading">
+			<div class="article-heading" data-poster-word="REVIEW">
 				<p>Review Overview</p>
 				<h2>评测<br>概览</h2>
 			</div>
@@ -208,7 +208,7 @@ const relatedReviewsByClass = Array.from(
 
 		{review.data.infoSummary.length ? (
 			<section class="work-info-summary" aria-label="作品信息总结">
-				<div class="work-info-heading">
+				<div class="work-info-heading" data-poster-word="PROFILE">
 					<p>Work Info</p>
 					<h2>信息<br>总结</h2>
 				</div>
@@ -226,7 +226,7 @@ const relatedReviewsByClass = Array.from(
 		) : null}
 
 		<section class="detail-preview-section" aria-label="详情预览">
-			<div class="detail-section-heading">
+			<div class="detail-section-heading" data-poster-word="PREVIEW">
 				<p>Detail Preview</p>
 				<h2>详情<br>预览</h2>
 			</div>
@@ -268,7 +268,7 @@ const relatedReviewsByClass = Array.from(
 
 		{relatedReviews.length ? (
 			<section class="detail-related-section" aria-label="关联作品">
-				<div class="detail-section-heading">
+				<div class="detail-section-heading" data-poster-word="RELATED">
 					<p>Related Works</p>
 					<h2>关联<br>作品</h2>
 				</div>
@@ -314,7 +314,7 @@ const relatedReviewsByClass = Array.from(
 			data-share-image={review.data.imgSrc}
 			data-share-path={currentReviewPath}
 		>
-			<div class="detail-section-heading">
+			<div class="detail-section-heading" data-poster-word="SHARE">
 				<p>Share Review</p>
 				<h2>分享<br>{review.data.proClass}</h2>
 			</div>
@@ -349,18 +349,9 @@ const relatedReviewsByClass = Array.from(
 					<!--<span class="share-entry-feedback" data-share-feedback aria-live="polite"></span> -->
 				</div>
 				<dialog class="share-preview-dialog" data-share-dialog aria-label={`${review.data.title} 分享卡片预览`}>
-					<div class="share-dialog-toolbar">
-						<p data-share-status>调整预览后可生成分享图片</p>
-						<div class="share-dialog-controls" aria-label="预览操作">
-							<button type="button" data-share-zoom-out aria-label="缩小预览">-</button>
-							<button type="button" data-share-zoom-reset>100%</button>
-							<button type="button" data-share-zoom-in aria-label="放大预览">+</button>
-							<button class="share-generate-button" type="button" data-share-generate data-share-filename={`${review.slug.replaceAll('/', '-')}-share.png`}>生成并下载</button>
-							<button type="button" data-share-close aria-label="关闭分享预览">×</button>
-						</div>
-					</div>
 					<div class="share-preview-viewport">
 						<div class="share-preview-scale" data-share-scale>
+							<div class="share-preview-canvas" data-share-canvas>
 							<div class="share-card-export" data-share-export aria-label={`${review.data.title} 分享卡片`}>
 								{moeqyGirlImages.length ? (
 									<img
@@ -398,7 +389,25 @@ const relatedReviewsByClass = Array.from(
 									<p>Copyright © {currentYear} MOEGN. Some rights reserved.</p>
 								</div>
 							</div>
+							</div>
 						</div>
+					</div>
+					<div class="share-dialog-toolbar">
+						<button class="share-dialog-close" type="button" data-share-close aria-label="关闭分享预览">×</button>
+						<div class="share-dialog-copy">
+							<span class="share-dialog-eyebrow">SHARE YOUR LOVE · 分享{review.data.proClass}</span>
+							<h3>把热爱，分享出去。</h3>
+							<p>保存这份评测，让更多人发现好作品。</p>
+						</div>
+						<div class="share-dialog-controls" aria-label="预览操作">
+							<div class="share-zoom-controls" role="group" aria-label="预览缩放">
+								<button type="button" data-share-zoom-out aria-label="缩小预览">−</button>
+								<button type="button" data-share-zoom-reset title="适应窗口" aria-label="缩放至适应窗口">100%</button>
+								<button type="button" data-share-zoom-in aria-label="放大预览">+</button>
+							</div>
+							<button class="share-generate-button" type="button" data-share-generate data-share-filename={`${review.slug.replaceAll('/', '-')}-share.png`}><span data-share-generate-label>下载分享卡片</span><span aria-hidden="true">↓</span></button>
+						</div>
+						<div class="share-dialog-footnote"><span>PNG · 高清原图</span><p data-share-status role="status" aria-live="polite">已准备好，点击下载即可保存</p></div>
 					</div>
 				</dialog>
 			</div>
@@ -1330,107 +1339,80 @@ const relatedReviewsByClass = Array.from(
 		white-space: nowrap;
 	}
 
-	.share-generate-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 42px;
-		padding: 0 18px;
-		border: 1px solid var(--color-main);
-		border-radius: 999px;
-		font-size: 14px;
-		font-family: var(--font-medium);
-		cursor: pointer;
-		transition: transform .2s ease-in-out, background .2s ease-in-out, color .2s ease-in-out;
-		background: var(--color-main);
-		color: var(--grey-0);
-	}
 
-	.share-generate-button:hover,
-	.share-generate-button:focus-visible {
-		transform: translateY(-2px);
-	}
-
+	/* Only the preview shell is styled here; the export node keeps its original design. */
+	:global(html:has(.share-preview-dialog[open])) { overflow: hidden; }
 	.share-preview-dialog {
-		width: min(1120px, calc(100vw - 32px));
-		height: min(900px, calc(100vh - 32px));
+		width: min(780px, calc(100vw - 40px));
+		height: min(980px, calc(100dvh - 40px));
 		max-width: none;
 		max-height: none;
 		padding: 0;
 		border: 0;
-		border-radius: 10px;
-		background: var(--grey-0);
-		box-shadow: 0 18px 48px rgba(38, 18, 28, .22);
+		overflow: hidden;
+		background: transparent;
 	}
-
-	.share-preview-dialog::backdrop {
-		background: rgba(26, 18, 24, .66);
-	}
-
-	.share-preview-dialog[open] {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.share-dialog-toolbar {
-		position: sticky;
-		top: 0;
-		z-index: 4;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 18px;
-		padding: 14px 18px;
-		border-bottom: 1px solid rgba(255, 105, 180, .2);
-		background: rgba(255, 255, 255, .94);
-		backdrop-filter: blur(12px);
-	}
-
-	.share-dialog-toolbar p {
-		margin: 0;
-		color: var(--grey-5);
-		font-size: 13px;
-		font-family: var(--font-light);
-	}
-
-	.share-dialog-controls {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 10px;
-	}
-
-	.share-dialog-controls button:not(.share-generate-button) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-width: 38px;
-		min-height: 38px;
-		padding: 0 12px;
-		border: 1px solid var(--color-red-a3);
-		border-radius: 999px;
-		background: var(--grey-0);
-		color: var(--color-main);
-		font-size: 14px;
-		font-family: var(--font-medium);
-		cursor: pointer;
-	}
-
+	.share-preview-dialog::backdrop { background: rgba(42, 24, 37, .55); backdrop-filter: blur(10px); }
+	.share-preview-dialog[open] { display: flex; flex-direction: column; }
 	.share-preview-viewport {
+		display: flex;
 		flex: 1;
 		min-height: 0;
+		margin-inline: 32px;
+		padding: 24px 24px 32px;
 		overflow: auto;
-		padding: 32px;
-		background: linear-gradient(180deg, rgba(255, 105, 180, .04), rgba(255, 255, 255, .96));
+		overscroll-behavior: contain;
+		border: 1px solid rgba(255, 255, 255, .6);
+		border-bottom: 0;
+		border-radius: 32px 32px 0 0;
+		background-color: #fff7fc;
+		background-image: radial-gradient(var(--color-red-a3) .8px, transparent .8px);
+		background-size: 16px 16px;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-light) transparent;
 	}
-
-	.share-preview-scale {
-		width: max-content;
-		margin: 0 auto;
-		transform-origin: top left;
-		transition: transform .18s ease-in-out;
+	.share-preview-scale { position: relative; flex: none; width: max-content; margin: auto; }
+	.share-preview-canvas { width: 640px; transform-origin: top left; }
+	.share-dialog-toolbar {
+		position: relative;
+		z-index: 4;
+		flex: 0 0 auto;
+		margin-top: -12px;
+		padding: 28px 32px 20px;
+		border: 1px solid var(--color-pink-light);
+		border-radius: 28px;
+		background: var(--grey-0);
+		box-shadow: 0 -8px 32px rgba(115, 51, 86, .06);
 	}
+	.share-dialog-copy { padding-right: 38px; }
+	.share-dialog-eyebrow { color: var(--color-main); font: 11px/1.5 var(--font-medium); letter-spacing: 1.5px; }
+	.share-dialog-copy h3 { margin: 7px 0 6px; font: 28px/1.3 var(--font-heavy); color: var(--grey-7); }
+	.share-dialog-copy p { margin: 0; font: 13px/1.6 var(--font-normal); color: var(--grey-6); }
+	.share-dialog-controls { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 22px; }
+	.share-zoom-controls { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--color-pink-light-a3); }
+	.share-zoom-controls button, .share-dialog-close {
+		display: inline-flex; align-items: center; justify-content: center;
+		min-width: 44px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 999px;
+		background: transparent; color: var(--grey-6); font: 16px/1 var(--font-medium); cursor: pointer;
+		transition: background .18s, color .18s;
+	}
+	.share-zoom-controls [data-share-zoom-reset] { min-width: 62px; font-size: 13px; }
+	.share-dialog-close { position: absolute; right: 18px; top: 18px; font-size: 24px; background: var(--color-pink-light-a3); }
+	.share-zoom-controls button:hover, .share-dialog-close:hover { color: var(--color-main); background: var(--color-pink-light); }
+	.share-generate-button {
+		display: inline-flex; align-items: center; justify-content: center; gap: 24px;
+		min-height: 50px; padding: 0 28px; border: 0; border-radius: 999px;
+		background: linear-gradient(110deg, var(--color-main), var(--color-light)); color: var(--grey-0);
+		font: 15px/1.4 var(--font-medium); cursor: pointer; box-shadow: 0 6px 16px var(--color-red-a3);
+		transition: transform .18s, box-shadow .18s;
+	}
+	.share-generate-button:hover { transform: translateY(-2px); box-shadow: 0 9px 20px var(--color-red-a3); }
+	.share-generate-button:disabled { cursor: wait; opacity: .7; transform: none; }
+	.share-dialog-toolbar button:focus-visible { outline: 2px solid var(--color-main); outline-offset: 3px; }
+	.share-dialog-footnote { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-top: 16px; color: var(--grey-6); font: 11px/1.6 var(--font-normal); }
+	.share-dialog-footnote > span { white-space: nowrap; }
+	.share-dialog-footnote p { margin: 0; text-align: right; overflow-wrap: anywhere; }
+	@media (prefers-reduced-motion: reduce) { .share-dialog-toolbar button { transition: none; } }
 
 	.share-card-export {
 		position: relative;
@@ -1799,46 +1781,19 @@ const relatedReviewsByClass = Array.from(
 			font-size: 24px;
 		}
 
-		.share-preview-dialog {
-			width: calc(100vw - 12px);
-			height: calc(100vh - 12px);
-			border-radius: 8px;
-		}
+		.share-preview-dialog { width: calc(100vw - 16px); height: calc(100dvh - 24px); }
+		.share-preview-viewport { margin-inline: 12px; padding: 16px 12px 28px; border-radius: 24px 24px 0 0; }
+		.share-dialog-toolbar { padding: 22px 18px 16px; border-radius: 24px; }
+		.share-dialog-copy h3 { font-size: 23px; }
+		.share-dialog-copy p { font-size: 12px; }
+		.share-dialog-eyebrow { font-size: 9px; letter-spacing: 1px; }
+		.share-dialog-close { top: 12px; right: 12px; }
+		.share-dialog-controls { flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+		.share-generate-button { flex: 1; padding-inline: 16px; gap: 8px; font-size: 13px; }
+		.share-zoom-controls button { min-width: 40px; padding-inline: 8px; }
+		.share-zoom-controls [data-share-zoom-reset] { min-width: 48px; }
+		.share-dialog-footnote { gap: 12px; font-size: 10px; }
 
-		.share-dialog-toolbar {
-			align-items: center;
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 8px;
-			padding: 10px;
-		}
-
-		.share-dialog-toolbar p {
-			display: none;
-		}
-
-		.share-dialog-controls {
-			width: 100%;
-			gap: 8px;
-			justify-content: space-between;
-		}
-
-		.share-dialog-controls button:not(.share-generate-button) {
-			min-width: 34px;
-			min-height: 34px;
-			padding: 0 10px;
-			font-size: 13px;
-		}
-
-		.share-dialog-controls .share-generate-button {
-			min-height: 36px;
-			padding: 0 14px;
-			font-size: 13px;
-		}
-
-		.share-preview-viewport {
-			padding: 12px;
-		}
 	}
 </style>
 
@@ -1954,6 +1909,8 @@ const relatedReviewsByClass = Array.from(
 		const status = section.querySelector<HTMLElement>('[data-share-status]');
 		const qrImage = section.querySelector<HTMLImageElement>('[data-share-qr]');
 		const scaleElement = section.querySelector<HTMLElement>('[data-share-scale]');
+		const canvasElement = section.querySelector<HTMLElement>('[data-share-canvas]');
+		const previewViewport = section.querySelector<HTMLElement>('.share-preview-viewport');
 		const zoomOutButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-out]');
 		const zoomResetButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-reset]');
 		const zoomInButton = section.querySelector<HTMLButtonElement>('[data-share-zoom-in]');
@@ -1962,12 +1919,14 @@ const relatedReviewsByClass = Array.from(
 		const shareFeedback = section.querySelector<HTMLElement>('[data-share-feedback]');
 		const shareMascot = section.querySelector<HTMLImageElement>('[data-share-mascot]');
 
-		if (!exportElement || !dialog || !openButton || !closeButton || !generateButton || !status || !qrImage || !scaleElement || !zoomOutButton || !zoomResetButton || !zoomInButton) return;
+		if (!exportElement || !dialog || !openButton || !closeButton || !generateButton || !status || !qrImage || !scaleElement || !canvasElement || !previewViewport || !zoomOutButton || !zoomResetButton || !zoomInButton) return;
 
 		const pageUrl = new URL(section.dataset.sharePath ?? location.pathname, location.origin).href;
 		const downloadFileName = generateButton.dataset.shareFilename || 'moegn-review-share.png';
-		const defaultGenerateText = generateButton.textContent || '生成并下载';
+		const generateLabel = generateButton.querySelector<HTMLElement>('[data-share-generate-label]') ?? generateButton;
+		const defaultGenerateText = generateLabel.textContent || '下载分享卡片';
 		let previewScale = 1;
+		let autoFit = true;
 		let feedbackTimer = 0;
 		let currentMascotIndex = -1;
 
@@ -1975,24 +1934,23 @@ const relatedReviewsByClass = Array.from(
 			const width = exportElement.offsetWidth || 640;
 			const height = exportElement.offsetHeight || exportElement.scrollHeight || 1024;
 
-			scaleElement.style.transform = `scale(${previewScale})`;
+			canvasElement.style.transform = `scale(${previewScale})`;
 			scaleElement.style.width = `${width * previewScale}px`;
-			scaleElement.style.height = `${(height - 26) * previewScale}px`;
+			scaleElement.style.height = `${height * previewScale}px`;
 			zoomResetButton.textContent = `${Math.round(previewScale * 100)}%`;
 		};
 		const fitPreviewToViewport = () => {
-			if (!window.matchMedia('(max-width: 560px)').matches) {
-				previewScale = 1;
-				updatePreviewScale();
-				return;
-			}
-
-			const viewportWidth = dialog.clientWidth || window.innerWidth;
-			const availableWidth = Math.max(240, viewportWidth - 24);
-			const fittedScale = Math.floor(Math.min(1, availableWidth / (exportElement.offsetWidth || 640)) * 100) / 100;
-			previewScale = Math.max(.4, fittedScale);
+			const viewportStyle = getComputedStyle(previewViewport);
+			const availableWidth = previewViewport.clientWidth - parseFloat(viewportStyle.paddingLeft) - parseFloat(viewportStyle.paddingRight);
+			const availableHeight = previewViewport.clientHeight - parseFloat(viewportStyle.paddingTop) - parseFloat(viewportStyle.paddingBottom);
+			previewScale = Math.max(.1, Math.floor(Math.min(1, availableWidth / (exportElement.offsetWidth || 640), availableHeight / (exportElement.offsetHeight || 1024)) * 100) / 100);
 			updatePreviewScale();
 		};
+		const previewResizeObserver = new ResizeObserver(() => {
+			if (dialog.open && autoFit) fitPreviewToViewport();
+		});
+		previewResizeObserver.observe(previewViewport);
+		previewResizeObserver.observe(exportElement);
 		const renderQr = async () => {
 			qrImage.src = await QRCode.toDataURL(pageUrl, {
 				width: 240,
@@ -2109,6 +2067,7 @@ const relatedReviewsByClass = Array.from(
 			randomizeShareMascot();
 			await renderQr();
 			dialog.showModal();
+			autoFit = true;
 			fitPreviewToViewport();
 		});
 
@@ -2120,23 +2079,25 @@ const relatedReviewsByClass = Array.from(
 		});
 
 		zoomOutButton.addEventListener('click', () => {
-			previewScale = Math.max(.4, Math.round((previewScale - .1) * 10) / 10);
+			autoFit = false;
+			previewScale = Math.max(.1, Math.round((previewScale - .1) * 100) / 100);
 			updatePreviewScale();
 		});
 
 		zoomResetButton.addEventListener('click', () => {
-			previewScale = 1;
-			updatePreviewScale();
+			autoFit = true;
+			fitPreviewToViewport();
 		});
 
 		zoomInButton.addEventListener('click', () => {
-			previewScale = Math.min(2, Math.round((previewScale + .1) * 10) / 10);
+			autoFit = false;
+			previewScale = Math.min(2, Math.round((previewScale + .1) * 100) / 100);
 			updatePreviewScale();
 		});
 
 		generateButton.addEventListener('click', async () => {
 			generateButton.disabled = true;
-			generateButton.textContent = '正在生成...';
+			generateLabel.textContent = '正在生成...';
 			status.textContent = '正在生成分享图片...';
 
 			try {
@@ -2149,7 +2110,7 @@ const relatedReviewsByClass = Array.from(
 				status.textContent = 'DOM 导出失败，请检查封面图片是否支持跨域或改用本地图片';
 			} finally {
 				generateButton.disabled = false;
-				generateButton.textContent = defaultGenerateText;
+				generateLabel.textContent = defaultGenerateText;
 			}
 		});
 	});

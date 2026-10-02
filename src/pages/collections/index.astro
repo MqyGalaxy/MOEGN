@@ -133,7 +133,7 @@ const resolveMediaSource = (source?: string) => {
 
 					return (
 						<a
-							class:list={['category-card', `is-${category.tone}`]}
+							class:list={['category-card', `is-${category.tone}`, { 'has-preview': Boolean(previewImage) }]}
 							href={getCollectionCategoryHref(category.slug)}
 							style={`--category-accent: ${category.accent}; --category-soft: ${category.softAccent}; --category-background: ${category.background}; --category-background-alt: ${category.backgroundAlt}; --category-foreground: ${category.foreground}; --category-muted: ${category.muted}; --category-signal: ${category.signal}; --category-grid: ${category.grid};`}
 						>
@@ -144,7 +144,7 @@ const resolveMediaSource = (source?: string) => {
 								<span>{category.description}</span>
 							</span>
 							{previewImage ? <Image src={previewImage} alt="" loading={index === 0 ? 'eager' : 'lazy'} /> : null}
-							<b class="category-count">{String(categoryItems.length).padStart(2, '0')} ITEMS</b>
+							<b class="category-count">{categoryItems.length ? `${String(categoryItems.length).padStart(2, '0')} ITEMS · 查看档案` : '暂无收录 · 探索分类'}</b>
 							<i aria-hidden="true">↗</i>
 						</a>
 					);

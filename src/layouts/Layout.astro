@@ -7,8 +7,18 @@ interface Props {
 
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import '../styles/editorial.css';
 
 const { webTitle, headerTheme = 'default', noIndex = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const uiPage = path === '/' ? 'home'
+	: path === '/reviews' ? 'reviews'
+	: path.startsWith('/reviews/category/') ? 'review-category'
+	: path.startsWith('/reviews/') ? 'review-detail'
+	: path === '/collections' ? 'collections'
+	: path.startsWith('/collections/category/') ? 'collection-category'
+	: path.startsWith('/collections/') ? 'collection-detail'
+	: path === '/generator/editor' ? 'editor' : 'generator';
 ---
 
 <!doctype html>
@@ -17,13 +27,13 @@ const { webTitle, headerTheme = 'default', noIndex = false } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
 		{noIndex ? <meta name="robots" content="noindex, nofollow, noarchive" /> : null}
-		<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name="viewport" />
+		<meta content="width=device-width,initial-scale=1" name="viewport" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<script is:inline src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 		<title>{webTitle}</title>
 	</head>
-	<body>
+	<body data-ui-page={uiPage}>
 		<Header theme={headerTheme} />
 		<slot />
 		<Footer />

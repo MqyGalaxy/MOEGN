@@ -9,6 +9,13 @@ interface Props {
 
 const { theme = 'default' } = Astro.props;
 const isHeroHeader = theme === 'hero';
+const navigation = [
+    { href: '/', label: '首页' },
+    { href: '/reviews/', label: '评测' },
+    { href: '/collections/', label: '收藏' },
+    { href: '/generator/', label: '创建卡片' },
+];
+const currentPath = `${Astro.url.pathname.replace(/\/$/, '')}/`;
 ---
 
 <header class:list={['site-header', { 'is-hero-header': isHeroHeader, 'is-over-hero': isHeroHeader }]} data-hero-header={isHeroHeader ? 'true' : 'false'}>
@@ -18,10 +25,9 @@ const isHeroHeader = theme === 'hero';
             <Image src={moegnLogoWhite} alt="MOEGN" class="brand-logo brand-logo-white" />
         </a>
         <nav class="site-nav" aria-label="主导航">
-            <a href="/">首页</a>
-            <a href="/reviews/">评测</a>
-            <a href="/collections/">收藏</a>
-            <a href="/generator/">创建卡片</a>
+            {navigation.map(({ href, label }) => (
+                <a href={href} aria-current={(href === '/' ? currentPath === '/' : currentPath.startsWith(href)) ? 'page' : undefined}>{label}</a>
+            ))}
         </nav>
     </div>
 </header>
@@ -53,10 +59,10 @@ const isHeroHeader = theme === 'hero';
         align-items: center;
         justify-content: space-between;
         gap: 24px;
-        width: min(1500px, 100%);
+        width: min(var(--ui-page-width), 100%);
         min-height: 72px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 var(--ui-gutter);
     }
 
     .brand {
@@ -148,7 +154,7 @@ const isHeroHeader = theme === 'hero';
         .header-inner {
             min-height: 62px;
             gap: 14px;
-            padding: 0 14px;
+            padding: 0 var(--ui-gutter);
         }
 
         .brand {
@@ -178,7 +184,7 @@ const isHeroHeader = theme === 'hero';
 
     @media only screen and (max-width: 430px) {
         .header-inner {
-            padding: 0 12px;
+            padding: 0 var(--ui-gutter);
         }
 
         .brand {
@@ -196,6 +202,24 @@ const isHeroHeader = theme === 'hero';
         .site-nav a {
             font-size: 13px;
         }
+    }
+</style>
+
+<style>
+    .site-header:not(.is-over-hero) {
+        background: rgba(255, 253, 254, .95);
+        border-bottom-color: var(--ui-line);
+        box-shadow: 0 4px 20px rgba(45, 29, 39, .035);
+    }
+    .site-header:not(.is-over-hero) .site-nav a[aria-current='page'] {
+        color: var(--ui-accent);
+    }
+    .site-header:not(.is-over-hero) .site-nav a[aria-current='page']::after {
+        transform: scaleX(.65);
+    }
+    .site-nav a:focus-visible, .brand:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 3px; }
+    @media (prefers-reduced-motion: reduce) {
+        .site-header, .brand-logo, .site-nav a, .site-nav a::after { transition: none; }
     }
 </style>
 

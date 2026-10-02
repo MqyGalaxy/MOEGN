@@ -23,7 +23,7 @@ infoSummary:
   - label: "登录平台"
     value: "PC / PS5 / Xbox Series X/S / Nintendo Switch 2"
   - label: "推荐游玩人数"
-    value: "1 ~ 4"
+    value: "1 ~ 6"
   - label: "适龄建议"
     value: "建议 16 岁以上游玩，包含战斗和血腥表现"
   - label: "推荐人群"

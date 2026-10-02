@@ -144,6 +144,7 @@ const getSortableScore = (score: string) => {
 			data-review-pagination-root
 			data-page-size={pageSize}
 		>
+			<header class="archive-heading"><h2>全部评测</h2><p>每一份体验，都有迹可循 · {reviews.length} 篇收录</p></header>
 			<div class="review-sort-toolbar" aria-label="全部评测排序方式">
 				<button type="button" class="is-active" data-review-sort="default" aria-pressed="true">默认排序</button>
 				<button type="button" data-review-sort="score" aria-pressed="false">分数排序</button>

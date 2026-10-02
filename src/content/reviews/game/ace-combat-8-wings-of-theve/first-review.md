@@ -1,0 +1,47 @@
+---
+title: "皇牌空战8 希孚之翼"
+disable: false
+subTitle: "Ace Combat 8: Wings of Theve"
+score: "9"
+scoreTag: "优秀"
+summary: "距离前作《皇牌空战7：未知空域》发售已经过去了7年，该系列沉淀许久最终带来了历代最长、画面表现最好、以及最强电影沉浸感的全新新作《空战奇兵8 希孚之翼》（原《皇牌空战》）。"
+proClass: "游戏"
+subCategor:
+  - "2026年度游戏"
+otherTag:
+  - "银:年度奖项预定"
+reviewType: "初评"
+infoSummary:
+  - label: "开发"
+    value: "Bandai Namco Aces Inc."
+  - label: "发行"
+    value: "Bandai Namco Entertainment Inc."
+  - label: "发行日期"
+    value: "2026 年 10 月 2 日"
+  - label: "售价"
+    value: "$69.99 · ¥298.00（普通版）"
+  - label: "游戏类型"
+    value: "飞行射击游戏"
+  - label: "登录平台"
+    value: "PC / PS5 / Xbox Series X/S"
+  - label: "推荐游玩人数"
+    value: "1 ~ 4"
+  - label: "适龄建议"
+    value: "建议 16 岁以上游玩，包含战斗表现"
+  - label: "推荐人群"
+    value: "皇牌空战系列粉丝；街机空战爱好者；军事爱好者；飞行小白"
+  - label: "游玩状态"
+    value: "主线通关"
+imgSrc: "https://bgmimg.anibt.net/r/400/pic/cover/l/df/19/614990_KDVV0.jpg"
+publishedAt: 2026-10-02
+buttonText: "查看详情"
+previewVideo: "https://player.bilibili.com/player.html?isOutside=true&aid=117326745765710&bvid=BV128aT6mEC8&cid=42185853565&p=1"
+previewVideoTitle: "《空战奇兵8 希孚之翼》开场动画"
+thirdPartyLinks:
+  - label: "官方公式网站"
+    href: "https://www.callofduty.com/"
+  - label: "Steam"
+    href: "https://store.steampowered.com/app/4435490/_4/"
+  - label: "Bangumi"
+    href: "https://bgm.tv/subject/656041"
+---

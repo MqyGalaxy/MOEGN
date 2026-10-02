@@ -1,0 +1,275 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Card from './Card.astro';
+import W3SvgIcon from './W3SvgIcon.astro';
+import { featuredReviewCategories, standardReviewCategories, matchesReviewCategory, getReviewCategoryHref } from '../data/reviewCategories';
+import { getSortedOtherTags } from '../data/reviewTags';
+import { getCollectionCategory } from '../data/collectionCategories';
+import { getCollectionAsset } from '../lib/collectionAssets';
+import { isContentEnabled } from '../lib/contentVisibility';
+import { getHomepageReviews, getHomepageCollections } from '../lib/homeContent';
+import createMascot from '../assets/moeqyGirl/moeqyGirl_MqyGalaxySmileShushing_noBackground.webp';
+
+const reviews = (await getCollection('reviews')).filter(isContentEnabled);
+const latest = getHomepageReviews(reviews);
+const collections = getHomepageCollections(await getCollection('collections'));
+const topics = featuredReviewCategories.map((category) => {
+	const entries = reviews.filter((review) => matchesReviewCategory(review.data, category));
+	return { ...category, count: entries.length, covers: getHomepageReviews(entries, 3) };
+});
+const preview = latest[0];
+const cardProps = (review: (typeof reviews)[number]) => ({
+	...review.data,
+	body: review.data.summary,
+	href: `/reviews/${review.slug}/`,
+	awardTags: getSortedOtherTags(review.data.otherTag),
+	buttonText: '阅读评测',
+});
+---
+
+<div class="home-content">
+	<div class="home-intro" aria-label="MOEGN 内容导航">
+		<p><span class="signal-dot" aria-hidden="true"></span>记录热爱，也留下自己的判断。</p>
+		<div><button class="home-motion-toggle" type="button" data-home-motion-toggle aria-pressed="false">暂停动效</button><a href="#reviews">阅读评测 <span aria-hidden="true">↓</span></a><a href="#collections">逛逛收藏室 <span aria-hidden="true">↗</span></a></div>
+	</div>
+	<div class="home-ribbon" aria-hidden="true"><div>{[0, 1, 2, 3].map(() => <span>MOEGN <i>✦</i> YOUR VOICE MATTERS <i>✦</i> 为玩家发出次元之声 <i>✦</i></span>)}</div></div>
+
+	<section class="home-section latest-section" id="reviews" aria-labelledby="latest-title">
+		<header class="home-heading review-heading" data-poster-word="REVIEWS" data-home-reveal>
+			<div class="review-heading-copy"><p class="ui-eyebrow">RECENT REVIEWS / 最近更新</p><h2 id="latest-title">认真玩，<br /><span>坦率说。</span></h2><a class="ui-text-link" href="/reviews/">全部评测 <span aria-hidden="true">↗</span></a></div>
+			<div class="latest-collage" aria-hidden="true" data-home-parallax>{latest.slice(0, 4).map((review, index) => <div class="collage-piece" style={`--piece: ${index};`}><img src={review.data.imgSrc} alt="" loading="lazy" /></div>)}</div>
+		</header>
+		{latest.length ? <ul class="home-review-grid" role="list">{latest.map((review) => <Card {...cardProps(review)} />)}</ul> : <p class="home-empty">第一篇评测正在酝酿中。先去收藏室逛逛吧。</p>}
+	</section>
+
+	<section class="home-section topics-section" aria-labelledby="topics-title">
+		<header class="home-heading" data-poster-word="DISCOVER" data-home-reveal>
+			<div><p class="ui-eyebrow">FIND YOUR NEXT / 兴趣导航</p><h2 id="topics-title">对上电波，<span>继续探索。</span></h2></div>
+			<p class="heading-description">新番、游戏，还有每一种心头好。</p>
+		</header>
+		<div class="home-topics" data-home-reveal>
+			{topics.map((topic, index) => <a class:list={['home-topic', `tone-${topic.tone}`]} href={getReviewCategoryHref(topic.slug)}>
+				<span class="topic-icon-decoration" aria-hidden="true"><W3SvgIcon name={topic.icon} /></span>
+				<div class="topic-copy"><span class="topic-kicker">专题 / {String(index + 1).padStart(2, '0')}</span><h3>{topic.title}</h3><p>{topic.description}</p><span class="topic-bottom">{topic.count ? `${topic.count} 篇评测 · 进入专题` : '暂无收录 · 查看专题'}<b aria-hidden="true">↗</b></span></div>
+				<div class="topic-covers" aria-hidden="true">{topic.covers.map((review) => <img src={review.data.imgSrc} alt="" loading="lazy" />)}</div>
+			</a>)}
+		</div>
+		<nav class="home-categories" aria-label="按作品分类探索">
+			{standardReviewCategories.map((category) => {
+				const count = reviews.filter((review) => matchesReviewCategory(review.data, category)).length;
+				return <a class={`tone-${category.tone}`} href={getReviewCategoryHref(category.slug)}><span class="home-category-icon"><W3SvgIcon name={category.icon} /></span><span><strong>{category.title}</strong><small>{count ? `${count} 篇评测` : '暂无收录'}</small></span><span class="category-arrow" aria-hidden="true">↗</span></a>;
+			})}
+		</nav>
+	</section>
+
+	<section class="home-section" id="collections" aria-labelledby="collections-title">
+		<header class="home-heading" data-poster-word="COLLECT" data-home-reveal>
+			<div><p class="ui-eyebrow">PERSONAL PICKS / 私藏心动</p><h2 id="collections-title">喜欢的，<span>都在这里。</span></h2></div>
+			<a class="ui-text-link" href="/collections/">进入收藏室 <span aria-hidden="true">↗</span></a>
+		</header>
+		{collections.length ? <div class:list={['home-collections', { 'is-single': collections.length === 1 }]}>{collections.map((item, index) => {
+			const category = getCollectionCategory(item.data.category);
+			return <a class="home-collection" href={`/collections/${item.slug}/`} data-home-reveal>
+				<div class="collection-copy">
+					{collections.length === 1 && <span class="collection-companion" aria-hidden="true"><Image src={getCollectionAsset('galaxy')} alt="" loading="lazy" /><span class="companion-spark companion-spark-one">✦</span><span class="companion-spark companion-spark-two">✧</span></span>}
+					<div class="collection-copy-body"><p class="ui-eyebrow">{category?.title ?? '私人收藏'}</p><h3>{item.data.title}</h3><p class="collection-subtitle">{item.data.subTitle}</p><span class="collection-link">阅读收藏故事 <b aria-hidden="true">↗</b></span></div>
+				</div>
+				<div class="collection-art"><Image src={getCollectionAsset(item.data.imageKey)} alt={item.data.title} loading="lazy" /><span class="collection-art-type">{item.data.itemType === 'virtual' ? '虚拟藏品' : '实体收藏'} / {String(index + 1).padStart(2, '0')}</span></div>
+			</a>;
+		})}</div> : <p class="home-empty">收藏室正在整理中，新的故事即将入柜。</p>}
+	</section>
+
+	<section class="home-section home-create" id="generator" aria-labelledby="create-title" data-home-reveal>
+		<span class="create-word" aria-hidden="true">YOUR VOICE!</span>
+		<div class="create-copy"><p class="ui-eyebrow">SAY IT YOUR WAY / 轮到你了</p><h2 id="create-title">下一张评测，<br /><span>由你发声！</span></h2><p>把真实感受，变成一张可以分享的卡片。</p><a class="ui-button" href="/generator/">创建我的卡片 <span aria-hidden="true">↗</span></a><span class="create-note">选择样式 · 编辑内容 · 保存分享</span></div>
+		<Image class="create-mascot" src={createMascot} alt="" aria-hidden="true" loading="lazy" />
+		<div class="create-preview">{preview ? <ul class="home-review-grid" role="list" aria-label="评测卡片样式预览"><Card {...cardProps(preview)} buttonText="" /></ul> : <div class="create-placeholder">每一种热爱<br />都值得被记录。</div>}<span class="preview-caption">一张卡片，一份真实的体验。</span></div>
+	</section>
+</div>
+
+<style>
+.home-content { position: relative; width: min(var(--ui-page-width), 100%); margin: 0 auto; padding: 0 var(--ui-gutter) 24px; color: var(--text-color); }
+.home-intro { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 30px 0 10px; font-size: 13px; }
+.home-intro p { display: flex; align-items: center; gap: 10px; margin: 0; color: var(--grey-6); }
+.signal-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-main); box-shadow: 0 0 0 5px var(--color-pink-light-a5); }
+.home-intro > div { display: flex; gap: 28px; }
+.home-intro a { text-decoration: none; }
+.home-intro a span { margin-left: 12px; color: var(--color-main); }
+.home-section { position: relative; margin-top: 96px; scroll-margin-top: 104px; }
+.home-heading { position: relative; display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 40px; padding-top: 18px; isolation: isolate; }
+.home-heading::before { content: attr(data-poster-word); position: absolute; z-index: -1; top: -28px; right: clamp(16px, 3vw, 44px); max-width: calc(100% - 32px); overflow: visible; color: var(--color-red-a1); font: italic 900 clamp(76px, 12vw, 176px)/1.15 var(--font-heavy); letter-spacing: -8px; white-space: nowrap; pointer-events: none; }
+.home-heading h2, .create-copy h2 { margin: 0; font-family: var(--font-heavy); font-size: clamp(34px, 4.6vw, 66px); line-height: 1.3; letter-spacing: -2px; }
+.home-heading h2 > span { display: inline-block; color: var(--color-main); transform: translateY(8px) rotate(-3deg); }
+.home-heading .ui-eyebrow { display: inline-block; margin-bottom: 16px; padding: 5px 14px; border-radius: 999px; background: var(--color-pink-light-a5); color: var(--grey-6); letter-spacing: 1.5px; transform: rotate(-2deg); }
+.heading-description { margin: 22px 0 0; color: var(--grey-6); font-size: 14px; line-height: 1.8; }
+.home-heading .ui-text-link { position: relative; z-index: 2; padding: 8px 20px; border: 1px solid var(--color-red-a3); border-radius: 999px; background: var(--grey-0); }
+.home-review-grid { position: relative; display: block; columns: 3; column-gap: 18px; padding: 0; margin: 0; font-size: 20px; line-height: 1.6; color: var(--text-color); }
+.latest-section::before { content: ''; position: absolute; z-index: -1; inset: 100px 0 -70px; border-radius: 48% 35% 42% 30%; background: radial-gradient(ellipse at 55% 45%, var(--color-pink-light-a5), transparent 72%); pointer-events: none; }
+.home-review-grid > :global(.moegn) { display: inline-flex; width: calc(100% - 40px); vertical-align: top; break-inside: avoid; margin-bottom: 24px; }
+.topics-section { margin-top: 100px; }
+/* Match the six category gradients and circular decoration on /reviews/. */
+.tone-rose { --category-start: #ff5faf; --category-end: #ff9ac2; }
+.tone-gold { --category-start: #f2a93b; --category-end: #ffd36a; }
+.tone-cyan { --category-start: #30b8d8; --category-end: #7bd9ea; }
+.tone-violet { --category-start: #8965e8; --category-end: #c088ff; }
+.tone-green { --category-start: #36b37e; --category-end: #8de0aa; }
+.tone-blue { --category-start: #4c8df6; --category-end: #8fc5ff; }
+.home-topic::after, .home-categories a::after { content: ''; position: absolute; z-index: -1; top: -24px; right: -22px; width: 138px; height: 138px; border-radius: 50%; background: rgba(255, 255, 255, .18); pointer-events: none; }
+.home-topic::after { width: 240px; height: 240px; top: -80px; right: -40px; }
+.home-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.home-topic { position: relative; display: flex; min-height: 280px; overflow: hidden; border-radius: 28px; background: linear-gradient(135deg, var(--category-start), var(--category-end)); color: var(--grey-0); text-decoration: none; isolation: isolate; }
+.topic-copy { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: start; width: 62%; padding: 34px; }
+.topic-icon-decoration { position: absolute; z-index: 0; left: -34px; bottom: -42px; width: 210px; height: 210px; color: var(--grey-0); opacity: .16; transform: rotate(12deg); pointer-events: none; }
+.topic-icon-decoration :global(svg) { width: 100%; height: 100%; }
+.topic-kicker { font-size: 11px; letter-spacing: 2px; color: rgba(255, 255, 255, .85); }
+.topic-copy h3 { margin: 20px 0 2px; font-size: clamp(22px, 2vw, 30px); line-height: 1.4; }
+.topic-copy p { margin: 6px 0 24px; font-size: 13px; color: rgba(255, 255, 255, .85); }
+.topic-bottom { display: flex; align-items: center; gap: 22px; margin-top: auto; font-size: 12px; }
+.topic-bottom b { display: grid; place-items: center; width: 34px; height: 34px; background: var(--grey-1-a7); border-radius: 50%; font-size: 20px; color: var(--category-start); transition: transform .2s; }
+.topic-covers { position: absolute; inset: 20px -20px 0 auto; width: 46%; display: flex; align-items: center; transform: rotate(12deg); }
+.topic-covers img { flex: 0 0 auto; width: 135px; height: 198px; object-fit: cover; border: 5px solid #fff; border-radius: 12px; box-shadow: 0 10px 24px var(--color-red-a3); margin-left: -42px; }
+.topic-covers img:nth-child(2) { transform: translateY(-18px); }
+.home-topic:hover .topic-bottom b { transform: translate(2px, -2px); }
+.home-categories { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+.home-categories a { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: center; gap: 14px; padding: 18px 22px; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(135deg, var(--category-start), var(--category-end)); color: var(--grey-0); text-decoration: none; transition: background .2s, transform .2s; }
+.home-categories a:hover { transform: translateY(-3px); }
+.home-category-icon { display: grid; place-items: center; color: var(--grey-0); width: 38px; height: 38px; flex: 0 0 38px; border-radius: 50%; background: rgba(255, 255, 255, .2); }
+.home-category-icon :global(svg) { width: 26px; height: 26px; }
+.home-categories strong { display: block; font-size: 15px; line-height: 1.5; }
+.home-categories small { display: block; color: rgba(255, 255, 255, .85); font-size: 11px; }
+.category-arrow { margin-left: auto; font-size: 20px; color: var(--grey-0); }
+.home-collections { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 32px; }
+.home-collection { position: relative; display: block; padding: 24px 0; text-decoration: none; }
+.is-single .home-collection { display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 52px; }
+.collection-art { position: relative; display: flex; align-items: center; justify-content: center; min-height: 320px; padding: 48px 26px; isolation: isolate; }
+.collection-art::before { content: ''; position: absolute; inset: 12px 14px; z-index: -1; border-radius: 60px 100px 80px 140px; background: linear-gradient(135deg, var(--color-main), var(--color-light)); transform: rotate(-5deg); }
+.collection-art::after { content: ''; position: absolute; right: 20px; top: 0; z-index: -2; width: 160px; height: 160px; border: 2px dashed var(--color-main); border-radius: 50%; }
+.collection-art img { width: 96%; height: 250px; object-fit: cover; border: 8px solid var(--grey-0); border-radius: 24px; box-shadow: 0 14px 28px var(--color-red-a3); transform: rotate(-3deg); transition: transform .3s; }
+.is-single .collection-art { min-height: 420px; }
+.is-single .collection-art img { height: 310px; }
+.home-collection:hover .collection-art img { transform: rotate(-1deg) translateY(-5px); }
+.collection-art-type { position: absolute; z-index: 2; bottom: 18px; right: 8px; padding: 9px 24px; border: 3px solid var(--grey-0); border-radius: 999px; background: var(--color-main); color: var(--grey-0); font-size: 12px; transform: rotate(5deg); }
+.collection-copy { position: relative; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; padding: 36px 20px 24px; text-align: right; }
+.collection-copy-body { position: relative; display: flex; flex-direction: column; align-items: flex-end; min-width: 0; }
+.is-single .collection-copy { flex-direction: row; align-items: center; justify-content: space-between; gap: 18px; padding-left: 0; }
+.is-single .collection-copy-body { flex: 1; }
+.collection-companion { position: relative; flex: 0 0 40%; max-width: 250px; isolation: isolate; }
+.collection-companion::before { content: ''; position: absolute; z-index: -1; inset: 16% -2% -6%; border-radius: 46% 54% 40% 60%; background: radial-gradient(ellipse at center, var(--color-pink-light), var(--color-pink-light-a3) 70%, transparent 71%); transform: rotate(-12deg); }
+.collection-companion::after { content: ''; position: absolute; z-index: -1; inset: 8% -6% -10%; border: 1px dashed var(--color-red-a3); border-radius: 50%; transform: rotate(18deg); }
+.collection-companion img { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 12px var(--color-red-a1)); animation: home-cover-float 6s ease-in-out infinite; }
+.companion-spark { position: absolute; color: var(--color-main); font: 28px/1 var(--font-normal); }
+.companion-spark-one { top: 8%; right: -2%; transform: rotate(12deg); }
+.companion-spark-two { bottom: 10%; left: 0; font-size: 20px; }
+@media (max-width: 600px) { .is-single .collection-copy { gap: 12px; } .collection-companion { flex-basis: 34%; } .collection-copy .collection-link { gap: 16px; padding-inline: 16px; } }
+.collection-copy .ui-eyebrow { padding: 5px 16px; border: 1px solid var(--color-red-a3); border-radius: 999px; color: var(--grey-6); }
+.collection-copy h3 { margin: 4px 0 0; font-family: var(--font-heavy); font-size: clamp(32px, 4vw, 56px); line-height: 1.3; letter-spacing: -1px; }
+.collection-subtitle { margin: 12px 0 0; font-size: 12px; color: var(--grey-5); overflow-wrap: anywhere; }
+.collection-summary { max-width: 480px; margin: 24px 0; font-size: 15px; color: var(--grey-6); line-height: 1.9; }
+.collection-link { display: flex; align-items: center; gap: 30px; padding: 10px 22px; border-radius: 999px; background: var(--color-pink-light-a5); font-size: 13px; font-weight: bold; }
+.collection-link b { color: var(--color-main); font-size: 20px; }
+.home-create { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; min-height: 560px; margin-top: 100px; padding: 76px 60px 56px; border-radius: 70px 36px 70px 36px; background: linear-gradient(120deg, var(--color-main), var(--color-light)); isolation: isolate; }
+.home-create::after { content: ''; position: absolute; z-index: -1; inset: 20px; border: 1px solid var(--grey-1-a3); border-radius: 54px 24px 54px 24px; pointer-events: none; }
+.create-word { position: absolute; z-index: -1; top: 8px; right: 32px; max-width: calc(100% - 64px); padding-inline: .12em; overflow: visible; color: var(--grey-1-a3); font: italic 900 clamp(38px, 9.2vw, 140px)/1.3 var(--font-heavy); letter-spacing: -.035em; white-space: nowrap; pointer-events: none; }
+.create-copy { position: relative; z-index: 3; }
+.create-copy .ui-eyebrow { display: inline-block; padding: 5px 14px; border-radius: 999px; background: var(--grey-1-a9); color: var(--grey-6); transform: rotate(-3deg); }
+.create-copy h2 { color: var(--grey-0); font-size: clamp(32px, 4.1vw, 58px); }
+.create-copy h2 span { display: inline-block; transform: translateX(12px) rotate(-3deg); }
+.create-copy > p:not(.ui-eyebrow) { margin: 24px 0; font-size: 14px; line-height: 1.9; color: var(--grey-0); }
+.create-copy .ui-button { background: var(--grey-0); color: var(--color-main); box-shadow: 0 8px 20px var(--color-red-a3); }
+.create-note { display: block; margin-top: 18px; font-size: 11px; color: var(--grey-0); letter-spacing: 1px; }
+.create-mascot { position: absolute; z-index: 1; width: min(28%, 330px); height: 320px; object-fit: contain; bottom: 0; left: 39%; pointer-events: none; }
+.create-preview { position: relative; z-index: 2; min-width: 0; padding: 0 0 0 14px; }
+.create-preview .home-review-grid { columns: 1; }
+.preview-caption { display: block; text-align: right; margin-top: 20px; padding-right: 24px; font-size: 12px; color: var(--grey-0); letter-spacing: 2px; }
+.create-placeholder { text-align: center; padding: 40px; font-size: 32px; color: var(--grey-0); }
+.home-empty { padding: 40px 24px; border: 1px dashed var(--color-red-a3); border-radius: 24px; color: var(--grey-6); font-size: 14px; }
+@media (max-width: 1100px) { .home-review-grid { column-count: 2; } .home-create { padding: 60px 32px 44px; gap: 24px; } .home-categories a { padding: 16px; gap: 10px; } .is-single .home-collection { gap: 24px; } }
+@media (max-width: 800px) { .home-topics { grid-template-columns: 1fr; } .home-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); } .is-single .home-collection { grid-template-columns: 1fr; } .home-create { grid-template-columns: 1fr; } .create-preview { width: min(520px, 100%); margin-left: auto; } .create-mascot { width: 180px; height: 240px; left: auto; right: 12px; bottom: auto; top: 60px; opacity: .8; } .create-copy { max-width: 80%; } .home-heading::before { letter-spacing: -4px; } }
+@media (max-width: 600px) { .home-intro { align-items: start; flex-direction: column; padding: 24px 0 0; gap: 12px; font-size: 12px; } .home-section { margin-top: 64px; } .home-heading { align-items: start; flex-direction: column; gap: 14px; margin-bottom: 28px; } .home-heading h2 { font-size: 32px; letter-spacing: -1px; } .home-heading::before { top: 2px; font-size: clamp(48px, 14vw, 66px); letter-spacing: -3px; } .home-heading .ui-eyebrow { margin-bottom: 14px; font-size: 10px; } .heading-description { font-size: 12px; margin-top: 16px; } .home-heading .ui-text-link { min-height: 36px; padding: 4px 16px; font-size: 12px; } .home-review-grid { column-count: 1; } .home-categories { gap: 10px; } .home-categories a { padding: 14px 12px; } .home-topic { min-height: 245px; border-radius: 24px; } .topic-copy { padding: 24px; width: 68%; } .topic-covers { right: -50px; } .topic-covers img { width: 125px; height: 185px; } .home-create { padding: 36px 12px; gap: 24px; border-radius: 40px 24px 40px 24px; } .home-create::after { inset: 10px; border-radius: 30px 16px 30px 16px; } .create-copy { max-width: 100%; padding: 0 12px; } .create-copy h2 { font-size: 36px; } .create-copy > p:not(.ui-eyebrow) { max-width: 210px; } .create-mascot { top: 90px; right: 5px; width: 120px; height: 180px; opacity: .55; } .create-preview { padding: 0; } .create-word { top: 4px; right: 16px; max-width: calc(100% - 32px); font-size: clamp(32px, 9.2vw, 55px); } .collection-copy { padding: 28px 4px 0; } .is-single .collection-art { min-height: 270px; padding: 32px 16px; } .is-single .collection-art img { height: 210px; border-width: 6px; } .collection-art-type { right: 12px; bottom: 2px; } .home-collection { padding-top: 8px; } }
+@media (prefers-reduced-motion: reduce) { .home-categories a, .topic-bottom b, .collection-art img { transition: none; } }
+
+/* A poster-like collage introduces the archive; the cards below flow vertically. */
+.home-motion-toggle { padding: 0; border: 0; background: none; color: var(--grey-6); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.home-motion-toggle:focus-visible { outline: 2px solid var(--color-main); outline-offset: 4px; }
+.home-ribbon { overflow: hidden; margin-top: 30px; border-block: 1px solid var(--color-red-a3); border-radius: 999px; background: var(--color-pink-light-a3); }
+.home-ribbon > div { display: flex; width: max-content; animation: home-ribbon-scroll 36s linear infinite; }
+.home-ribbon span { display: flex; align-items: center; gap: 32px; padding: 12px 16px; color: var(--color-main); font: italic 900 24px/1.4 var(--font-heavy); white-space: nowrap; }
+.home-ribbon i { font-size: 18px; font-style: normal; }
+.review-heading { min-height: 400px; margin-bottom: 32px; align-items: center; }
+.review-heading-copy { position: relative; z-index: 2; width: 48%; }
+.review-heading h2 { font-size: clamp(48px, 7vw, 100px); line-height: 1.12; }
+.review-heading .ui-text-link { margin-top: 32px; }
+.review-heading::before { top: -40px; font-size: clamp(100px, 16vw, 225px); }
+.latest-collage { position: absolute; right: 18px; top: 20px; width: 49%; height: 340px; transform: translateY(var(--home-parallax, 0px)); }
+.latest-collage::before { content: ''; position: absolute; inset: 36px 12px 0; border-radius: 50%; background: linear-gradient(120deg, var(--color-pink-light), var(--color-light)); transform: rotate(-8deg); }
+.collage-piece { position: absolute; width: 32%; height: 260px; top: 36px; left: calc(var(--piece) * 22%); transform: rotate(calc((var(--piece) - 1.5) * 8deg)); }
+.collage-piece:nth-child(2) { top: -8px; }
+.collage-piece:nth-child(4) { top: 4px; }
+.collage-piece img { width: 100%; height: 100%; object-fit: cover; border: 7px solid var(--grey-0); border-radius: 22px; box-shadow: 0 16px 28px var(--color-red-a3); animation: home-cover-float 5s ease-in-out infinite; animation-delay: calc(var(--piece) * -1.1s); }
+.collection-link { margin-top: 28px; }
+.topic-covers img { animation: home-cover-float 5.5s ease-in-out infinite; }
+.topic-covers img:nth-child(2) { animation-delay: -1.8s; }
+.topic-covers img:nth-child(3) { animation-delay: -3.4s; }
+.home-collection .collection-art img { animation: home-photo-float 7s ease-in-out infinite; }
+.create-mascot { animation: home-cover-float 5s ease-in-out infinite; }
+.home-heading::before { animation: home-word-drift 8s ease-in-out infinite; }
+.home-reveal-play { animation: home-reveal .9s cubic-bezier(.18,.8,.2,1) both; }
+.home-section:not(.home-is-active) :is(.topic-covers img, .collage-piece img, .collection-art img, .collection-companion img, .create-mascot),
+.home-section:not(.home-is-active) .home-heading::before { animation-play-state: paused; }
+.home-content[data-home-paused] *, .home-content[data-home-paused] *::before { animation-play-state: paused !important; }
+.home-content[data-home-paused] .home-reveal-play { animation: none; }
+@keyframes home-ribbon-scroll { to { transform: translateX(-50%); } }
+@keyframes home-cover-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+@keyframes home-photo-float { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-10px); } }
+@keyframes home-word-drift { 0%, 100% { translate: 0 0; } 50% { translate: -12px 8px; } }
+@keyframes home-reveal { from { opacity: 0; transform: translateY(38px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 1100px) { .review-heading { min-height: 340px; } .latest-collage { height: 270px; } .collage-piece { height: 210px; } }
+@media (max-width: 800px) { .review-heading { min-height: 320px; } .collage-piece { height: 190px; } .latest-collage { top: 40px; } }
+@media (max-width: 600px) { .home-intro > div { flex-wrap: wrap; gap: 18px; } .home-ribbon { margin-top: 24px; } .home-ribbon span { font-size: 18px; gap: 20px; padding: 10px 12px; } .latest-section { margin-top: 42px; } .review-heading { display: block; min-height: 470px; margin-bottom: 12px; } .review-heading-copy { width: 100%; } .review-heading h2 { font-size: 52px; } .review-heading .ui-text-link { margin-top: 18px; } .latest-collage { right: 8px; top: 256px; width: calc(100% - 20px); height: 200px; } .collage-piece { height: 150px; top: 20px; } .collage-piece img { border-width: 4px; border-radius: 14px; } .latest-collage::before { inset: 20px 12px 0; } .review-heading::before { top: 50px; font-size: clamp(48px, 14vw, 66px); } }
+@media (prefers-reduced-motion: reduce) { .home-content *, .home-content *::before { animation: none !important; } .latest-collage { transform: none; } }
+
+</style>
+
+<script>
+const home = document.querySelector<HTMLElement>('.home-content');
+if (home) {
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+	const toggle = home.querySelector<HTMLButtonElement>('[data-home-motion-toggle]');
+	const collage = home.querySelector<HTMLElement>('[data-home-parallax]');
+	let paused = reducedMotion.matches;
+	let frame = 0;
+	const syncMotion = () => {
+		home.toggleAttribute('data-home-paused', paused);
+		toggle?.setAttribute('aria-pressed', String(paused));
+		if (toggle) {
+			toggle.disabled = reducedMotion.matches;
+			toggle.textContent = reducedMotion.matches ? '已跟随系统减少动效' : paused ? '开启动效' : '暂停动效';
+		}
+		if (paused) collage?.style.removeProperty('--home-parallax');
+	};
+	toggle?.addEventListener('click', () => { paused = !paused; syncMotion(); });
+	reducedMotion.addEventListener('change', () => { paused = reducedMotion.matches; syncMotion(); });
+	syncMotion();
+	if ('IntersectionObserver' in window) {
+		const observer = new IntersectionObserver((entries) => {
+			for (const entry of entries) {
+				if (entry.target.classList.contains('home-section')) entry.target.classList.toggle('home-is-active', entry.isIntersecting);
+				if (entry.isIntersecting && entry.target.hasAttribute('data-home-reveal') && !paused) entry.target.classList.add('home-reveal-play');
+			}
+		}, { threshold: .08 });
+		home.querySelectorAll('.home-section, [data-home-reveal]').forEach((element) => observer.observe(element));
+	}
+	window.addEventListener('scroll', () => {
+		if (paused || reducedMotion.matches || frame || !collage) return;
+		frame = requestAnimationFrame(() => {
+			const bounds = collage.getBoundingClientRect();
+			if (bounds.bottom > 0 && bounds.top < innerHeight) {
+				const offset = Math.max(-14, Math.min(14, (innerHeight / 2 - bounds.top) * .035));
+				collage.style.setProperty('--home-parallax', `${offset}px`);
+			}
+			frame = 0;
+		});
+	}, { passive: true });
+}
+</script>
